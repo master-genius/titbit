@@ -34,11 +34,11 @@ var app = new titbit({
 var {router} = app;
 
 router.get('/', async ctx => {
-    ctx.res.data = 'ok';
+    ctx.res.body = 'ok';
 });
 
 router.post('/p', async ctx => {
-    ctx.res.data = ctx.bodyparam;
+    ctx.res.body = ctx.body;
 });
 
 /* app.add(async (ctx, next) => {
@@ -51,7 +51,7 @@ app.add(async (ctx, next) => {
         return ;
     }
     if (!ctx.getFile('image')) {
-        ctx.res.data = 'file not found, please upload with name "image" ';
+        ctx.res.body = 'file not found, please upload with name "image" ';
         return ;
     }
     await next(ctx);
@@ -69,11 +69,11 @@ app.add(async (ctx, next) => {
 
 router.post('/upload', async c => {
     try {
-        c.res.data = await c.moveFile(c.getFile('image'), {
+        c.res.body = await c.moveFile(c.getFile('image'), {
             path : process.env.HOME + '/tmp/buffer',
         });
     } catch (err) {
-        c.res.data = err.message;
+        c.res.body = err.message;
     }
 });
 
