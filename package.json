@@ -1,8 +1,8 @@
 {
   "name": "titbit",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "a web framework support http/1.1 and http/2",
-  "main": "lib/titbit.js",
+  "main": "main.js",
   "directories": {
     "lib": "lib"
   },

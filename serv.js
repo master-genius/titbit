@@ -1,18 +1,18 @@
 'use strict';
 
-const titbit = require('./lib/titbit');
+const titbit = require('./main');
 
 var app = new titbit({
-    bodyMaxSize: 100000000,
+    bodyMaxSize: 80000000,
     debug: true,
     useLimit: true,
-    deny : ['10.7.10.144'],
+    //deny : ['10.7.10.149'],
     maxIPRequest: 520,
     peerTime: 2,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     http2: true,
-    showLoadInfo: false,
+    //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
@@ -31,9 +31,6 @@ var app = new titbit({
     `,
 });
 
-//app.add(app.box.bodyparser);
-//app.add(app.box.router);
-
 var {router} = app;
 
 router.get('/', async ctx => {
@@ -44,10 +41,10 @@ router.post('/p', async ctx => {
     ctx.res.data = ctx.bodyparam;
 });
 
-app.add(async (ctx, next) => {
+/* app.add(async (ctx, next) => {
     console.log('middleware for POST/PUT');
     await next(ctx);
-}, {method: 'POST,PUT'});
+}, {method: 'POST,PUT'}); */
 
 app.add(async (ctx, next) => {
     if (!ctx.isUpload) {
@@ -60,7 +57,7 @@ app.add(async (ctx, next) => {
     await next(ctx);
 }, {preg: '/upload'});
 
-var _total_time = 0;
+/* var _total_time = 0;
 app.add(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -68,7 +65,7 @@ app.add(async (ctx, next) => {
     var timing = end_time-start_time;
     _total_time += timing;
     console.log(process.pid,ctx.path, `: ${timing}ms, total: ${_total_time}ms`);
-});
+}); */
 
 router.post('/upload', async c => {
     try {
