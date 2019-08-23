@@ -7,11 +7,11 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
-    maxIPRequest: 500,
+    maxIPRequest: 800,
     peerTime: 1,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    //http2: true,
+    http2: true,
     //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
@@ -57,14 +57,14 @@ app.add(async (ctx, next) => {
     await next(ctx);
 }, {preg: '/upload'});
 
-var _total_time = 0;
+//var _total_time = 0;
 app.add(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
     var end_time = Date.now();
     var timing = end_time-start_time;
-    _total_time += timing;
-    console.log(process.pid,ctx.path, `: ${timing}ms, total: ${_total_time}ms`);
+    //_total_time += timing;
+    //console.log(process.pid,ctx.path, `: ${timing}ms, total: ${_total_time}ms`);
 });
 
 router.post('/upload', async c => {
@@ -81,4 +81,4 @@ router.get('/err', async ctx => {
     throw 'Error: test';
 });
 
-app.daemon(2021, 2);
+app.daemon(2021, 3);
