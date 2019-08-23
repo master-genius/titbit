@@ -11,7 +11,7 @@ var app = new titbit({
     peerTime: 2,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
     //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
@@ -57,7 +57,7 @@ app.add(async (ctx, next) => {
     await next(ctx);
 }, {preg: '/upload'});
 
-/* var _total_time = 0;
+var _total_time = 0;
 app.add(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -65,7 +65,7 @@ app.add(async (ctx, next) => {
     var timing = end_time-start_time;
     _total_time += timing;
     console.log(process.pid,ctx.path, `: ${timing}ms, total: ${_total_time}ms`);
-}); */
+});
 
 router.post('/upload', async c => {
     try {
@@ -81,4 +81,4 @@ router.get('/err', async ctx => {
     throw 'Error: test';
 });
 
-app.daemon(1990);
+app.daemon(2021, 2);
