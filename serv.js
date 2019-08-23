@@ -13,7 +13,7 @@ var app = new titbit({
     key : './rsa/localhost-privkey.pem',
     http2: true,
     //showLoadInfo: false,
-    //globalLog: true,
+    globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
         <html>
@@ -75,6 +75,10 @@ router.post('/upload', async c => {
     } catch (err) {
         c.res.data = err.message;
     }
+});
+
+router.get('/err', async ctx => {
+    throw 'Error: test';
 });
 
 app.daemon(1990);
