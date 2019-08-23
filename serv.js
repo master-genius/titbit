@@ -13,7 +13,7 @@ var app = new titbit({
     key : './rsa/localhost-privkey.pem',
     http2: true,
     //showLoadInfo: false,
-    globalLog: true,
+    //globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
         <html>
@@ -41,10 +41,10 @@ router.post('/p', async ctx => {
     ctx.res.body = ctx.body;
 });
 
-/* app.add(async (ctx, next) => {
+app.add(async (ctx, next) => {
     console.log('middleware for POST/PUT');
     await next(ctx);
-}, {method: 'POST,PUT'}); */
+}, {method: ['POST','PUT']});
 
 app.add(async (ctx, next) => {
     if (!ctx.isUpload) {
