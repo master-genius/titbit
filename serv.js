@@ -11,8 +11,8 @@ var app = new titbit({
     peerTime: 1,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
-    //showLoadInfo: false,
+    //http2: true,
+    showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
@@ -41,12 +41,32 @@ router.post('/p', async ctx => {
     ctx.res.body = ctx.body;
 });
 
-app.add(async (ctx, next) => {
-    //console.log('middleware for POST/PUT');
+app.use(async (ctx, next) => {
+    console.log('middleware for POST/PUT');
     await next(ctx);
+    console.log('middleware for POST/PUT -- ');
 }, {method: ['POST','PUT']});
 
-app.add(async (ctx, next) => {
+app.use(async (ctx, next) => {
+    console.log('a1');
+    await next(ctx);
+    console.log('a1');
+});
+
+app.use(async (ctx, next) => {
+    console.log('a2');
+    await next(ctx);
+    console.log('a2');
+});
+
+app.use(async (ctx, next) => {
+    console.log('a3');
+    await next(ctx);
+    console.log('a3');
+});
+
+app.use(async (ctx, next) => {
+    console.log('checking file');
     if (!ctx.isUpload) {
         return ;
     }
@@ -58,7 +78,7 @@ app.add(async (ctx, next) => {
 }, {preg: '/upload'});
 
 //var _total_time = 0;
-app.add(async (ctx, next) => {
+app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
     var end_time = Date.now();
