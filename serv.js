@@ -12,7 +12,7 @@ var app = new titbit({
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     http2: true,
-    //showLoadInfo: false,
+    showLoadInfo: false,
     globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
@@ -39,11 +39,20 @@ router.get('/', async ctx => {
 
 router.post('/p', async ctx => {
     ctx.res.body = ctx.body;
-}, 'post-test');
+}, '@post');
 
 router.post('/pt', async ctx => {
     ctx.res.body = ctx.body;
-}, 'post-test2');
+}, {name: 'post-test2', group: 'post'});
+
+//var _total_time = 0;
+app.use(async (ctx, next) => {
+    var start_time = Date.now();
+    await next(ctx);
+    var end_time = Date.now();
+    var timing = end_time-start_time;
+    console.log(process.pid,ctx.path, `: ${timing}ms`);
+});
 
 
 app.use(async (ctx, next) => {
@@ -68,7 +77,7 @@ app.use(async (ctx, next) => {
     console.log('a3');
     await next(ctx);
     console.log('a3');
-});
+}, {group: 'post'});
 
 app.use(async (ctx, next) => {
     console.log('checking file');
@@ -82,18 +91,10 @@ app.use(async (ctx, next) => {
     await next(ctx);
 }, {preg: '/upload'});
 
-//var _total_time = 0;
-app.use(async (ctx, next) => {
-    var start_time = Date.now();
-    await next(ctx);
-    var end_time = Date.now();
-    var timing = end_time-start_time;
-    //_total_time += timing;
-    //console.log(process.pid,ctx.path, `: ${timing}ms, total: ${_total_time}ms`);
-});
-
 router.post('/upload', async c => {
     try {
+        var upf = c.getFile('image');
+        console.log(upf.length, upf.data.length);
         c.res.body = await c.moveFile(c.getFile('image'), {
             path : process.env.HOME + '/tmp/buffer',
         });
@@ -106,6 +107,6 @@ router.get('/err', async ctx => {
     throw 'Error: test';
 });
 
-console.log(app.router);
+//console.log(app.router);
 
 app.daemon(2021, 3);

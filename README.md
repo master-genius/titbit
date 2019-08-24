@@ -130,16 +130,18 @@ app.run(2019);
     {
       data: DATA,
       'content-type': CONTENT_TYPE,
-      filename: ORIGIN_FILENAME
+      filename: ORIGIN_FILENAME,
+      length: LENGTH
     },
     ...
   ],
 
   "video" : [
     {
-      data: DATA,
-      'content-type': CONTENT_TYPE,
-      filename: ORIGIN_FILENAME
+      data: DATA,  //binary编码的文件数据
+      'content-type': CONTENT_TYPE,  //文件类型
+      filename: ORIGIN_FILENAME //原始文件名
+      length: LENGTH,  //文件长度，字节数
     },
     ...
   ]
