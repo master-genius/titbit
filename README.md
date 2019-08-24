@@ -3,13 +3,13 @@
 
 # titbit
 
-目前正在开发的Web框架，总结之前的开发经验，这次想把之前的一些想法综合起来，同时支持HTTP/1.1和HTTP/2协议。
+目前正在开发的Web框架，融合了之前的开发经验，抛弃了不好的设计，同时支持HTTP/1.1和HTTP/2协议。
 
-现在已经可用，正在经历比较完整的测试。中间件模式做了扩展支持按照请求类型执行。抽离出了请求过滤、全局日志模块，方便维护和替换。
-
-路由和解析body数据也改成了中间件模式，但是框架会有默认启用并提供了设置项。
+中间件模式做了扩展支持按照请求类型执行，同时支持根据路由分组执行。抽离出了请求过滤模块，方便维护和替换。解析body数据也改成了独立模块，并提供一个中间件，但是框架会有默认启用并提供了设置项。
 
 大部分核心模块都使用class进行了重写，路由部分进行了大量修改，使用更简单了，并且采用了分离式分组设计。
+
+更多内容，查看[wiki](https://github.com/master-genius/titbit/wiki)
 
 核心功能：
 
@@ -22,9 +22,140 @@
 * 支持通过配置启用HTTP/1.1或是HTTP/2服务
 * 支持配置启用HTTPS服务（HTTP/2服务必须要开启HTTPS）
 
-中间件是一个很有用的模式，不同语言实现起来多少还是有些区别的，这个框架采用了一个有些不同的设计，并没有参考其他代码，当初是独自设计出来的，在middleware模块，目前来说运行还很好，如果有问题，也请不吝赐教。
+## 安装
 
-此框架的中间件设计需要next中传递请求上下文参数，除此以外，其他使用都没有任何区别，在设计层面上，并不是动态生成的，而是在一开始就已经确定了执行链条，并且按照路由分组区分开来，也可以识别不同请求类型和路由确定是否执行还是跳过到下一层，只要请求过来就马上开始执行，所以速度非常快。参考形式如下：
+```
+npm i titbit
+```
+
+## 最小示例
+
+``` JavaScript
+'use strict';
+
+const titbit = require('titibit');
+
+var app = new titbit();
+
+var {router} = app;
+
+router.get('/', async c => {
+  c.res.body = 'success';
+});
+
+//默认监听0.0.0.0
+app.run(2019);
+
+```
+
+## 获取URL参数和表单数据
+
+``` JavaScript
+'use strict';
+
+const titbit = require('titibit');
+
+var app = new titbit();
+
+var {router} = app;
+
+router.get('/q', async c => {
+  //URL中?后面的查询字符串解析到query中。
+  c.res.body = c.query;
+});
+
+router.post('/p', async c => {
+  //POST、PUT提交的数据保存到body，如果是表单则会自动解析，否则只是保存原始文本值，
+  //可以使用中间件处理各种数据。
+  c.res.body = c.body;
+});
+
+app.run(2019);
+
+```
+
+## 上传文件
+
+默认会解析上传的文件，你可以在初始化服务的时候，传递parseBody选项关闭它，关于选项后面有详细的说明。
+解析后的文件数据在c.files中存储，想知道具体结构请往下看。
+
+``` JavaScript
+'use strict';
+
+const titbit = require('titibit');
+
+var app = new titbit();
+
+var {router} = app;
+
+//添加中间件过滤上传文件的大小，后面有中间件详细说明。
+//第二个参数表示只针对POST请求的/upload路由执行。
+app.use(async (c, next) => {
+  //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
+  let upf = c.getFile('image');
+  if (!upf) {
+    c.res.body = 'file not found';
+    return ;
+  } else if (upf.data.length > 2000000) {
+    c.res.body = 'max file size: 2M';
+    return ;
+  }
+  await next(c);
+
+}, {method: 'POST', preg: '/upload'});
+
+router.post('/upload', async c => {
+  let f = c.getFile('image');
+  //此函数是助手函数，配合解析后的文件使用。
+  //会自动生成文件名。
+  try {
+    c.res.body = await c.moveFile(f, {
+      path: process.env.HOME + '/tmp/image'
+    });
+  } catch (err) {
+    c.res.body = err.message;
+  }
+});
+
+app.run(2019);
+
+```
+
+## c.files数据结构
+
+```
+
+{
+  "image" : [
+    {
+      data: DATA,
+      'content-type': CONTENT_TYPE,
+      filename: ORIGIN_FILENAME
+    },
+    ...
+  ],
+
+  "video" : [
+    {
+      data: DATA,
+      'content-type': CONTENT_TYPE,
+      filename: ORIGIN_FILENAME
+    },
+    ...
+  ]
+}
+```
+c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0的数字，则会获取整个文件数组，没有返回null。
+
+## 中间件
+
+中间件是一个很有用的模式，不同语言实现起来多少还是有些区别的，这个框架采用了一个有些不同的设计，并没有参考其他代码，当初是独自设计出来的，目前来说运行还很好，如果有问题，也请不吝赐教。
+
+中间件图示：
+
+![](images/titbit-midware.png)
+
+此框架的中间件设计需要next中传递请求上下文参数，除此以外，其他使用都没有任何区别，在设计层面上，并不是根据中间件函数的数组取出来动态封装，递归调用，而是在一开始就已经确定了执行链条，并且按照路由分组区分开来，也可以识别不同请求类型和路由确定是否执行还是跳过到下一层，只要请求过来就马上开始执行，所以速度非常快。参考形式如下：
 
 ``` JavaScript
 
@@ -41,5 +172,5 @@ app.add(async (c, next) => {
 
 ```
 
-为了兼容常见框架，提供use接口添加中间件，使用use添加的中间件按照添加顺序执行，而add接口添加的则是采用标准的洋葱模型，按照添加的顺序逆序执行，这两种方式，包括PHP、Python、Node.js在内，都有使用，开发者根据习惯和需要决定如何使用，不过从设计完成后，发现这两种方式可以综合使用，不过比较复杂，不建议这样使用。
+为了兼容常见框架，提供use接口添加中间件，使用use添加的中间件按照添加顺序执行，而add接口添加的则是采用标准的洋葱模型，按照添加的顺序逆序执行，这两种方式，包括PHP、Python、Node.js在内，都有使用，开发者根据习惯和需要决定如何使用，不过从设计完成后，发现这两种方式可以综合使用，不过比较复杂，不建议这样做。
 
