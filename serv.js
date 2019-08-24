@@ -7,7 +7,7 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
-    maxIPRequest: 80,
+    maxIPRequest: 280,
     peerTime: 1,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
@@ -39,7 +39,12 @@ router.get('/', async ctx => {
 
 router.post('/p', async ctx => {
     ctx.res.body = ctx.body;
-});
+}, 'post-test');
+
+router.post('/pt', async ctx => {
+    ctx.res.body = ctx.body;
+}, 'post-test2');
+
 
 app.use(async (ctx, next) => {
     console.log('middleware for POST/PUT');
@@ -100,5 +105,7 @@ router.post('/upload', async c => {
 router.get('/err', async ctx => {
     throw 'Error: test';
 });
+
+console.log(app.router);
 
 app.daemon(2021, 3);
