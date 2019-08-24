@@ -7,13 +7,13 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
-    maxIPRequest: 800,
+    maxIPRequest: 80,
     peerTime: 1,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    //http2: true,
-    showLoadInfo: false,
-    //globalLog: true,
+    http2: true,
+    //showLoadInfo: false,
+    globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
         <html>
