@@ -3,17 +3,18 @@
 const titbit = require('./main');
 
 var app = new titbit({
+    daemon: true,
     bodyMaxSize: 80000000,
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
-    maxIPRequest: 280,
+    maxIPRequest: 420,
     peerTime: 1,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     http2: true,
-    showLoadInfo: false,
-    globalLog: true,
+    //showLoadInfo: false,
+    //globalLog: true,
     logType: 'stdio',
     pageNotFound: `<!DOCTYPE html>
         <html>
