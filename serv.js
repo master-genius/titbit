@@ -16,6 +16,7 @@ var app = new titbit({
     //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
+    loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>

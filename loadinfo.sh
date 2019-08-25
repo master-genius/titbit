@@ -9,42 +9,37 @@ get_master_pid () {
 }
 
 if [ $# -gt 0 ] ; then
-    if [ $1 = "start" ] ; then
-        RUNCOMM="start"
-    elif [ $1 = "stop" ] ; then
-        RUNCOMM="stop"
-    else
-        LOAD_FILE="$1"
-    fi
-    
-fi
-
-if [ ! -f $LOAD_FILE ] ; then
-    echo "$LOAD_INFO not found"
-    echo "usage: $0 [PATH], by default, the file is ./load-info.log"
-    exit 1
+    for k in $@ ; do
+        case "$k" in
+            "--stop")
+                RUNCOMM="$k"
+                ;;
+            *)
+                LOAD_FILE="$k"
+                ;;
+        esac
+    done
 fi
 
 get_master_pid
 
 CPID=`ps -e -o comm,pid,args | grep "node.*$PID" | grep -v grep`
 
-if [ -n $RUNCOMM ] ; then
-    case $RUNCOMM in
-        "start")
-            if [ -n "$CPID" ] ; then
-                echo "already running"
-                exit 0
-            fi
-
-            ;;
-        "stop")
+if [ -n "$RUNCOMM" ] ; then
+    case "$RUNCOMM" in
+        "--stop")
             if [ -n "$CPID" ] ; then
                 kill "$PID" && echo "stop server"
             fi
             exit 0
             ;;
     esac
+else
+    if [ ! -f $LOAD_FILE ] ; then
+        echo "$LOAD_INFO not found"
+        echo "usage: $0 [PATH], by default, the file is ./load-info.log"
+        exit 1
+    fi
 fi
 
 if [ -z "$CPID" ] ; then
