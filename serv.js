@@ -47,7 +47,7 @@ router.post('/pt', async ctx => {
     ctx.res.body = ctx.body;
 }, {name: 'post-test2', group: 'post'});
 
-//var _total_time = 0;
+
 app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -91,7 +91,7 @@ app.use(async (ctx, next) => {
         return ;
     }
     await next(ctx);
-}, {preg: '/upload'});
+}, {name: 'upload-image'});
 
 router.post('/upload', async c => {
     try {
@@ -103,7 +103,7 @@ router.post('/upload', async c => {
     } catch (err) {
         c.res.body = err.message;
     }
-});
+}, 'upload-image');
 
 router.get('/err', async ctx => {
     throw 'Error: test';
