@@ -92,7 +92,7 @@ var app = new titbit();
 var {router} = app;
 
 //添加中间件过滤上传文件的大小，后面有中间件详细说明。
-//第二个参数表示只针对POST请求的/upload路由执行。
+//第二个参数表示只针对POST请求，并且路由命名为upload-image路由执行。
 app.use(async (c, next) => {
   //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
   let upf = c.getFile('image');
@@ -105,7 +105,7 @@ app.use(async (c, next) => {
   }
   await next(c);
 
-}, {method: 'POST', preg: '/upload'});
+}, {method: 'POST', name: 'upload-image'});
 
 router.post('/upload', async c => {
   let f = c.getFile('image');
@@ -118,7 +118,7 @@ router.post('/upload', async c => {
   } catch (err) {
     c.res.body = err.message;
   }
-});
+}, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
 
 app.run(2019);
 
