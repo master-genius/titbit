@@ -1,5 +1,5 @@
 
-![ ](images/titbit.png)
+![ ](images/titbit-logo.png)
 
 # titbit
 
