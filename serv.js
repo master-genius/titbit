@@ -1,9 +1,11 @@
 'use strict';
 
 const titbit = require('./main');
+const zlib = require('zlib');
+const fs = require('fs');
 
 var app = new titbit({
-    daemon: true,
+    //daemon: true,
     bodyMaxSize: 80000000,
     debug: true,
     useLimit: true,
@@ -13,7 +15,7 @@ var app = new titbit({
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     http2: true,
-    //showLoadInfo: false,
+    showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
@@ -31,6 +33,7 @@ var app = new titbit({
             </body>
         </html>
     `,
+    secureMode: false,
 });
 
 var {router} = app;
@@ -108,6 +111,40 @@ router.post('/upload', async c => {
 router.get('/err', async ctx => {
     throw 'Error: test';
 });
+
+router.get('/app', async c => {
+    if (c.app) {
+        c.res.body = c.app.router.group();
+    } else {
+        c.res.body = 'null';
+    }
+});
+
+app.use(async (c, next) => {
+    c.res.setHeader('content-encoding', 'gzip');
+    c.res.setHeader('content-type', 'text/plain; charset=utf-8');
+    c.stream.respond(c.res.headers);
+    await next(c);
+    let wdat = await new Promise((rv, rj) => {
+        //zlib.gzip(Buffer.from(c.res.body, c.res.encoding)
+        zlib.gzip(c.res.body, {encoding:'utf8'}, (err, data) => {
+            if (err) {rj (err);}
+            rv(data);
+        });
+    });
+    c.stream.write(wdat);
+    c.res.body = null; //最后不再返回数据。
+}, {name: 'gzip-test'});
+
+router.get('/quantum', async c => {
+    c.res.body = await new Promise((rv, rj) => {
+        fs.readFile('./tmp/quantum', {encoding:'utf8'}, (err, data) => {
+            if (err) { rj(err); }
+            rv(data);
+        });
+    });
+}, 'gzip-test');
+
 
 //console.log(app.router);
 
