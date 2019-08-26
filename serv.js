@@ -106,7 +106,26 @@ router.post('/upload', async c => {
     } catch (err) {
         c.res.body = err.message;
     }
-}, 'upload-image');
+}, {name: 'upload-image', group: 'upload'});
+
+app.use(async (c, next) => {
+    if (c.getFile('file') === null) {
+        c.res.body = 'file not found -> c.files.file';
+        return ;
+    }
+    await next(c);
+
+}, 'upload-file');
+
+router.put('/upload', async c => {
+    try {
+        c.res.body = await c.moveFile(c.getFile('file'), {
+            path: process.env.HOME+'/tmp/a'
+        });
+    } catch (err) {
+        c.res.body = err.message;
+    }
+}, {name:'upload-file', group:'upload'});
 
 router.get('/err', async ctx => {
     throw 'Error: test';
@@ -145,7 +164,15 @@ router.get('/quantum', async c => {
     });
 }, 'gzip-test');
 
+router.get('/router', async c => {
+    c.res.body = [
+        c.app.router.routeTable(),
+        c.app.router.group()
+    ];
+});
+
 
 //console.log(app.router);
 
 app.daemon(2021, 3);
+
