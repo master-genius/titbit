@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -25,7 +25,7 @@
     "framework"
   ],
   "author": "BraveWang",
-  "license": "MPL-2.0",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/master-genius/titbit/issues"
   },

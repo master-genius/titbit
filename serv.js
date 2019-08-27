@@ -33,8 +33,9 @@ var app = new titbit({
             </body>
         </html>
     `,
-    secureMode: false,
 });
+
+app.service.router = app.router;
 
 var {router} = app;
 
@@ -132,11 +133,7 @@ router.get('/err', async ctx => {
 });
 
 router.get('/app', async c => {
-    if (c.app) {
-        c.res.body = c.app.router.group();
-    } else {
-        c.res.body = 'null';
-    }
+    c.res.body = c.service.router.group();
 });
 
 app.use(async (c, next) => {
@@ -170,7 +167,6 @@ router.get('/router', async c => {
         c.app.router.group()
     ];
 });
-
 
 //console.log(app.router);
 
