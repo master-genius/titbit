@@ -5,20 +5,27 @@ const titbit = require('../main');
 var app = new titbit({
     debug: true,
     showLoadInfo: false,
-    /*postHook:  async (ctx) => {
-        console.log('hook');
-        if (!ctx.query.pass || ctx.query.pass !== '1990') {
-            await new Promise((rv, rj) => {
-                setTimeout(() => {
-                    rv();
-                }, 100);
-            });
-            ctx.response.end('fucked');
-        }
-    } */
+    http2: true,
+    key: '../rsa/localhost-privkey.pem',
+    cert: '../rsa/localhost-cert.pem'
 });
 
 var {router} = app;
+
+app.addHook(async (ctx, next) => {
+    console.log('hook');
+    await new Promise((rv, rj) => {
+        setTimeout(() => {
+            rv();
+        }, 10);
+    });
+    if (!ctx.query.pass || ctx.query.pass !== '1990') { 
+        ctx.res.body = 'deny~';
+    } else {
+        ctx.bodyMaxSize = 200;
+        await next(ctx);
+    }
+}, {method:['POST','PUT']});
 
 app.use(async (ctx, next) => {
     console.log('mid');
