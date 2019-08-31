@@ -188,4 +188,4 @@ app.add(async (c, next) => {
 
 下图较完整的说明了请求处理过程：
 
-![](images/titbit-total-request.png)
+![](images/titbit-hook-req-midware.png)
