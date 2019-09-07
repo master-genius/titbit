@@ -15,7 +15,7 @@ var app = new titbit({
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     http2: true,
-    //showLoadInfo: false,
+    showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
@@ -158,7 +158,7 @@ app.use(async (c, next) => {
 
 router.get('/quantum', async c => {
     c.res.body = await new Promise((rv, rj) => {
-        fs.readFile('./tmp/quantum', {encoding:'utf8'}, (err, data) => {
+        fs.readFile('../tmp/quantum', {encoding:'utf8'}, (err, data) => {
             if (err) { rj(err); }
             rv(data);
         });
@@ -167,8 +167,8 @@ router.get('/quantum', async c => {
 
 router.get('/router', async c => {
     c.res.body = [
-        c.app.router.routeTable(),
-        c.app.router.group()
+        c.service.router.routeTable(),
+        c.service.router.group()
     ];
 });
 
