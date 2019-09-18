@@ -131,9 +131,10 @@ app.run(2019);
 {
   "image" : [
     {
-      data: DATA,
       'content-type': CONTENT_TYPE,
       filename: ORIGIN_FILENAME,
+      start : START,
+      end   : END,
       length: LENGTH
     },
     ...
@@ -141,9 +142,10 @@ app.run(2019);
 
   "video" : [
     {
-      data: DATA,  //binary编码的文件数据
       'content-type': CONTENT_TYPE,  //文件类型
       filename: ORIGIN_FILENAME //原始文件名
+      start : START, //ctx.rawBody开始的索引位置
+      end   : END,   //ctx.rawBody结束的索引位置
       length: LENGTH,  //文件长度，字节数
     },
     ...
