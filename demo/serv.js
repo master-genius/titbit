@@ -104,12 +104,19 @@ app.use(async (ctx, next) => {
 
 router.post('/upload', async c => {
     try {
-        var upf = c.getFile('image');
-        console.log(upf.length, upf.data.length);
-        c.res.body = await c.moveFile(c.getFile('image'), {
-            path : process.env.HOME + '/tmp/buffer',
-        });
+        console.log(c.files);
+        let results = [];
+        let tmp = '';
+        let images = c.getFile('image', -1);
+        for(let i=0; i<images.length; i++) {
+            tmp = await c.moveFile(images[i], {
+                path : process.env.HOME + '/tmp/buffer',
+            });
+            results.push(tmp);
+        }
+        c.res.body = results;
     } catch (err) {
+        console.log(err);
         c.res.body = err.message;
     }
 }, {name: 'upload-image', group: 'upload'});
@@ -125,6 +132,7 @@ app.use(async (c, next) => {
 
 router.put('/upload', async c => {
     try {
+        console.log(c.files);
         c.res.body = await c.moveFile(c.getFile('file'), {
             path: process.env.HOME+'/tmp/a'
         });
