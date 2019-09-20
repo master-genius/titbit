@@ -133,9 +133,21 @@ app.use(async (c, next) => {
 router.put('/upload', async c => {
     try {
         console.log(c.files);
-        c.res.body = await c.moveFile(c.getFile('file'), {
-            path: process.env.HOME+'/tmp/a'
-        });
+        console.log(c.body);
+        let files = c.getFile('file', -1);
+        let results = [];
+        let tmp = '';
+        for(let i=0; i<files.length; i++) {
+            try {
+                tmp = await c.moveFile(files[i], {
+                    path: process.env.HOME+'/tmp/a'
+                });
+                results.push(tmp);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        c.res.body = results;
     } catch (err) {
         c.res.body = err.message;
     }
