@@ -1,13 +1,13 @@
 {
   "name": "titbit",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "test": "node serv.js"
+    "test": "cd demo && node serv.js"
   },
   "repository": {
     "type": "git",
