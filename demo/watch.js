@@ -12,13 +12,9 @@ if (cluster.isMaster) {
 
     fwt.on('change', (etype, filename) => {
         console.log(etype, filename);
-        if (app.rundata.workers === null) {
-            return ;
-        }
 
-        for(let id in app.rundata.workers) {
-            //console.log(app.rundata.workers[id]);
-            app.rundata.workers[id].process.kill();
+        for(let id in cluster.workers) {
+            cluster.workers[id].process.kill();
         }
     });
 

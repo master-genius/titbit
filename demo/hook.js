@@ -7,7 +7,9 @@ var app = new titbit({
     showLoadInfo: false,
     http2: true,
     key: '../rsa/localhost-privkey.pem',
-    cert: '../rsa/localhost-cert.pem'
+    cert: '../rsa/localhost-cert.pem',
+    daemon: true,
+    pidFile: 'mymaster.pid'
 });
 
 var {router} = app;
@@ -63,4 +65,5 @@ router.post('/upload', async c => {
     }
 }, '@upload');
 
-app.run(1990);
+app.daemon(1990);
+
