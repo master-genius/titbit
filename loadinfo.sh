@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PID=
-LOAD_FILE="./load-info.log"
+LOAD_FILE="./loadinfo.log"
 RUNCOMM=
 
 get_master_pid () {
