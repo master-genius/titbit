@@ -6,7 +6,7 @@ const fs = require('fs');
 
 var app = new titbit({
     //daemon: true,
-    bodyMaxSize: 80000000,
+    bodyMaxSize: 1500000000,
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
@@ -14,8 +14,8 @@ var app = new titbit({
     peerTime: 1,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
-    http2: true,
-    showLoadInfo: false,
+    //http2: true,
+    //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
@@ -143,6 +143,7 @@ router.put('/upload', async c => {
                     path: process.env.HOME+'/tmp/a'
                 });
                 results.push(tmp);
+                //console.log('not move');
             } catch (err) {
                 console.log(err);
             }
