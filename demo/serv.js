@@ -15,7 +15,7 @@ var app = new titbit({
     cert : ['../rsa/localhost-cert.pem'],
     key : ['../rsa/localhost-privkey.pem'],
     //http2: true,
-    //showLoadInfo: false,
+    showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
@@ -41,8 +41,8 @@ var {router} = app;
 
 router.options('/*', async c => {
     console.log(c.param.starPath);
-    c.res.setHeader('Access-control-allow-origin', '*');
-    c.res.setHeader('Access-control-allow-methods', app.router.methodList);
+    c.setHeader('Access-control-allow-origin', '*');
+    c.setHeader('Access-control-allow-methods', app.router.methods);
 }, 'options-check');
 
 router.get('/', async ctx => {
@@ -163,8 +163,8 @@ router.get('/app', async c => {
 });
 
 app.use(async (c, next) => {
-    c.res.setHeader('content-encoding', 'gzip');
-    c.res.setHeader('content-type', 'text/plain; charset=utf-8');
+    c.setHeader('content-encoding', 'gzip');
+    c.setHeader('content-type', 'text/plain; charset=utf-8');
     c.stream.respond(c.res.headers);
     await next(c);
     let wdat = await new Promise((rv, rj) => {
