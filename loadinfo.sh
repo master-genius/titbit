@@ -37,7 +37,7 @@ if [ -n "$RUNCOMM" ] ; then
 else
     if [ ! -f $LOAD_FILE ] ; then
         echo "$LOAD_INFO not found"
-        echo "usage: $0 [PATH], by default, the file is ./load-info.log"
+        echo "usage: $0 [PATH], by default, the file is $LOAD_FILE"
         exit 1
     fi
 fi
@@ -50,6 +50,6 @@ fi
 
 while cat "$LOAD_FILE" ; do
     echo "run 'kill $PID' to end the server"
-    sleep 0.6
+    sleep 0.8
     clear
 done
