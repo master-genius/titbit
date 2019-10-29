@@ -1,5 +1,10 @@
 const titbit = require('../main');
 
+process.on('exit', (code) => {
+  console.log(code);
+});
+
+
 var app = new titbit({
     globalLog : true
 });
