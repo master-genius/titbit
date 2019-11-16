@@ -9,7 +9,7 @@ var app = new titbit({
     maxIPRequest: 1,
     peerTime: 5,
     useLimit: true,
-    http2: true,
+    //http2: true,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
 });
@@ -28,6 +28,10 @@ app.post('/p', async c => {
 
 app.get('/e', async c => {
     throw 'err test';
+});
+
+app.get('/nat', async c => {
+    c.res.body = `${c.ip}:${c.port}`;
 });
 
 app.daemon(2021, 2);
