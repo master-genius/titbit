@@ -3,13 +3,11 @@
 
 # titbit
 
-> titbit是运行于服务端的Web框架，如果你还没有接触过Web后端开发，可能需要一些HTTP协议和前后端通信的知识，这可以在 [https://www.w3xm.top](https://www.w3xm.top)找到。
+> titbit是运行于服务端的Web框架，如果你还没有接触过Web后端开发，可能需要一些HTTP协议和前后端通信的知识，这可以在 [https://m.w3xm.cn](https://m.w3xm.cn)找到。
 
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
 中间件模式做了扩展支持按照请求类型执行，同时支持根据路由分组执行。抽离出了请求过滤模块，方便维护和替换。解析body数据也改成了独立模块，并提供一个中间件，但是框架会有默认启用并提供了设置项。
-
-大部分核心模块都使用class进行了重写，路由部分进行了大量修改，使用更简单了，并且采用了分离式分组设计。
 
 更多内容，查看[wiki](https://github.com/master-genius/titbit/wiki)
 
@@ -45,7 +43,7 @@ var app = new titbit();
 var {router} = app;
 
 router.get('/', async c => {
-  c.res.body = 'success';
+  c.send('success'); //返回字符串
 });
 
 //默认监听0.0.0.0
@@ -66,13 +64,13 @@ var {router} = app;
 
 router.get('/q', async c => {
   //URL中?后面的查询字符串解析到query中。
-  c.res.body = c.query;
+  c.send(c.query); //返回JSON文本，主要区别在于header中content-type为text/json
 });
 
 router.post('/p', async c => {
   //POST、PUT提交的数据保存到body，如果是表单则会自动解析，否则只是保存原始文本值，
   //可以使用中间件处理各种数据。
-  c.res.body = c.body;
+  c.send(c.body);
 });
 
 app.run(2019);
@@ -99,10 +97,10 @@ app.use(async (c, next) => {
   //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
   let upf = c.getFile('image');
   if (!upf) {
-    c.res.body = 'file not found';
+    c.send('file not found');
     return ;
   } else if (upf.data.length > 2000000) {
-    c.res.body = 'max file size: 2M';
+    c.send('max file size: 2M');
     return ;
   }
   await next(c);
@@ -118,7 +116,7 @@ router.post('/upload', async c => {
       path: process.env.HOME + '/tmp/image'
     });
   } catch (err) {
-    c.res.body = err.message;
+    c.send(err.message);
   }
 }, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
 
