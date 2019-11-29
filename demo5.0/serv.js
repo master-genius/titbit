@@ -46,15 +46,19 @@ router.options('/*', async c => {
 }, 'options-check');
 
 router.get('/', async ctx => {
-    ctx.String('ok');
+    ctx.send('ok');
+});
+
+router.get('/test', async ctx => {
+    ctx.send(Buffer.from('我是中国人'));
 });
 
 router.post('/p', async ctx => {
-    ctx.JSON(ctx.body);
+    ctx.sendJSON(ctx.body);
 }, '@post');
 
 router.post('/pt', async ctx => {
-    ctx.JSON(ctx.body);
+    ctx.sendJSON(ctx.body);
 }, {name: 'post-test2', group: 'post'});
 
 app.use(async (ctx, next) => {
@@ -114,16 +118,16 @@ router.post('/upload', async c => {
             });
             results.push(tmp);
         }
-        c.JSON(results);
+        c.sendJSON(results);
     } catch (err) {
         console.log(err);
-        c.res.body = err.message;
+        c.send(err.message);
     }
 }, {name: 'upload-image', group: 'upload'});
 
 app.use(async (c, next) => {
     if (c.getFile('file') === null) {
-        c.String('file not found -> c.files.file');
+        c.send('file not found -> c.files.file');
         return ;
     }
     await next(c);
@@ -159,7 +163,7 @@ router.get('/err', async ctx => {
 });
 
 router.get('/app', async c => {
-    c.JSON(c.service.router.group());
+    c.send(c.service.router.group());
 });
 
 app.use(async (c, next) => {
@@ -173,7 +177,7 @@ app.use(async (c, next) => {
             rv(data);
         });
     });
-}, {name: 'gzip-est'});
+}, {name: 'gzip-test'});
 
 router.get('/quantum', async c => {
     let data = await new Promise((rv, rj) => {
