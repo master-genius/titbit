@@ -10,7 +10,7 @@ var app = new titbit({
     maxIPRequest: 10,
     peerTime: 5,
     useLimit: true,
-    //http2: true,
+    http2: true,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //showLoadInfo: true,
@@ -18,14 +18,12 @@ var app = new titbit({
 });
 
 app.use(async (c, next) => {
-    c.cache = true;
-    //await next(c);
+    await next(c);
 });
 
 app.get('/', async c => {
-    throw new Error('test ok error after send');
     c.send('ok');
-    
+    //throw new Error('test ok error after send');
 });
 
 app.get('/test', async c => {

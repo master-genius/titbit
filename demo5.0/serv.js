@@ -54,11 +54,11 @@ router.get('/test', async ctx => {
 });
 
 router.post('/p', async ctx => {
-    ctx.sendJSON(ctx.body);
+    ctx.res.body = ctx.body;
 }, '@post');
 
 router.post('/pt', async ctx => {
-    ctx.sendJSON(ctx.body);
+    ctx.res.body = ctx.body;
 }, {name: 'post-test2', group: 'post'});
 
 app.use(async (ctx, next) => {
@@ -118,7 +118,7 @@ router.post('/upload', async c => {
             });
             results.push(tmp);
         }
-        c.sendJSON(results);
+        c.res.body = results;
     } catch (err) {
         console.log(err);
         c.send(err.message);
