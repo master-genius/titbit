@@ -15,6 +15,10 @@ app.get('/', async c => {
     c.res.body = 'success';
 });
 
+app.get('/uuid', async c => {
+  c.send(c.helper.uuid('w_'));
+});
+
 app.post('/p', async c => {
     c.res.body = c.body;
 });
