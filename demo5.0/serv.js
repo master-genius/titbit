@@ -14,7 +14,7 @@ var app = new titbit({
     peerTime: 1,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
     showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
