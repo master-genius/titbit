@@ -1,10 +1,13 @@
 {
   "name": "titbit",
-  "version": "5.1.5",
+  "version": "5.1.6",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
     "lib": "lib"
+  },
+  "bin" : {
+    "loadinfo" : "./bin/loadinfo.sh"
   },
   "scripts": {
     "test": "cd demo && node test.js"

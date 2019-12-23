@@ -85,6 +85,18 @@ app.run(2019);
 
 ```
 
+## 路由参数
+
+``` JavaScript
+app.get('/:name/:id', async c => {
+  //使用:表示路由参数，请求参数被解析到c.param
+  let username = c.param.name;
+  let uid = c.param.id;
+  c.res.body = `${username} ${id}`;
+});
+app.run(8000);
+```
+
 ## 上传文件
 
 默认会解析上传的文件，你可以在初始化服务的时候，传递parseBody选项关闭它，关于选项后面有详细的说明。
