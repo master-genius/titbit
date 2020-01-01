@@ -14,11 +14,12 @@ var app = new titbit({
     peerTime: 1,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
+    showLoadInfo: true,
     //http2: true,
-    showLoadInfo: false,
+    //showLoadInfo: false,
     //globalLog: true,
     logType: 'stdio',
-    loadInfoFile: '/tmp/loadinfo.log',
+    //loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>
@@ -193,4 +194,5 @@ router.get('/router', async c => {
     ];
 });
 
-app.daemon(2021, 3);
+app.daemon(2021);
+
