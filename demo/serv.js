@@ -14,12 +14,11 @@ var app = new titbit({
     peerTime: 1,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
-    showLoadInfo: true,
     //http2: true,
-    //showLoadInfo: false,
-    //globalLog: true,
+    showLoadInfo: false,
+    globalLog: true,
     logType: 'stdio',
-    //loadInfoFile: '/tmp/loadinfo.log',
+    loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>
@@ -47,7 +46,11 @@ router.options('/*', async c => {
 }, 'options-check');
 
 router.get('/', async ctx => {
-    ctx.res.body = 'ok';
+    ctx.send('ok');
+});
+
+router.get('/test', async ctx => {
+    ctx.send(Buffer.from('我是中国人'));
 });
 
 router.post('/p', async ctx => {
@@ -57,6 +60,17 @@ router.post('/p', async ctx => {
 router.post('/pt', async ctx => {
     ctx.res.body = ctx.body;
 }, {name: 'post-test2', group: 'post'});
+
+app.get('/html', async c => {
+  c.html(`<!DOCTYPE html><html>
+      <head>
+        <meta charset="utf-8">
+      </head>
+      <body>
+        <div style="color:#676869;font-size:125%;text-align:center;">Great</div>
+      </body>
+    </html>`);
+});
 
 app.use(async (ctx, next) => {
     var start_time = Date.now();
@@ -97,7 +111,7 @@ app.use(async (ctx, next) => {
         return ;
     }
     if (!ctx.getFile('image')) {
-        ctx.res.body = 'file not found, please upload with name "image" ';
+        ctx.String('file not found, please upload with name "image" ');
         return ;
     }
     await next(ctx);
@@ -118,13 +132,13 @@ router.post('/upload', async c => {
         c.res.body = results;
     } catch (err) {
         console.log(err);
-        c.res.body = err.message;
+        c.send(err.message);
     }
 }, {name: 'upload-image', group: 'upload'});
 
 app.use(async (c, next) => {
     if (c.getFile('file') === null) {
-        c.res.body = 'file not found -> c.files.file';
+        c.send('file not found -> c.files.file');
         return ;
     }
     await next(c);
@@ -160,31 +174,30 @@ router.get('/err', async ctx => {
 });
 
 router.get('/app', async c => {
-    c.res.body = c.service.router.group();
+    c.send(c.service.router.group());
 });
 
 app.use(async (c, next) => {
+    c.cache = true;
     c.setHeader('content-encoding', 'gzip');
     c.setHeader('content-type', 'text/plain; charset=utf-8');
-    c.stream.respond(c.res.headers);
     await next(c);
-    let wdat = await new Promise((rv, rj) => {
-        zlib.gzip(c.res.body, {encoding:'utf8'}, (err, data) => {
+    c.resBody = await new Promise((rv, rj) => {
+        zlib.gzip(c.resBody, {encoding:'utf8'}, (err, data) => {
             if (err) {rj (err);}
             rv(data);
         });
     });
-    c.stream.write(wdat);
-    c.res.body = null; //最后不再返回数据。
 }, {name: 'gzip-test'});
 
 router.get('/quantum', async c => {
-    c.res.body = await new Promise((rv, rj) => {
+    let data = await new Promise((rv, rj) => {
         fs.readFile('../tmp/quantum', {encoding:'utf8'}, (err, data) => {
             if (err) { rj(err); }
             rv(data);
         });
     });
+    c.send(data);
 }, 'gzip-test');
 
 router.get('/router', async c => {
@@ -194,5 +207,4 @@ router.get('/router', async c => {
     ];
 });
 
-app.daemon(2021);
-
+app.daemon(2021, 3);

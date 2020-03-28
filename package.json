@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "5.2.2",
+  "version": "5.3.0-beta",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
