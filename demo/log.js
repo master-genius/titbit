@@ -6,7 +6,8 @@ process.on('exit', (code) => {
 
 
 var app = new titbit({
-    globalLog : true
+  debug: true,
+  globalLog : true
 });
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
