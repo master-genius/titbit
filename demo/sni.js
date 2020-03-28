@@ -26,7 +26,7 @@ var app = new titbit({
             return cb(null, tls.createSecureContext(certs[servername]));
         }
     },
-    pidFile: 'mymaster.pid'
+    pidFile: '/tmp/mymaster.pid'
 });
 
 var {router} = app;
@@ -63,3 +63,4 @@ router.post('/upload', async c => {
 }, '@upload');
 
 app.daemon(1990);
+
