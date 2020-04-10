@@ -10,8 +10,8 @@ var app = new titbit({
     //deny : ['10.7.10.149'],
     maxIPRequest: 480,
     peerTime: 1,
-    cert : ['../rsa/localhost-cert.pem'],
-    key : ['../rsa/localhost-privkey.pem'],
+    cert : '../rsa/localhost-cert.pem',
+    key : '../rsa/localhost-privkey.pem',
     http2: true,
     showLoadInfo: false,
     globalLog: true,
@@ -75,4 +75,9 @@ router.get('x/*', async c => {
     c.res.body = c.param.starPath;
 });
 
+router.get('/:name/:id/:age', async c => {
+  c.res.body = c.param;
+});
+
 app.run(2021);
+
