@@ -10,14 +10,15 @@ var app = new titbit({
     bodyMaxSize: 1500000000,
     debug: true,
     useLimit: true,
-    //deny : ['10.7.10.149'],
-    maxIPRequest: 4,
-    peerTime: 5,
+    //deny : ['192.168.3.4'],
+    maxIPRequest: 500,
+    peerTime: 3,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    //showLoadInfo: true,
-    globalLog: true,
+    showLoadInfo: true,
+    loadInfoType : 'json',
+    //globalLog: true,
     logType: 'stdio',
     //loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
@@ -39,6 +40,51 @@ var app = new titbit({
 app.service.router = app.router;
 
 var {router} = app;
+/*
+app.addHook(async (c, next) => {
+  c.bodyMaxSize = 8;
+
+  await next(c);
+}, {method : ['POST','PUT']});
+*/
+
+var _userAgentCache = {};
+
+app.use(async (c, next) => {
+  if (c.headers['user-agent'] === undefined) {
+    c.headers['user-agent'] = 'default-agent';
+  }
+
+  let ua = c.headers['user-agent'];
+
+  let key = `${ua}:${c.ip}`;
+  
+  if (_userAgentCache[key] === undefined) {
+    _userAgentCache[key] = {
+      time : Date.now(),
+      count : 1
+    };
+  }
+  
+  let uak = _userAgentCache[key];
+
+  let tm = Date.now();
+  if (tm - uak.time > 10000) {
+    uak.count = 1;
+    uak.time = tm;
+  }
+
+  if (uak.count > 100) {
+    c.status(503);
+    c.res.body = 'too many request';
+    return ;
+  }
+
+  uak.count += 1;
+
+  await next(c);
+
+});
 
 router.options('/*', async c => {
     console.log(c.param.starPath);
@@ -51,7 +97,15 @@ router.get('/', async ctx => {
 });
 
 router.get('/test', async ctx => {
-    ctx.send(Buffer.from('我是中国人'));
+  let delay = parseInt(Math.random() * 1000);
+
+  await new Promise((rv, rj) => {
+    setTimeout(() => {
+      rv();
+    }, delay);
+  });
+
+  ctx.send(Buffer.from(`我是中国人${delay}\n`));
 });
 
 router.post('/p', async ctx => {
@@ -72,7 +126,7 @@ app.get('/html', async c => {
       </body>
     </html>`);
 });
-
+/*
 app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -105,6 +159,7 @@ app.use(async (ctx, next) => {
     await next(ctx);
     console.log('a3');
 }, {group: 'post'});
+*/
 
 app.use(async (ctx, next) => {
     console.log('checking file');
@@ -216,4 +271,4 @@ if (cluster.isWorker) {
 }
 */
 
-app.run(2021, 3);
+app.daemon(2021, 3);
