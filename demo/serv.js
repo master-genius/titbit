@@ -3,6 +3,7 @@
 const titbit = require('../main');
 const zlib = require('zlib');
 const fs = require('fs');
+const cluster = require('cluster');
 
 var app = new titbit({
     //daemon: true,
@@ -10,15 +11,15 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
-    maxIPRequest: 480,
-    peerTime: 1,
+    maxIPRequest: 4,
+    peerTime: 5,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    showLoadInfo: false,
+    //showLoadInfo: true,
     globalLog: true,
     logType: 'stdio',
-    loadInfoFile: '/tmp/loadinfo.log',
+    //loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>
@@ -207,4 +208,12 @@ router.get('/router', async c => {
     ];
 });
 
-app.daemon(2021, 3);
+/*
+if (cluster.isWorker) {
+  setTimeout(() => {
+    process.exit(2);
+  }, 150);
+}
+*/
+
+app.run(2021, 3);
