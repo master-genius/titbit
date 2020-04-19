@@ -16,7 +16,7 @@ var app = new titbit({
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    showLoadInfo: true,
+    //showLoadInfo: true,
     loadInfoType : 'json',
     //globalLog: true,
     logType: 'stdio',
@@ -74,7 +74,7 @@ app.use(async (c, next) => {
     uak.time = tm;
   }
 
-  if (uak.count > 100) {
+  if (uak.count > 1500) {
     c.status(503);
     c.res.body = 'too many request';
     return ;
@@ -126,7 +126,7 @@ app.get('/html', async c => {
       </body>
     </html>`);
 });
-/*
+
 app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -136,6 +136,7 @@ app.use(async (ctx, next) => {
 });
 
 
+/*
 app.use(async (ctx, next) => {
     console.log('middleware for POST/PUT');
     await next(ctx);
