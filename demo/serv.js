@@ -12,12 +12,12 @@ var app = new titbit({
     useLimit: true,
     //deny : ['192.168.3.4'],
     maxIPRequest: 500,
-    peerTime: 3,
+    peerTime: 2,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    //showLoadInfo: true,
-    loadInfoType : 'json',
+    showLoadInfo: true,
+    //loadInfoType : 'json',
     //globalLog: true,
     logType: 'stdio',
     //loadInfoFile: '/tmp/loadinfo.log',
@@ -74,7 +74,7 @@ app.use(async (c, next) => {
     uak.time = tm;
   }
 
-  if (uak.count > 1500) {
+  if (uak.count > 150) {
     c.status(503);
     c.res.body = 'too many request';
     return ;
@@ -97,7 +97,7 @@ router.get('/', async ctx => {
 });
 
 router.get('/test', async ctx => {
-  let delay = parseInt(Math.random() * 1000);
+  let delay = parseInt(Math.random() * 300);
 
   await new Promise((rv, rj) => {
     setTimeout(() => {
@@ -272,4 +272,4 @@ if (cluster.isWorker) {
 }
 */
 
-app.daemon(2021, 3);
+app.daemon(2021, 1);
