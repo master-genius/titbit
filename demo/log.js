@@ -7,7 +7,10 @@ process.on('exit', (code) => {
 
 var app = new titbit({
   debug: true,
-  globalLog : true
+  globalLog : true,
+  logType : 'file',
+  logFile : '/tmp/titbit.log',
+  errorLogFile : '/tmp/titbit-error.log'
 });
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
@@ -32,5 +35,5 @@ app.get('/decrypt', async c => {
   c.res.body = c.helper.aesDecrypt(c.query.data, _key);
 });
 
-app.run(8000);
+app.daemon(8000);
 
