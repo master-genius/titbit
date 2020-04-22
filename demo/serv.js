@@ -21,7 +21,7 @@ var app = new titbit({
     //globalLog: true,
     logType: 'stdio',
     //loadInfoFile: '/tmp/loadinfo.log',
-    loadInfoFile : '--msg',
+    //loadInfoFile : '',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>
@@ -290,9 +290,12 @@ if (cluster.isWorker) {
 */
 
 if (cluster.isWorker) {
+  /*
   var _sysloadinfo = '';
   process.on('message', (msg) => {
     _sysloadinfo = msg;
+    console.clear();
+    console.log(msg);
   });
 
   setInterval(() => {
@@ -302,6 +305,7 @@ if (cluster.isWorker) {
   app.get('/loadinfo', async c=>{
     c.res.body = _sysloadinfo;
   });
+*/
 
 }
 
