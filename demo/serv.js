@@ -20,7 +20,7 @@ var app = new titbit({
     //loadInfoType : 'json',
     //globalLog: true,
     logType: 'stdio',
-    //loadInfoFile: '/tmp/loadinfo.log',
+    loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
             <head>
@@ -69,12 +69,12 @@ app.use(async (c, next) => {
   let uak = _userAgentCache[key];
 
   let tm = Date.now();
-  if (tm - uak.time > 10000) {
+  if (tm - uak.time > 8000) {
     uak.count = 1;
     uak.time = tm;
   }
 
-  if (uak.count > 150) {
+  if (uak.count > 350) {
     c.status(503);
     c.res.body = 'too many request';
     return ;
@@ -272,4 +272,19 @@ if (cluster.isWorker) {
 }
 */
 
-app.daemon(2021, 1);
+//worker中设置大量定时器，测试性能
+//在设置1000个定时器，仍然可以处理请求，但是比较慢
+//在设置10个以内的定时器，触发时间100ms以上，对整体的性能影响比较小。
+//但是这也要看定时器中进行的任务处理耗时，如果定时器中处理的是异步则不会有太大的影响。
+
+if (cluster.isWorker) {
+  let randtm = 0;
+  for (let i=0; i < 100; i++) { 
+    randtm = i+10;
+    setInterval(() => {
+      console.log(process.pid,'timeout', i, process.memoryUsage(), process.cpuUsage());
+    }, randtm);
+  }
+}
+
+app.daemon(2021, 2);
