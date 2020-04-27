@@ -17,8 +17,8 @@ var app = new titbit({
     //cert : '../rsa/localhost-cert.pem',
     //key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    showLoadInfo: true,
-    //loadInfoType : 'json',
+    //showLoadInfo: true,
+    loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
@@ -41,7 +41,7 @@ var app = new titbit({
 
 //console.log(app.secure);
 
-//app.secure.maxrss = 36860000*2;
+app.secure.maxrss = 36860000*2;
 //console.log(app.secure.maxmem/1024/1024)
 
 app.service.router = app.router;
