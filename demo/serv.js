@@ -17,10 +17,10 @@ var app = new titbit({
     key : '../rsa/localhost-privkey.pem',
     //http2: true,
     showLoadInfo: true,
-    loadInfoType : 'json',
+    //loadInfoType : 'json',
     //globalLog: true,
-    logType: 'stdio',
-    //loadInfoFile: '/tmp/loadinfo.log',
+    //logType: 'stdio',
+    loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
     pageNotFound: `<!DOCTYPE html>
         <html>
@@ -37,6 +37,11 @@ var app = new titbit({
         </html>
     `,
 });
+
+//console.log(app.secure);
+
+app.secure.maxrss = 36860000*2;
+//console.log(app.secure.maxmem/1024/1024)
 
 app.service.router = app.router;
 
@@ -309,4 +314,4 @@ if (cluster.isWorker) {
 
 }
 
-app.daemon(2021, 4);
+app.daemon(2021, 2);
