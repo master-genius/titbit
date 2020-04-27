@@ -11,10 +11,11 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
-    maxIPRequest: 800,
+    maxIPRequest: 8000,
+    maxConn: 12345,
     peerTime: 1,
-    cert : '../rsa/localhost-cert.pem',
-    key : '../rsa/localhost-privkey.pem',
+    //cert : '../rsa/localhost-cert.pem',
+    //key : '../rsa/localhost-privkey.pem',
     //http2: true,
     showLoadInfo: true,
     //loadInfoType : 'json',
@@ -40,7 +41,7 @@ var app = new titbit({
 
 //console.log(app.secure);
 
-app.secure.maxrss = 36860000*2;
+//app.secure.maxrss = 36860000*2;
 //console.log(app.secure.maxmem/1024/1024)
 
 app.service.router = app.router;
