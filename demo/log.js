@@ -20,7 +20,7 @@ app.get('/', async c => {
 });
 
 app.get('/uuid', async c => {
-  c.send(c.helper.uuid('w_'));
+  c.res.body = c.helper.uuid('w_');
 });
 
 app.post('/p', async c => {

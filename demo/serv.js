@@ -17,7 +17,7 @@ var app = new titbit({
     //cert : '../rsa/localhost-cert.pem',
     //key : '../rsa/localhost-privkey.pem',
     //http2: true,
-    //showLoadInfo: true,
+    showLoadInfo: true,
     loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
@@ -41,7 +41,7 @@ var app = new titbit({
 
 //console.log(app.secure);
 
-app.secure.maxrss = 36860000*2;
+//app.secure.maxrss = 36860000*2;
 //console.log(app.secure.maxmem/1024/1024)
 
 app.service.router = app.router;
@@ -100,11 +100,12 @@ router.options('/*', async c => {
 }, 'options-check');
 
 router.get('/', async ctx => {
-    ctx.send('ok');
+    ctx.res.body = 'ok';
 });
 
 router.get('/test', async ctx => {
-  let delay = parseInt(Math.random() * 200);
+  
+  let delay = parseInt(Math.random() * 50);
 
   await new Promise((rv, rj) => {
     setTimeout(() => {
@@ -112,7 +113,12 @@ router.get('/test', async ctx => {
     }, delay);
   });
 
-  ctx.send(Buffer.from(`我是中国人${delay}\n`));
+  let astr = '我是中国人\n中华民族伟大复兴！\n';
+  for (let i=0; i<12; i++) {
+    astr += astr;
+  }
+
+  ctx.res.body = Buffer.from(`${astr}`);
 });
 
 router.post('/p', async ctx => {
@@ -124,14 +130,14 @@ router.post('/pt', async ctx => {
 }, {name: 'post-test2', group: 'post'});
 
 app.get('/html', async c => {
-  c.html(`<!DOCTYPE html><html>
+  c.res.body = `<!DOCTYPE html><html>
       <head>
         <meta charset="utf-8">
       </head>
       <body>
         <div style="color:#676869;font-size:125%;text-align:center;">Great</div>
       </body>
-    </html>`);
+    </html>`;
 });
 
 app.use(async (ctx, next) => {
@@ -175,29 +181,35 @@ app.use(async (ctx, next) => {
         return ;
     }
     if (!ctx.getFile('image')) {
-        ctx.String('file not found, please upload with name "image" ');
+        ctx.res.body = 'file not found, please upload with name "image" ';
         return ;
     }
     await next(ctx);
 }, {name: 'upload-image'});
 
 router.post('/upload', async c => {
-    try {
-        console.log(c.files);
-        let results = [];
-        let tmp = '';
-        let images = c.getFile('image', -1);
-        for(let i=0; i<images.length; i++) {
-            tmp = await c.moveFile(images[i], {
-                path : process.env.HOME + '/tmp/buffer',
-            });
-            results.push(tmp);
-        }
-        c.res.body = results;
-    } catch (err) {
-        console.log(err);
-        c.send(err.message);
+  try {
+    console.log(c.files);
+    console.log(c.body);
+    let files = c.getFile('image', -1);
+    let results = [];
+    let tmp = '';
+    let fname = '';
+
+    for(let i=0; i<files.length; i++) {
+      try {
+        fname = `${process.env.HOME}/tmp/a/${c.helper.makeName(files[i].filename, `${i}`)}`;
+        tmp = await c.moveFile(files[i], fname);
+        results.push(fname);
+        //console.log('not move');
+      } catch (err) {
+        console.error(err);
+      }
     }
+    c.res.body = results;
+  } catch (err) {
+      c.res.body = err.message;
+  }
 }, {name: 'upload-image', group: 'upload'});
 
 app.use(async (c, next) => {
@@ -210,27 +222,28 @@ app.use(async (c, next) => {
 }, 'upload-file');
 
 router.put('/upload', async c => {
-    try {
-        console.log(c.files);
-        console.log(c.body);
-        let files = c.getFile('file', -1);
-        let results = [];
-        let tmp = '';
-        for(let i=0; i<files.length; i++) {
-            try {
-                tmp = await c.moveFile(files[i], {
-                    path: process.env.HOME+'/tmp/a'
-                });
-                results.push(tmp);
-                //console.log('not move');
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        c.res.body = results;
-    } catch (err) {
-        c.res.body = err.message;
+  try {
+    console.log(c.files);
+    console.log(c.body);
+    let files = c.getFile('file', -1);
+    let results = [];
+    let tmp = '';
+    let fname = '';
+
+    for(let i=0; i<files.length; i++) {
+      try {
+        fname = `${process.env.HOME}/${c.helper.makeName(files[i].filename, `${i}`)}`;
+        tmp = await c.moveFile(files[i], fname);
+        results.push(fname);
+        //console.log('not move');
+      } catch (err) {
+        console.log(err);
+      }
     }
+    c.res.body = results;
+  } catch (err) {
+      c.res.body = err.message;
+  }
 }, {name:'upload-file', group:'upload'});
 
 router.get('/err', async ctx => {

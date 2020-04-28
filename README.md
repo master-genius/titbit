@@ -1,13 +1,17 @@
 
 ![ ](images/titbit-logo.png)
 
+
+## Node挺好的，只是有点垃圾！(F||CK Node.js)
+
+版本号自2020年4月28号开始采用年.月.日.小版本号的形式。
+
+
 # titbit
 
-> titbit是运行于服务端的Web框架，如果你还没有接触过Web后端开发，可能需要一些HTTP协议和前后端通信的知识，这可以在 [https://m.w3xm.cn](https://m.w3xm.cn)找到。
+> titbit是运行于服务端的Web框架，我从来不指望有多少人用，这主要是用在自己的业务系统上，也用于教学。
 
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
-
-中间件模式做了扩展支持按照请求类型执行，同时支持根据路由分组执行。抽离出了请求过滤模块，方便维护和替换。解析body数据也改成了独立模块，并提供一个中间件，但是框架会有默认启用并提供了设置项。
 
 更多内容，查看[wiki](https://github.com/master-genius/titbit/wiki)
 
@@ -28,7 +32,7 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 ## !注意
 
-请不要使用5.0版本，此版本是作为不兼容的测试版本，请使用最新版本。
+请使用最新版本。
 
 ## 安装
 
@@ -79,7 +83,7 @@ router.get('/q', async c => {
 router.post('/p', async c => {
   //POST、PUT提交的数据保存到body，如果是表单则会自动解析，否则只是保存原始文本值，
   //可以使用中间件处理各种数据。
-  c.send(c.body);
+  c.res.body = c.body;
 });
 
 app.run(2019);
