@@ -20,7 +20,7 @@ var app = new titbit({
     //http2: true,
     showLoadInfo: true,
     loadInfoType : 'text',
-    //globalLog: true,
+    globalLog: true,
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
@@ -141,6 +141,7 @@ app.get('/html', async c => {
     </html>`;
 });
 
+/*
 app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -148,7 +149,7 @@ app.use(async (ctx, next) => {
     var timing = end_time-start_time;
     console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
-
+*/
 
 /*
 app.use(async (ctx, next) => {
