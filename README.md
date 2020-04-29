@@ -4,7 +4,7 @@
 
 ## Node挺好的，只是有点垃圾！(F||CK Node.js)
 
-版本号自2020年4月28号开始采用年.月.日.小版本号的形式。
+版本号自2020年4月28号开始采用年.月.日+小版本号的形式。
 
 
 # titbit
@@ -52,11 +52,10 @@ var app = new titbit();
 var {router} = app;
 
 router.get('/', async c => {
-  //c.send(data, encoding='utf8', ctype='text/plain; charset=utf-8');
   //data类型为string|Buffer
   //其等效形式为c.res.body = 'success';
   //同时可以设置c.res.encoding为返回数据的编码格式，默认为'utf8'。
-  c.send('success'); //返回字符串
+  c.res.body = 'success'; //返回字符串
 });
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
@@ -77,7 +76,7 @@ var {router} = app;
 
 router.get('/q', async c => {
   //URL中?后面的查询字符串解析到query中。
-  c.send(c.query); //返回JSON文本，主要区别在于header中content-type为text/json
+  c.res.body = c.query; //返回JSON文本，主要区别在于header中content-type为text/json
 });
 
 router.post('/p', async c => {
@@ -122,10 +121,10 @@ app.use(async (c, next) => {
   //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
   let upf = c.getFile('image');
   if (!upf) {
-    c.send('file not found');
+    c.res.body = 'file not found';
     return ;
   } else if (upf.data.length > 2000000) {
-    c.send('max file size: 2M');
+    c.res.body = 'max file size: 2M';
     return ;
   }
   await next(c);
@@ -141,7 +140,7 @@ router.post('/upload', async c => {
       path: process.env.HOME + '/tmp/image'
     });
   } catch (err) {
-    c.send(err.message);
+    c.res.body = err.message;
   }
 }, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
 
@@ -220,3 +219,4 @@ app.add(async (c, next) => {
 ![](images/titbit-hook-req-midware.png)
 
 你其实完全可以忽略这里的hook操作，并不影响任何逻辑，其存在也仅仅是为了能够处理一些严苛场景的需求，对多数开发者来说，它可以是透明的，并且没有任何性能损失。
+
