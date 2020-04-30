@@ -8,10 +8,21 @@ process.on('exit', (code) => {
 var app = new titbit({
   debug: true,
   globalLog : true,
-  logType : 'file',
-  logFile : '/tmp/titbit.log',
-  errorLogFile : '/tmp/titbit-error.log'
+  loadInfoType : 'text',
+  loadInfoFile : '/tmp/titbit-loadinfo.log'
 });
+
+/*
+ * 重写日志函数
+ *
+ * */
+
+let gbl = app.httpServ.globalLog;
+
+app.httpServ.globalLog = (method, rinfo) => {
+  console.log('test for rewrite log:', method, rinfo);
+  gbl(method, rinfo);
+};
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
 
@@ -35,5 +46,6 @@ app.get('/decrypt', async c => {
   c.res.body = c.helper.aesDecrypt(c.query.data, _key);
 });
 
-app.daemon(8000);
+
+app.daemon(2021);
 

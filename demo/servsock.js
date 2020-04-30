@@ -17,9 +17,8 @@ var app = new titbit({
     //key : '../rsa/localhost-privkey.pem',
     //http2: true,
     //showLoadInfo: true,
-    //loadInfoType : 'json',
-    //globalLog: true,
-    logType: 'stdio',
+    loadInfoType : 'text',
+    globalLog: true,
     //loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
         <html>
