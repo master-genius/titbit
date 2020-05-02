@@ -6,11 +6,13 @@ process.on('exit', (code) => {
   console.log('EXIT CODE:', code);
 });
 
+/*
 if (cluster.isWorker) {
   setInterval(() => {
     console.log(v8.getHeapStatistics());
   }, 15000);
 }
+*/
 
 async function delay(t) {
   return await new Promise((rv, rj) => {
@@ -26,8 +28,20 @@ var app = new titbit({
   loadInfoType : 'text',
   loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
-  socktimeout: 1000,
+  //socktimeout: 1000,
   useLimit: true
+});
+
+app.use(async (c, next) => {
+  //c.request.setTimeout(1);
+
+  //c.response.setTimeout(123);
+  //
+  c.response.on('timeout', (sock) => {
+    console.log(sock);
+  });
+  
+  await next(c);
 });
 
 /*
@@ -58,14 +72,34 @@ app.post('/p', async c => {
 });
 
 app.get('/tout', async c => {
-  
-  await delay(10000);
+
+  await delay(18000);
 
   c.response.write('handling...');
 
   await delay(10000);
 
   c.res.body = 'timeout test';
+});
+
+app.post('/tout', async c => {
+  await delay (119);
+
+  console.log('start');
+  c.response.write('start');
+  
+  await delay (119);
+
+  console.log('not end');
+  c.response.write('start 2');
+  
+  await delay(18000);
+
+  c.response.write('handling...');
+
+  await delay(10000);
+
+  c.res.body = 'timeout test' + JSON.stringify(c.body);
 });
 
 app.get('/encrypt', async c => {
@@ -79,7 +113,6 @@ app.get('/decrypt', async c => {
 app.get('/sha256', async c => {
   c.res.body = c.helper.sha256(`${Math.random()}${Date.now()}`);
 });
-
 
 app.daemon(2021, 1);
 

@@ -6,7 +6,7 @@ var start_time = Date.now();
 
 var ctx = null;
 
-for (let i=0 ;i<10000;i++) {
+for (let i=0 ;i<50000;i++) {
   ctx = app.httpServ.context();
   ctx.path = '/';
   ctx.ip = '127.0.0.1';

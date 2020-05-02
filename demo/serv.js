@@ -14,10 +14,11 @@ var app = new titbit({
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 100,
-    //cert : '../rsa/localhost-cert.pem',
-    //key : '../rsa/localhost-privkey.pem',
-    //http2: true,
+    timeout : 20,
+    socktimeout: 32,
+    cert : '../rsa/localhost-cert.pem',
+    key : '../rsa/localhost-privkey.pem',
+    http2: true,
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog: true,
@@ -40,6 +41,13 @@ var app = new titbit({
     `,
 });
 
+async function delay(t) {
+  return await new Promise((rv, rj) => {
+    setTimeout(() => {
+      rv();
+    }, t);
+  });
+}
 //console.log(app.secure);
 
 //app.secure.maxrss = 36860000*2;
@@ -105,8 +113,20 @@ router.get('/', async ctx => {
 });
 
 router.get('/test', async ctx => {
+
+  await delay(10);
+  console.log('ok start');
+
+  await delay(10);
+
+  console.log('not end');
   
-  let delay = parseInt(Math.random() * 50);
+  await delay(10);
+  console.log('ha ha!');
+  
+  let tout = parseInt(Math.random() * 50);
+
+  await delay(tout);
 
   await new Promise((rv, rj) => {
     setTimeout(() => {
