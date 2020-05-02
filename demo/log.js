@@ -12,12 +12,22 @@ if (cluster.isWorker) {
   }, 15000);
 }
 
+async function delay(t) {
+  return await new Promise((rv, rj) => {
+    setTimeout(() => {
+      rv();
+    }, t);
+  });
+}
 
 var app = new titbit({
   debug: true,
   globalLog : true,
   loadInfoType : 'text',
-  loadInfoFile : '/tmp/titbit-loadinfo.log'
+  loadInfoFile : '/tmp/loadinfo.log',
+  timeout : 15000,
+  socktimeout: 1000,
+  useLimit: true
 });
 
 /*
@@ -45,6 +55,17 @@ app.get('/uuid', async c => {
 
 app.post('/p', async c => {
     c.res.body = c.body;
+});
+
+app.get('/tout', async c => {
+  
+  await delay(10000);
+
+  c.response.write('handling...');
+
+  await delay(10000);
+
+  c.res.body = 'timeout test';
 });
 
 app.get('/encrypt', async c => {
