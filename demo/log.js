@@ -29,7 +29,10 @@ var app = new titbit({
   loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
   //socktimeout: 1000,
-  useLimit: true
+  useLimit: true,
+  logType : 'file',
+  logFile: '/tmp/access.log',
+  errorLogFile : '/tmp/error.log'
 });
 
 app.use(async (c, next) => {
@@ -37,9 +40,10 @@ app.use(async (c, next) => {
 
   //c.response.setTimeout(123);
   //
+  /*
   c.response.on('timeout', (sock) => {
     console.log(sock);
-  });
+  });*/
   
   await next(c);
 });
@@ -59,7 +63,6 @@ app.httpServ.globalLog = (method, rinfo) => {
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
 
 app.get('/', async c => {
-  console.log(c);
     c.res.body = 'success';
 },{name:'home', group:'/'});
 
