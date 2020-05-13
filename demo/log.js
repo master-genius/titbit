@@ -26,7 +26,7 @@ var app = new titbit({
   debug: true,
   globalLog : true,
   loadInfoType : 'text',
-  loadInfoFile : '/tmp/loadinfo.log',
+  //loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
@@ -117,5 +117,5 @@ app.get('/sha256', async c => {
   c.res.body = c.helper.sha256(`${Math.random()}${Date.now()}`);
 });
 
-app.daemon(2021, 1);
+app.daemon(2021, 2);
 

@@ -310,7 +310,7 @@ router.get('/router', async c => {
 if (cluster.isWorker) {
   setTimeout(() => {
     process.exit(2);
-  }, 150);
+  }, 900);
 }
 */
 
