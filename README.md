@@ -1,11 +1,7 @@
 
 ![ ](images/titbit-logo.png)
 
-
-## Node挺好的，只是有点垃圾！(F||CK Node.js)
-
 版本号自2020年4月28号开始采用年.月.日+小版本号的形式。
-
 
 # titbit
 
