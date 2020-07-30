@@ -36,43 +36,42 @@ var app = new titbit({
 var {router} = app;
 
 router.options('/*', async c => {
-    console.log(c.param.starPath);
-    c.setHeader('Access-control-allow-origin', '*');
-    c.setHeader('Access-control-allow-methods', app.router.methods);
+  console.log(c.param.starPath);
+  c.setHeader('Access-control-allow-origin', '*');
+  c.setHeader('Access-control-allow-methods', app.router.methods);
 }, 'options-check');
 
 router.get('/', async ctx => {
-    ctx.res.body = 'ok';
+  ctx.res.body = 'ok';
 });
 
 router.post('/p', async ctx => {
-    ctx.res.body = ctx.body;
+  ctx.res.body = ctx.body;
 }, '@post');
 
 router.post('/pt', async ctx => {
-    ctx.res.body = ctx.body;
+  ctx.res.body = ctx.body;
 }, {name: 'post-test2', group: 'post'});
 
 app.use(async (ctx, next) => {
-    var start_time = Date.now();
-    await next(ctx);
-    var end_time = Date.now();
-    var timing = end_time-start_time;
-    console.log(process.pid,ctx.path, `: ${timing}ms`);
+  var start_time = Date.now();
+  await next(ctx);
+  var end_time = Date.now();
+  var timing = end_time-start_time;
+  console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
 
 router.get('/err', async ctx => {
-    ctx.res.body = '500 error';
-    ctx.status(500);
+  ctx.res.body = '500 error';
+  ctx.status(500);
 });
 
 router.get('/a/:a/:b/', async c => {
-    console.log(c.query.a.length);
-    c.res.body = c.param;
+  c.res.body = c.param;
 });
 
 router.get('x/*', async c => {
-    c.res.body = c.param.starPath;
+  c.res.body = c.param.starPath;
 });
 
 router.get('/:name/:id/:age', async c => {
