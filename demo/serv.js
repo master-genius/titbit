@@ -14,8 +14,8 @@ var app = new titbit({
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 20,
-    socktimeout: 32,
+    timeout : 200,
+    socktimeout: 350,
     //cert : '../rsa/localhost-cert.pem',
     //key : '../rsa/localhost-privkey.pem',
     //http2: true,
@@ -91,7 +91,7 @@ app.use(async (c, next) => {
   }
 
   if (uak.count > 650) {
-    c.status(503);
+    c.status(429);
     c.res.body = 'too many request';
     return ;
   }
@@ -348,6 +348,10 @@ if (cluster.isWorker) {
   });
 */
 
+}
+
+if (process.argv.indexOf('-d') > 0) {
+  app.config.daemon = true;
 }
 
 app.daemon(2021, 2);
