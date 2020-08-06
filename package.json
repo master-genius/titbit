@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "20.8.3",
+  "version": "20.9.0",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {

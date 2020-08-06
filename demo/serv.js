@@ -14,8 +14,8 @@ var app = new titbit({
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 200,
-    socktimeout: 350,
+    timeout : 240,
+    socktimeout: 390,
     //cert : '../rsa/localhost-cert.pem',
     //key : '../rsa/localhost-privkey.pem',
     //http2: true,
@@ -160,8 +160,6 @@ app.get('/html', async c => {
       </body>
     </html>`;
 });
-
-/*
 app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next(ctx);
@@ -169,7 +167,6 @@ app.use(async (ctx, next) => {
     var timing = end_time-start_time;
     console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
-*/
 
 /*
 app.use(async (ctx, next) => {
@@ -296,7 +293,7 @@ router.get('/quantum', async c => {
             rv(data);
         });
     });
-    c.send(data);
+    c.res.body = data;
 }, 'gzip-test');
 
 router.get('/router', async c => {
