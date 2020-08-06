@@ -88,7 +88,7 @@ app.run(2019);
 ``` JavaScript
 'use strict';
 
-const titbit = require('titibit');
+const titbit = require('titbit');
 
 var app = new titbit();
 
@@ -129,7 +129,7 @@ app.run(8000);
 ``` JavaScript
 'use strict';
 
-const titbit = require('titibit');
+const titbit = require('titbit');
 
 var app = new titbit();
 
