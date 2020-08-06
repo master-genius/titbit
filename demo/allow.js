@@ -18,16 +18,45 @@ var app = new titbit({
 });
 
 app.use(async (c, next) => {
-    await next(c);
-});
+    console.log('middleware 1');
+    await next();
+    console.log('middleware 1 end');
+}, 'home');
+
+app.use(async (c, next) => {
+    console.log('middleware 2');
+    c.body.say = '你好';
+    await next();
+    console.log('middleware 2 end');
+}, {group: 'test', method: 'POST'});
+
+app.use(async (c, next) => {
+    console.log('middleware 3');
+    if (c.query.say == 'hey') {
+        c.send('你好，test 接口 GET请求结束。');
+    } else {
+        await next();
+    }
+    console.log('middleware 3 end');
+}, {group: 'test', method : 'GET'});
+
+app.use(async (c, next) => {
+    console.log('middleware 4');
+    c.body.x = 12;
+    await next();
+    console.log('middleware 4 end');
+}, 'test-post');
 
 app.get('/', async c => {
     c.send('ok');
-    //throw new Error('test ok error after send');
-});
+}, 'home');
 
 app.get('/test', async c => {
     c.send(c.name);
-}, 'test');
+}, {group: 'test', name : 'test'});
+
+app.post('/test', async c => {
+    c.send(c.body);
+}, {group: 'test', name : 'test-post'});
 
 app.daemon(2021, 2);
