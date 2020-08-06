@@ -7,6 +7,7 @@ const cluster = require('cluster');
 
 var app = new titbit({
     //daemon: true,
+    nextMode: 'args',
     bodyMaxSize: 1500000000,
     debug: true,
     useLimit: true,
