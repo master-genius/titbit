@@ -1,6 +1,9 @@
 const titbit = require('../main');
 
-var app = new titbit();
+var app = new titbit({
+  debug: true,
+  //http2: true
+});
 
 var start_time = Date.now();
 

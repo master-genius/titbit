@@ -113,6 +113,23 @@ router.get('/', async ctx => {
     ctx.res.body = 'ok';
 });
 
+router.get('/ctx', async ctx => {
+  
+  console.log(ctx);
+
+  let ctxjson = {};
+  let tp = '';
+  for (let k in ctx) {
+    tp = typeof ctx[k];
+    if (tp == 'string' || tp == 'number') {
+      ctxjson[k] = ctx[k];
+    }
+  }
+
+  ctx.res.body = JSON.stringify(ctxjson);
+
+});
+
 router.get('/test', async ctx => {
 
   await delay(10);
