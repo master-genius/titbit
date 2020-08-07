@@ -25,14 +25,15 @@ async function delay(t) {
 var app = new titbit({
   debug: true,
   globalLog : true,
-  loadInfoType : 'text',
+  //loadInfoType : 'text',
   //loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
   logType : 'file',
   logFile: '/tmp/access.log',
-  errorLogFile : '/tmp/error.log'
+  errorLogFile : '/tmp/error.log',
+  nextMode : 'args'
 });
 
 app.use(async (c, next) => {
@@ -55,9 +56,9 @@ app.use(async (c, next) => {
 
 let gbl = app.httpServ.globalLog;
 
-app.httpServ.globalLog = (method, rinfo) => {
-  console.log('test for rewrite log:', method, rinfo);
-  gbl(method, rinfo);
+app.httpServ.globalLog = (msg) => {
+  console.log('test for rewrite log:', msg);
+  gbl(msg);
 };
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';

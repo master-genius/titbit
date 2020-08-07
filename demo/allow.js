@@ -14,6 +14,9 @@ var app = new titbit({
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
     //showLoadInfo: true,
+    //loadInfoType : 'text',
+    globalLog : true,
+    logType: 'stdio'
     //loadInfoFile : '/tmp/loadinfo.log'
 });
 
