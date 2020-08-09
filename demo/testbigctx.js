@@ -9,7 +9,9 @@ var start_time = Date.now();
 
 var ctx = null;
 
-for (let i=0 ;i<50000;i++) {
+let total = 50000;
+
+for (let i=0 ;i < total; i++) {
   ctx = app.httpServ.context();
   ctx.path = '/';
   ctx.ip = '127.0.0.1';
@@ -21,4 +23,6 @@ for (let i=0 ;i<50000;i++) {
 
 var end_time = Date.now();
 
-console.log(end_time - start_time, 'ms');
+let rtm = end_time - start_time;
+
+console.log(rtm, 'ms', `${parseInt(total * 1000 / rtm)}/s`);
