@@ -17,8 +17,8 @@ var app = new titbit({
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog : true,
-    logType: 'stdio'
-    //loadInfoFile : '/tmp/loadinfo.log'
+    logType: 'stdio',
+    loadInfoFile : '/tmp/loadinfo.log'
 });
 
 app.use(async (c, next) => {
