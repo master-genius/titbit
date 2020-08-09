@@ -7,14 +7,15 @@ var app = new titbit({
     allow : [
         '127.0.0.1'
     ],
-    maxIPRequest: 10,
-    peerTime: 5,
-    useLimit: true,
+    maxIPRequest: 1500,
+    peerTime: 1,
+    useLimit: false,
+    maxConn: 2000,
     http2: true,
     cert : '../rsa/localhost-cert.pem',
     key : '../rsa/localhost-privkey.pem',
-    //showLoadInfo: true,
-    //loadInfoType : 'text',
+    showLoadInfo: true,
+    loadInfoType : 'text',
     globalLog : true,
     logType: 'stdio'
     //loadInfoFile : '/tmp/loadinfo.log'
