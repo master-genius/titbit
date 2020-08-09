@@ -21,6 +21,12 @@ var app = new titbit({
 });
 
 app.use(async (c, next) => {
+  console.log('hook running');
+  console.log(c.group, c.name, c.method, '\n');
+  await next();
+}, {hook : true});
+
+app.use(async (c, next) => {
     console.log('middleware 1');
     await next();
     console.log('middleware 1 end');
