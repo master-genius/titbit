@@ -147,7 +147,7 @@ app.use(async (c, next) => {
     c.res.body = 'max file size: 2M';
     return ;
   }
-  await next(c);
+  await next();
 
 }, {method: 'POST', name: 'upload-image'});
 
@@ -206,7 +206,7 @@ c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0
 
 ![](images/titbit-midware.png)
 
-此框架的中间件设计需要next中传递请求上下文参数，除此以外，其他使用都没有任何区别，在设计层面上，并不是根据中间件函数的数组取出来动态封装，递归调用，而是在一开始就已经确定了执行链条，并且按照路由分组区分开来，也可以识别不同请求类型和路由确定是否执行还是跳过到下一层，只要请求过来就马上开始执行，所以速度非常快。参考形式如下：
+此框架的中间件在设计层面上，并不是根据中间件函数的数组取出来动态封装，递归调用，而是在一开始就已经确定了执行链条，并且按照路由分组区分开来，也可以识别不同请求类型和路由确定是否执行还是跳过到下一层，只要请求过来就马上开始执行，所以速度非常快。参考形式如下：
 
 ``` JavaScript
 
@@ -217,7 +217,7 @@ c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0
 */
 app.add(async (c, next) => {
     console.log('before');
-    await next(c);
+    await next();
     console.log('after');
 }, {method: 'POST', group: '/api'});
 
@@ -227,12 +227,26 @@ app.add(async (c, next) => {
 
 **建议你最好只使用use来添加中间件。**
 
+
 ## hook
 
 一般称为钩子，在这里钩子其实也是中间件，那么和之前所说的中间件有什么区别呢？
 
 主要区别就是在一个请求流程中，所在的位置不同，hook在处理data事件以前，可用于在接收数据之前的权限过滤操作。
-得益于之前的中间件机制，仍然可以使用第二个参数作为筛选条件。使用的接口是addHook，其参数和use相同。
+
+得益于之前的中间件机制，仍然可以使用第二个参数作为筛选条件。使用的接口是addHook，其参数和use相同。为了一致的开发体验，你可以直接使用use接口，只需要在选项中通过hook指定：
+
+```
+let setbodysize = async (c, next) => {
+    //设定body最大接收数据为~10k。
+    c.bodyMaxSize = 10000;
+    await next();
+};
+
+//等效于app.addHook(setbodysize);
+app.use(setbodysize, {hook: true});
+
+```
 
 下图较完整的说明了请求处理过程：
 
