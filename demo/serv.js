@@ -7,8 +7,7 @@ const cluster = require('cluster');
 
 var app = new titbit({
     //daemon: true,
-    nextMode: 'args',
-    bodyMaxSize: 1500000000,
+    bodyMaxSize: 150000000,
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
@@ -26,7 +25,7 @@ var app = new titbit({
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
-    pageNotFound: `<!DOCTYPE html>
+    notFound: `<!DOCTYPE html>
         <html>
             <head>
                 <meta charset="utf-8">
@@ -99,7 +98,7 @@ app.use(async (c, next) => {
 
   uak.count += 1;
 
-  await next(c);
+  await next();
 
 });
 
@@ -178,39 +177,41 @@ app.get('/html', async c => {
       </body>
     </html>`;
 });
+
 app.use(async (ctx, next) => {
     var start_time = Date.now();
-    await next(ctx);
+    await next();
     var end_time = Date.now();
     var timing = end_time-start_time;
     console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
 
-/*
+
 app.use(async (ctx, next) => {
     console.log('middleware for POST/PUT');
-    await next(ctx);
+    await next();
     console.log('middleware for POST/PUT -- ');
-}, {method: ['POST','PUT']});
+}, {method: ['POST','PUT'], hook: true});
 
 app.use(async (ctx, next) => {
     console.log('a1');
-    await next(ctx);
+    console.log(ctx.method, ctx.path);
+    await next();
     console.log('a1');
 });
 
 app.use(async (ctx, next) => {
     console.log('a2');
-    await next(ctx);
+    await next();
     console.log('a2');
 });
 
 app.use(async (ctx, next) => {
     console.log('a3');
-    await next(ctx);
+    await next();
     console.log('a3');
 }, {group: 'post'});
-*/
+
 
 app.use(async (ctx, next) => {
     console.log('checking file');
@@ -221,7 +222,7 @@ app.use(async (ctx, next) => {
         ctx.res.body = 'file not found, please upload with name "image" ';
         return ;
     }
-    await next(ctx);
+    await next();
 }, {name: 'upload-image'});
 
 router.post('/upload', async c => {
@@ -254,7 +255,7 @@ app.use(async (c, next) => {
         c.send('file not found -> c.files.file');
         return ;
     }
-    await next(c);
+    await next();
 
 }, 'upload-file');
 
@@ -295,7 +296,7 @@ app.use(async (c, next) => {
     c.cache = true;
     c.setHeader('content-encoding', 'gzip');
     c.setHeader('content-type', 'text/plain; charset=utf-8');
-    await next(c);
+    await next();
     c.resBody = await new Promise((rv, rj) => {
         zlib.gzip(c.resBody, {encoding:'utf8'}, (err, data) => {
             if (err) {rj (err);}

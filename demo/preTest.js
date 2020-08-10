@@ -24,7 +24,7 @@ app.get('/a/:id', async c => {
 
 });
 
-console.log(app.router.routeTable());
+app.router.printTable();
 
 console.log(app.router.findRealPath('/a', 'GET'));
 
