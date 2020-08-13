@@ -24,7 +24,9 @@ var app = new titbit({
 app.use(async (c, next) => {
   console.log('hook running');
   console.log(c.group, c.name, c.method, '\n');
+  console.log(c.box);
   await next();
+
 }, {hook : true});
 
 app.use(async (c, next) => {
@@ -68,5 +70,23 @@ app.get('/test', async c => {
 app.post('/test', async c => {
     c.send(c.body);
 }, {group: 'test', name : 'test-post'});
+
+app.post('/transmit', async c => {
+    c.send('ok');
+}, 'transmit');
+
+app.use(async (c, next) => {
+    let total = 0;
+    
+    c.box.dataHandle = (data) => {
+        total += data.length;
+    };
+
+    await next();
+
+    console.log(total, 'bytes');
+
+}, {hook: true, method: 'POST', name: 'transmit'});
+
 
 app.daemon(2021, 2);
