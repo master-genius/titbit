@@ -1,6 +1,4 @@
 
-![ ](images/titbit-logo.png)
-
 # titbit
 
 > titbit是运行于服务端的Web框架，最开始主要用于教学，后来很快用在了一些业务系统上。
@@ -249,7 +247,5 @@ app.use(setbodysize, {hook: true});
 ```
 
 下图较完整的说明了请求处理过程：
-
-![](images/titbit-hook-req-midware.png)
 
 你其实完全可以忽略这里的hook操作，并不影响任何逻辑，其存在也仅仅是为了能够处理一些严苛场景的需求，对多数开发者来说，它可以是透明的，并且没有任何性能损失。
