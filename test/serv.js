@@ -7,7 +7,7 @@ const cluster = require('cluster');
 
 var app = new titbit({
     //daemon: true,
-    bodyMaxSize: 150000000,
+    maxBody: 150000000,
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
@@ -58,7 +58,7 @@ app.service.router = app.router;
 var {router} = app;
 /*
 app.addHook(async (c, next) => {
-  c.bodyMaxSize = 8;
+  c.maxBody = 8;
 
   await next(c);
 }, {method : ['POST','PUT']});
