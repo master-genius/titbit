@@ -53,6 +53,12 @@ app.use(async (c, next) => {
 }, {group: 'test', method : 'GET'});
 
 app.use(async (c, next) => {
+    console.log('set body size');
+    c.maxBody = 24;
+    await next();
+}, {name: 'test-post', hook: true});
+
+app.use(async (c, next) => {
     console.log('middleware 4');
     c.body.x = 12;
     await next();
