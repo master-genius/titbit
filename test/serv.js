@@ -322,13 +322,11 @@ router.get('/router', async c => {
     ];
 });
 
-/*
 if (cluster.isWorker) {
   setTimeout(() => {
     process.exit(2);
   }, 900);
 }
-*/
 
 //worker中设置大量定时器，测试性能
 //在设置1000个定时器，仍然可以处理请求，但是比较慢
