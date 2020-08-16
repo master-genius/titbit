@@ -16,9 +16,9 @@ var app = new titbit({
     peerTime: 1,
     timeout : 240,
     socktimeout: 390,
-    //cert : '../rsa/localhost-cert.pem',
-    //key : '../rsa/localhost-privkey.pem',
-    //http2: true,
+    cert : './rsa/localhost-cert.pem',
+    key : './rsa/localhost-privkey.pem',
+    http2: true,
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog: true,
@@ -227,19 +227,18 @@ app.use(async (ctx, next) => {
 
 router.post('/upload', async c => {
   try {
-    console.log(c.files);
-    console.log(c.body);
+    /* console.log(c.files);
+    console.log(c.body); */
+
     let files = c.getFile('image', -1);
     let results = [];
-    let tmp = '';
     let fname = '';
 
     for(let i=0; i<files.length; i++) {
       try {
-        fname = `${process.env.HOME}/tmp/a/${c.helper.makeName(files[i].filename, `${i}`)}`;
-        tmp = await c.moveFile(files[i], fname);
+        fname = `${process.env.HOME}/tmp/a/${c.helper.makeName(files[i].filename)}`;
+        await c.moveFile(files[i], fname);
         results.push(fname);
-        //console.log('not move');
       } catch (err) {
         console.error(err);
       }
@@ -265,13 +264,12 @@ router.put('/upload', async c => {
     console.log(c.body);
     let files = c.getFile('file', -1);
     let results = [];
-    let tmp = '';
     let fname = '';
 
-    for(let i=0; i<files.length; i++) {
+    for(let i=0; i < files.length; i++) {
       try {
         fname = `${process.env.HOME}/${c.helper.makeName(files[i].filename, `${i}`)}`;
-        tmp = await c.moveFile(files[i], fname);
+        await c.moveFile(files[i], fname);
         results.push(fname);
         //console.log('not move');
       } catch (err) {
@@ -322,12 +320,12 @@ router.get('/router', async c => {
     ];
 });
 
-if (cluster.isWorker) {
+/* if (cluster.isWorker) {
   setTimeout(() => {
     process.exit(2);
   }, 900);
 }
-
+ */
 //worker中设置大量定时器，测试性能
 //在设置1000个定时器，仍然可以处理请求，但是比较慢
 //在设置10个以内的定时器，触发时间100ms以上，对整体的性能影响比较小。

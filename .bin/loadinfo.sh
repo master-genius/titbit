@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PID=
-LOAD_FILE="./loadinfo.log"
+LOAD_FILE="./titbit-monitor.log"
 RUNCOMM=
 
 get_master_pid () {
