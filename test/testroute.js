@@ -3,15 +3,15 @@ const titbit = require('../main');
 var app = new titbit();
 
 for(let i=0; i < 50; i++) {
-    app.get(`/test/x/${i}/:z/:t`, async c => {
+    app.get(`/test/:x/${i}/:z/:t`, async c => {
         c.res.body = i;
     });
 
-    app.post(`/test/x/${i}/:z/:t`, async c => {
+    app.post(`/test/:x/${i}/:z/:t`, async c => {
         c.res.body = i;
     });
 
-    app.get(`/test/linux/unix/${i}`, async c => {
+    app.get(`/test/:linux/:unix/${i}`, async c => {
         c.res.body = 'unix';
     });
 
