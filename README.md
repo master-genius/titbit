@@ -5,7 +5,6 @@
 
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
-更多内容，查看[wiki](https://github.com/master-genius/titbit/wiki)
 
 核心功能：
 
@@ -226,24 +225,244 @@ app.add(async (c, next) => {
 **建议你最好只使用use来添加中间件。**
 
 
-## hook
+## pre 在接收body数据之前
 
-一般称为钩子，在这里钩子其实也是中间件，那么和之前所说的中间件有什么区别呢？
+使用pre接口添加的中间件和use添加的主要区别就是会在接收body数据之前执行。可用于在接收数据之前的权限过滤操作。其参数和use一致。
 
-主要区别就是在一个请求流程中，所在的位置不同，hook在处理data事件以前，可用于在接收数据之前的权限过滤操作。
-
-得益于之前的中间件机制，仍然可以使用第二个参数作为筛选条件。使用的接口是addHook，其参数和use相同。为了一致的开发体验，你可以直接使用use接口，只需要在选项中通过hook指定：
+为了一致的开发体验，你可以直接使用use接口，只需要在选项中通过pre指定：
 
 ```
 let setbodysize = async (c, next) => {
     //设定body最大接收数据为~10k。
-    c.bodyMaxSize = 10000;
+    c.maxBody = 10000;
     await next();
 };
 
-//等效于app.addHook(setbodysize);
-app.use(setbodysize, {hook: true});
+//等效于app.pre(setbodysize);
+app.use(setbodysize, {pre: true});
 
 ```
 
-你其实完全可以忽略这里的hook操作，并不影响任何逻辑，其存在也仅仅是为了能够处理一些严苛场景的需求，对多数开发者来说，它可以是透明的，并且没有任何性能损失。
+使用pre可以进行更复杂的处理，并且可以拦截并不执行下一层，比如doio-proxy利用这个特性直接实现了高性能的代理服务，并且只是框架的一个扩展。其主要操作就是在这一层，直接设置了request的data事件来接收数据，并作其他处理，之后直接返回。
+
+
+## 配置选项
+
+应用初始化，完整的配置选项如下
+
+``` JavaScript
+  {
+    //此配置表示POST/PUT提交表单的最大字节数，也是上传文件的最大限制。
+    maxBody   : 8000000,
+
+    //最大解析的文件数量
+    maxFiles      : 12,
+
+    daemon        : false, //开启守护进程
+
+    /*
+      开启守护进程模式后，如果设置路径不为空字符串，则会把pid写入到此文件，可用于服务管理。
+    */
+    pidFile       : '',
+
+    //开启HTTPS
+    https       : false,
+
+    http2   : false,
+
+    //HTTPS密钥和证书的文件路径，如果设置了路径，则会自动设置https为true。
+    key   : '',
+    cert  : '',
+
+    //服务器选项都写在server中，在初始化http服务时会传递，参考http2.createSecureServer、tls.createServer
+    server : {
+      handshakeTimeout: 7168, //TLS握手连接（HANDSHAKE）超时
+      //sessionTimeout: 350,
+    },
+
+    //设置服务器超时，毫秒单位，在具体的请求中，可以再设置请求的超时。
+    timeout   : 18000,
+
+    debug     : false,
+
+    //忽略路径末尾的 /
+    ignoreSlash: true,
+
+    //启用请求限制
+    useLimit: false,
+
+    //最大连接数，0表示不限制
+    maxConn : 1024,
+
+    //单个IP单位时间内的最大连接数，0表示不限制
+    maxIPRequest: 0,
+
+    //单位时间，默认为1秒
+    peerTime : 1,
+
+    // 请求处理的钩子函数，如果设定了，在请求开始，回调函数中会执行此函数，
+    // 在这里你可以设定一些事件处理函数，最好仅做这些或者是其他执行非常快的任务，可以是异步的。
+    //在http/1.1协议中，传递参数就是request，response以及protocol表示协议的字符串'http:' 或者 'https:'
+    //在http/2协议中，传递stream参数。
+
+    requestHandle : null,
+
+
+    //404要返回的数据
+    notFound: 'Not Found',
+    
+    //400要返回的数据
+    badRequest : 'Bad Request',
+
+    //展示负载信息，需要通过daemon接口开启cluster集群模式
+    showLoadInfo : true,
+
+    //负载信息的类型，text 、json、--null
+    //json类型是给程序通信使用的，方便接口开发
+    loadInfoType : 'text',
+
+    //负载信息的文件路径，如果不设置则输出到终端，否则保存到文件
+    loadInfoFile : '',
+
+  };
+  // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
+  // 因为一旦能够开始执行，就可以通过运行状态返回对应的状态码。
+  // 而在这之前，框架还在为开始执行洋葱模型做准备，不过此过程非常快。
+
+```
+
+### 请求上下文
+
+请求上下文就是一个封装了各种请求数据的对象。通过这样的设计，把HTTP/1.1 和 HTTP/2协议的一些差异以及Node.js版本演进带来的一些不兼容做了处理，出于设计和性能上的考虑，对于HTTP2模块，封装请求对象是stream，而不是http模块的IncomingMessage和ServerResponse（封装对象是request和response）。
+
+``` JavaScript
+
+    var ctx = {
+
+      version : '1.1', //协议版本
+      
+      maxBody : 0, //最大body请求数据量
+
+      method    : '', //请求类型
+
+      ip      : '', //客户端IP
+
+      host    : '', 
+      
+      port    : 0,
+      
+      protocol: '', //协议
+
+      //实际的访问路径
+      path    : '',
+
+      name    : '', //对路由和请求的命名
+      
+      headers   : {},
+
+      //实际执行请求的路径，是添加到路由模块的路径
+      routepath   : '', 
+
+      //路由参数
+      param     : {},
+
+      //url的querystring参数，就是url 的 ? 后面的参数
+      query     : {},
+
+      //请求体解析后的数据
+      body    : {},
+
+      //是否是上传文件的操作
+      isUpload  : false,
+
+      //路由分组
+      group     : '',
+      
+      //原始body数据
+      rawBody   : '',
+
+      //body数据接收到的总大小
+      bodyLength  : 0,
+
+      //解析后的文件信息，实际的文件数据还在rawBody中，这里只记录信息。
+      files     : {},
+
+      // 指向实际请求的回调函数，就是通过app.get等接口添加的回调函数。
+      // 你甚至可以在执行请求过程中，让它指向一个新的函数，这称为请求函数重定向。
+      exec : null,
+
+      //助手函数，包括aes加解密、sha1、sha256、sha512、格式化时间字符串、生成随机字符串等处理。
+      helper    : helper,
+
+      //要返回数据和编码的记录
+      res : {
+        body : '',
+        encoding : 'utf8',
+      },
+  
+      //http模块请求回调函数传递的参数被封装到此。
+      //在http2协议中，没有这两项。
+      request   : null,
+      response  : null,
+
+      //只有在http2模块才有此项。
+      stream : null,
+  
+      //中间件执行时挂载到此处的值可以传递到下一层。
+      box : {},
+
+      //app运行时，最开始通过addService添加的服务会被此处的service引用。
+      //这称为依赖注入，不必每次在代码里引入。
+      service:null,
+    };
+
+    ctx.send = (d) => {
+      ctx.res.body = d;
+    };
+
+    ctx.getFile = (name, ind = 0) => {
+      if (ind < 0) {return ctx.files[name] || [];}
+  
+      if (ctx.files[name] === undefined) {return null;}
+      
+      if (ind >= ctx.files[name].length) {return null;}
+  
+      return ctx.files[name][ind];
+    };
+  
+    ctx.setHeader = (name, val) => {
+      ctx.response.setHeader(name, val);
+    };
+ 
+    ctx.status = (stcode = null) => {
+      if (stcode === null) { return ctx.response.statusCode; }
+      if(ctx.response) { ctx.response.statusCode = stcode; }
+    };
+
+    //上传文件时，写入数据到文件的助手函数。
+    ctx.moveFile = async (upf, target) => {
+      let fd = await new Promise((rv, rj) => {
+        fs.open(target, 'w+', 0o644, (err, fd) => {
+          if (err) { rj(err); }
+          else { rv(fd); }
+        });
+      });
+
+      return new Promise((rv, rj) => {
+        fs.write(fd, ctx.rawBody, upf.start, upf.length, 
+          (err,bytesWritten,buffer) => {
+            if (err) { rj(err); }
+            else { rv(bytesWritten); }
+          });
+      })
+      .then(d => {
+        return d;
+      }, e => { throw e; })
+      .finally(() => {
+        fs.close(fd, (err) => {});
+      });
+    };
+
+```
+
+注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。

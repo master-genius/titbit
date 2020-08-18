@@ -11,7 +11,7 @@ var app = new titbit({
     peerTime: 1,
     useLimit: false,
     maxConn: 2000,
-    http2: true,
+    //http2: true,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     showLoadInfo: true,
@@ -27,7 +27,7 @@ app.use(async (c, next) => {
   console.log(c.box);
   await next();
 
-}, {hook : true});
+}, {pre : true});
 
 app.use(async (c, next) => {
     console.log('middleware 1');
@@ -56,7 +56,7 @@ app.use(async (c, next) => {
     console.log('set body size');
     c.maxBody = 24;
     await next();
-}, {name: 'test-post', hook: true});
+}, {name: 'test-post', pre: true});
 
 app.use(async (c, next) => {
     console.log('middleware 4');
@@ -86,13 +86,18 @@ app.use(async (c, next) => {
     
     c.box.dataHandle = (data) => {
         total += data.length;
+        if (total > 32) {
+            c.response.statusCode = 413;
+            c.response.end('太多了，限制32字节以内');
+            return ;
+        }
     };
 
     await next();
 
     console.log(total, 'bytes');
 
-}, {hook: true, method: 'POST', name: 'transmit'});
+}, {pre: true, method: 'POST', name: 'transmit'});
 
 
 app.daemon(2021, 2);
