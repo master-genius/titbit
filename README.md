@@ -167,6 +167,12 @@ app.run(2019);
 
 ## c.files数据结构
 
+这种结构是根据HTTP协议上传文件时的数据构造设计的，HTTP协议允许同一个上传名有多个文件，所以要解析成一个数组。而使用getFile默认情况只返回第一个文件，因为多数情况只是一个上传名对应一个文件。
+
+> 对于前端来说，上传名就是你在HTML中表单的name属性：&lt;input type="file" name="image"&gt;
+> image是上传名，不要把上传名和文件名混淆。
+
+
 ```
 
 {
@@ -194,6 +200,7 @@ app.run(2019);
 }
 ```
 c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0的数字，则会获取整个文件数组，没有返回null。
+
 
 ## 中间件
 
@@ -265,6 +272,18 @@ app.use(setbodysize, {pre: true});
     */
     pidFile       : '',
 
+    //是否开启全局日志，true表示开启，这时候会把请求信息输出或者写入到文件
+    globalLog: false,
+
+    //日志输出方式：stdio表示输出到终端，file表示输出到文件
+    logType : 'stdio',
+
+    //正确请求日志输出的文件路径
+    logFile : '',
+
+    //错误请求日志输出的文件路径
+    errorLogFile : '',
+
     //开启HTTPS
     https       : false,
 
@@ -299,21 +318,7 @@ app.use(setbodysize, {pre: true});
 
     //单位时间，默认为1秒
     peerTime : 1,
-
-    // 请求处理的钩子函数，如果设定了，在请求开始，回调函数中会执行此函数，
-    // 在这里你可以设定一些事件处理函数，最好仅做这些或者是其他执行非常快的任务，可以是异步的。
-    //在http/1.1协议中，传递参数就是request，response以及protocol表示协议的字符串'http:' 或者 'https:'
-    //在http/2协议中，传递stream参数。
-
-    requestHandle : null,
-
-
-    //404要返回的数据
-    notFound: 'Not Found',
     
-    //400要返回的数据
-    badRequest : 'Bad Request',
-
     //展示负载信息，需要通过daemon接口开启cluster集群模式
     showLoadInfo : true,
 
@@ -323,6 +328,12 @@ app.use(setbodysize, {pre: true});
 
     //负载信息的文件路径，如果不设置则输出到终端，否则保存到文件
     loadInfoFile : '',
+
+    //404要返回的数据
+    notFound: 'Not Found',
+    
+    //400要返回的数据
+    badRequest : 'Bad Request',
 
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
@@ -434,6 +445,7 @@ app.use(setbodysize, {pre: true});
       ctx.response.setHeader(name, val);
     };
  
+    //不使用getter和setter是因为其性能比函数调用差很多
     ctx.status = (stcode = null) => {
       if (stcode === null) { return ctx.response.statusCode; }
       if(ctx.response) { ctx.response.statusCode = stcode; }
