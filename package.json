@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "21.3.3",
+  "version": "21.3.4",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -9,7 +9,7 @@
   "bin" : {
   },
   "scripts": {
-    "test": "cd demo && node test.js"
+    "test": "echo nothing"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
   "author": "BraveWang",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/master-genius/titbit/issues"
+    "url": "https://gitee.com/daoio/titbit/issues"
   },
-  "homepage": "https://github.com/master-genius/titbit#readme"
+  "homepage": "https://gitee.com/daoio/titbit/blob/master/README.md"
 }

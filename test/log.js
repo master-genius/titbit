@@ -26,14 +26,13 @@ var app = new titbit({
   debug: true,
   globalLog : true,
   //loadInfoType : 'text',
-  //loadInfoFile : '/tmp/loadinfo.log',
+  loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
   logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
-  nextMode : 'args'
 });
 
 app.use(async (c, next) => {
@@ -54,12 +53,12 @@ app.use(async (c, next) => {
  *
  * */
 
-let gbl = app.httpServ.globalLog;
+/* let gbl = app.httpServ.logger;
 
-app.httpServ.globalLog = (msg) => {
+app.httpServ.logger = (msg) => {
   console.log('test for rewrite log:', msg);
   gbl(msg);
-};
+}; */
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
 
@@ -118,5 +117,6 @@ app.get('/sha256', async c => {
   c.res.body = c.helper.sha256(`${Math.random()}${Date.now()}`);
 });
 
-app.daemon(2021, 2);
+//app.logger.watch();
 
+app.daemon(2021, 2);
