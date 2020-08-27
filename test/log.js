@@ -35,6 +35,8 @@ var app = new titbit({
   errorLogFile : '/tmp/error.log',
 });
 
+app.addService('name', 'brave');
+
 app.use(async (c, next) => {
   //c.request.setTimeout(1);
 
@@ -72,6 +74,10 @@ app.get('/uuid', async c => {
 
 app.post('/p', async c => {
     c.res.body = c.body;
+});
+
+app.get('/name', async c => {
+  c.res.body = c.service.name;
 });
 
 app.get('/tout', async c => {
