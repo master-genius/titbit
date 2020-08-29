@@ -30,9 +30,15 @@ var app = new titbit({
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
-  logType : 'file',
+  //logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
+
+  logType : 'self',
+  logHandle : (w, msg) => {
+    console.log(w.id, msg);
+  }
+
 });
 
 app.addService('name', 'brave');
