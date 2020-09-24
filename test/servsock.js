@@ -18,6 +18,7 @@ var app = new titbit({
     //http2: true,
     //showLoadInfo: true,
     loadInfoType : 'text',
+    loadInfoFile : '/tmp/titbit-load.log',
     globalLog: true,
     //loadInfoFile: '/tmp/loadinfo.log',
     pageNotFound: `<!DOCTYPE html>
@@ -185,11 +186,12 @@ router.post('/upload', async c => {
         console.log(c.files);
         let results = [];
         let tmp = '';
+        let fname = '';
         let images = c.getFile('image', -1);
+
         for(let i=0; i<images.length; i++) {
-            tmp = await c.moveFile(images[i], {
-                path : process.env.HOME + '/tmp/buffer',
-            });
+            fname = `${process.env.HOME}/tmp/a/${c.helper.makeName(images[i].filename)}`;
+            tmp = await c.moveFile(images[i], fname);
             results.push(tmp);
         }
         c.res.body = results;

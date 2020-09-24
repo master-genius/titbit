@@ -268,7 +268,7 @@ router.put('/upload', async c => {
 
     for(let i=0; i < files.length; i++) {
       try {
-        fname = `${process.env.HOME}/${c.helper.makeName(files[i].filename, `${i}`)}`;
+        fname = `${process.env.HOME}/tmp/a/${c.helper.makeName(files[i].filename, `${i}`)}`;
         await c.moveFile(files[i], fname);
         results.push(fname);
         //console.log('not move');
