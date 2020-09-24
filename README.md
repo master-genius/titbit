@@ -1,25 +1,43 @@
 
 # titbit
 
-> titbit是运行于服务端的Web框架，最开始主要用于教学，后来很快用在了一些业务系统上。
+> titbit是运行于服务端的Web框架，最开始是为了在教学中方便开发而设计，后来用在了一些业务系统上。设计上重点考虑性能、稳定、易用、实用、功能完整度和简洁等因素。
 
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
 
 核心功能：
 
-* 中间件模式
-* 路由分组/中间件按照路由分组执行
-* 中间件匹配请求方法和路由来执行
-* 开启守护进程：使用cluster模块
-* 显示子进程负载情况
-* 提供了解析body数据模块
-* 支持通过配置启用HTTP/1.1或是HTTP/2服务
-* 支持配置启用HTTPS服务（HTTP/2服务必须要开启HTTPS）
-* 限制请求数量
-* 限制一段时间内单个IP的最大访问次数
-* IP黑名单和IP白名单
-* 在daemon模式，监控子进程超出最大内存限制则重启。
+* 请求上下文设计。
+
+* 中间件模式。
+
+* 路由分组和命名。
+
+* 中间件按照路由分组执行。
+
+* 中间件匹配请求方法和路由来执行。
+
+* 开启守护进程：使用cluster模块。
+
+* 显示子进程负载情况。
+
+* 默认解析body数据。
+
+* 支持通过配置启用HTTP/1.1或是HTTP/2服务。
+
+* 支持配置启用HTTPS服务（HTTP/2服务必须要开启HTTPS）。
+
+* 方便切换HTTP/1.1和HTTP/2。
+
+* 限制请求数量。
+
+* 限制一段时间内单个IP的最大访问次数。
+
+* IP黑名单和IP白名单。
+
+* 在cluster模式，监控子进程超出最大内存限制则重启。
+
 
 框架在初始化会自动检测内存大小并设定相关上限，你可以在初始化后，通过更改secure中的属性来更改限制，这需要你使用daemon接口，也就是使用master管理子进程的模式。
 
@@ -38,7 +56,15 @@ app.secure.diemem = 600000000;
 
 //最大内存使用设置为2G
 //注意这是总的内存使用，包括你用Buffer申请的内存。
-app.secure.maxrss = 2000000000;
+
+let workers = 2;
+app.secure.maxrss = 2000000000 * workers;
+
+app.get('/', async c => {
+  c.send('ok');
+})
+
+app.daemon(8008, workers);
 
 ```
 
@@ -452,27 +478,12 @@ app.use(setbodysize, {pre: true});
     };
 
     //上传文件时，写入数据到文件的助手函数。
-    ctx.moveFile = async (upf, target) => {
-      let fd = await new Promise((rv, rj) => {
-        fs.open(target, 'w+', 0o644, (err, fd) => {
-          if (err) { rj(err); }
-          else { rv(fd); }
-        });
-      });
-
-      return new Promise((rv, rj) => {
-        fs.write(fd, ctx.rawBody, upf.start, upf.length, 
-          (err,bytesWritten,buffer) => {
-            if (err) { rj(err); }
-            else { rv(bytesWritten); }
-          });
-      })
-      .then(d => {
-        return d;
-      }, e => { throw e; })
-      .finally(() => {
-        fs.close(fd, (err) => {});
-      });
+    /**
+     * @param {object} upf 通过ctx.getFile获取的文件对象
+     * @param {string} target 目标文件路径，包括路径和文件名。
+    */
+    ctx.moveFile = (upf, target) => {
+      return moveFile(ctx, upf, target);
     };
 
 ```
