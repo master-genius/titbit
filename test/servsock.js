@@ -100,6 +100,8 @@ router.options('/*', async c => {
 }, 'options-check');
 
 router.get('/', async ctx => {
+    let rsock = ctx.request.socket;
+    console.log(ctx.headers, rsock.remoteFamily);
     ctx.send('ok');
 });
 
