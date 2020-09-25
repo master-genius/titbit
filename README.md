@@ -28,8 +28,6 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 * 支持配置启用HTTPS服务（HTTP/2服务必须要开启HTTPS）。
 
-* 方便切换HTTP/1.1和HTTP/2。
-
 * 限制请求数量。
 
 * 限制一段时间内单个IP的最大访问次数。
@@ -92,8 +90,10 @@ const titbit = require('titibit');
 
 var app = new titbit();
 
+//router中的路由方法在app中都有同名的快速调用方法。
 var {router} = app;
 
+//也可以直接使用app.get
 router.get('/', async c => {
   //data类型为string|Buffer
   //其等效形式为c.res.body = 'success';
@@ -105,6 +105,55 @@ router.get('/', async c => {
 app.run(2019);
 
 ```
+
+## 路由和请求类型
+
+HTTP的起始行给出了请求类型，也被称为：请求方法。目前有8种请求方法：
+```
+GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH
+```
+
+最常用的是前面5个。对于每个请求类型，router中都有同名但是小写的函数进行路由挂载。为了方便调用，在初始化app后，可以使用app上同名的快捷调用。
+
+**示例：**
+
+``` JavaScript
+
+'use strict';
+
+const titbit = require('titibit');
+
+var app = new titbit({
+  debug: true
+});
+
+app.get('/', async c => {
+  c.res.body = 'success';
+});
+
+app.get('/p', async c => {
+  c.res.body = `${c.method} ${c.routepath}`;
+});
+
+app.post('/', async c => {
+  //返回上传的数据
+  c.res.body = c.body;
+});
+
+app.put('/p', async c => {
+  c.res.body = {
+    method : c.method,
+    body : c.body,
+    query : c.query
+  };
+});
+
+//默认监听0.0.0.0，参数和原生接口listen一致。
+app.run(8080);
+
+```
+
+
 
 ## 获取URL参数和表单数据
 
