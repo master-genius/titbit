@@ -20,6 +20,8 @@ for(let i=0; i < 50; i++) {
     });
 }
 
+console.log('路由数量：', app.router.count);
+
 let startTime = Date.now();
 
 let t = '';
