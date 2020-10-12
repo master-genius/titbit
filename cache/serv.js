@@ -18,7 +18,7 @@ var app = new titbit({
     socktimeout: 390,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog: true,
@@ -56,13 +56,6 @@ async function delay(t) {
 app.service.router = app.router;
 
 var {router} = app;
-/*
-app.addHook(async (c, next) => {
-  c.maxBody = 8;
-
-  await next(c);
-}, {method : ['POST','PUT']});
-*/
 
 var _userAgentCache = {};
 
@@ -106,7 +99,7 @@ router.options('/*', async c => {
     console.log(c.param.starPath);
     c.setHeader('Access-control-allow-origin', '*');
     c.setHeader('Access-control-allow-methods', app.router.methods);
-}, 'options-check');
+});
 
 router.get('/', async ctx => {
     ctx.res.body = 'ok';
@@ -186,7 +179,26 @@ app.use(async (ctx, next) => {
     console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
 
+app.put('/bin-upload/:filename', async c => {
 
+  let fname = `${c.helper.makeName(c.param.filename)}${c.helper.extName(c.param.filename)}`;
+
+  let r = await new Promise((rv, rj) => {
+    fs.writeFile(process.env.HOME + '/tmp/a/' + fname, c.body, (err) => {
+      if (err) {
+        rj(err);
+      } else {
+        rv(fname);
+      }
+    });
+
+  });
+
+  c.res.body = r;
+
+});
+
+/* 
 app.use(async (ctx, next) => {
     console.log('middleware for POST/PUT');
     await next();
@@ -211,7 +223,7 @@ app.use(async (ctx, next) => {
     await next();
     console.log('a3');
 }, {group: 'post'});
-
+ */
 
 app.use(async (ctx, next) => {
     console.log('checking file');

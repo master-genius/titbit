@@ -84,14 +84,28 @@ app.post('/transmit', async c => {
 app.use(async (c, next) => {
     let total = 0;
     
-    c.box.dataHandle = (data) => {
-        total += data.length;
-        if (total > 32) {
-            c.response.statusCode = 413;
-            c.response.end('太多了，限制32字节以内');
-            return ;
-        }
-    };
+    if (c.http2) {
+        c.box.dataHandle = (data) => {
+            total += data.length;
+            if (total > 32) {
+                
+                c.status(413);
+                c.stream.respond(c.res.headers);
+                c.stream.close();
+                //c.response.end('太多了，限制32字节以内');
+                return ;
+            }
+        };
+    } else {
+        c.box.dataHandle = (data) => {
+            total += data.length;
+            if (total > 32) {
+                c.status(413);
+                c.response.end('太多了，限制32字节以内');
+                return ;
+            }
+        };
+    }
 
     await next();
 
