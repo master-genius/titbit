@@ -8,6 +8,7 @@ const cluster = require('cluster');
 var app = new titbit({
     //daemon: true,
     maxBody: 150000000,
+    maxFiles: 50,
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
@@ -95,10 +96,16 @@ app.use(async (c, next) => {
 
 });
 
+app.use(async (c, next) => {
+  c.setHeader('Access-control-allow-origin', '*');
+  c.setHeader('Access-control-allow-methods', app.router.methods);
+  c.setHeader('access-control-request-headers', 'content-type');
+  
+  await next();
+});
+
 router.options('/*', async c => {
-    console.log(c.param.starPath);
-    c.setHeader('Access-control-allow-origin', '*');
-    c.setHeader('Access-control-allow-methods', app.router.methods);
+  
 });
 
 router.get('/', async ctx => {
