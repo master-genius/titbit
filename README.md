@@ -225,12 +225,11 @@ app.use(async (c, next) => {
 
 router.post('/upload', async c => {
   let f = c.getFile('image');
-  //此函数是助手函数，配合解析后的文件使用。
-  //会自动生成文件名。
+  //此函数是助手函数，makeName默认会按照时间戳生成名字，extName解析文件的扩展名。
+  let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`;
+
   try {
-    c.res.body = await c.moveFile(f, {
-      path: process.env.HOME + '/tmp/image'
-    });
+    c.res.body = await c.moveFile(f, fname);
   } catch (err) {
     c.res.body = err.message;
   }
@@ -410,6 +409,9 @@ app.use(setbodysize, {pre: true});
     //400要返回的数据
     badRequest : 'Bad Request',
 
+    //控制子进程最大内存使用量的百分比参数，范围从-0.42 ～ 0.36。基础数值是0.52，所以默认值百分比为80%。
+    memFactor: 0.28
+
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
   // 因为一旦能够开始执行，就可以通过运行状态返回对应的状态码。
@@ -538,3 +540,40 @@ app.use(setbodysize, {pre: true});
 ```
 
 注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
+
+## 依赖注入
+
+请求上下文中有一项是service，指向的是app.service。当初始化app后，一切需要开始就初始化好的数据、实例等都可以挂载到app.service。
+
+``` JavaScript
+
+'use strict';
+
+const titbit = require('titbit');
+
+var app = new titbit({
+  debug: true
+});
+
+//有则会覆盖，没有则添加。
+app.addService('name', 'first');
+app.addService('data', {
+  id : 123,
+  ip : '127.0.0.1'
+});
+
+/*
+这可能看不出什么作用，毕竟在一个文件中，直接访问变量都可以，如果要做模块分离，就变得非常重要了。
+*/
+app.get('/info', async c => {
+
+  c.res.body = {
+    name : c.service.name,
+    data : c.service.data
+  };
+
+});
+
+app.run(1234);
+
+```
