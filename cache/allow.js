@@ -11,7 +11,7 @@ var app = new titbit({
     peerTime: 1,
     useLimit: false,
     maxConn: 2000,
-    //http2: true,
+    http2: true,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     showLoadInfo: true,
@@ -66,6 +66,7 @@ app.use(async (c, next) => {
 }, 'test-post');
 
 app.get('/', async c => {
+    console.log(c.headers);
     c.send('ok');
 }, 'home');
 
