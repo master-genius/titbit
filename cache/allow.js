@@ -65,7 +65,7 @@ app.use(async (c, next) => {
     console.log('middleware 4 end');
 }, 'test-post');
 
-app.get('/', async c => {
+app.get('', async c => {
     console.log(c.headers);
     c.send('ok');
 }, 'home');

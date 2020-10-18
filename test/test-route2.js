@@ -31,15 +31,15 @@ for (let i=0; i < 60000; i++) {
     count += 1;
   }
 
-  if ( app.router.findRealPath('/test/49/qwe/dsv/ds/sd/asdff', 'GET') ) {
+  if ( app.router.findRealPath('/test/49/qwe/dsv/ds/sd///////////asdff/', 'GET') ) {
     count += 1;
   }
 
-  if ( app.router.findRealPath('/test/x/49/unix/freebsd', 'POST') ) {
+  if ( app.router.findRealPath('/test/x/49/unix//////freebsd/', 'POST') ) {
     count += 1;
   }
 
-  if ( app.router.findRealPath('/test/linux/unix/49', 'GET') ) {
+  if ( app.router.findRealPath('/test/linux/unix/49/', 'GET') ) {
     count += 1;
   }
 }
