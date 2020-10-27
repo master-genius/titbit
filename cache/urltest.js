@@ -9,7 +9,7 @@ const app = new titbit({
   //maxIPRequest: 10000,
   maxConn: 10000,
   maxUrlLength: 1000,
-  http2: true,
+  //http2: true,
   cert : './rsa/localhost-cert.pem',
   key : './rsa/localhost-privkey.pem',
 })
