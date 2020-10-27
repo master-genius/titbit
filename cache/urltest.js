@@ -23,4 +23,11 @@ app.get('/url', async c => {
 
 })
 
-app.run(1234)
+let serv = app.run(1234)
+
+
+setInterval(() => {
+  serv.getConnections((err,count) => {
+    console.log(count)
+  })
+}, 2000)
