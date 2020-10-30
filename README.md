@@ -3,6 +3,9 @@
 
 > titbit是运行于服务端的Web框架，最开始是为了在教学中方便开发而设计，也用在一些业务系统上。它绝对算不上重型框架，但是也不简单过头。
 
+> 有bug或是疑惑请提交issue。
+
+
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
 
@@ -303,7 +306,32 @@ app.add(async (c, next) => {
 
 使用add添加的中间件是按照添加顺序逆序执行，这是标准的洋葱模型。为了提供容易理解的逻辑，提供use接口添加中间件，使用use添加的中间件按照添加顺序执行。不同的框架对实现顺序的逻辑往往会不同，但是顺序执行更符合开发者习惯。
 
-**建议你最好只使用use来添加中间件。**
+**建议你最好只使用use来添加中间件：**
+
+``` JavaScript
+//先执行
+app.use(async (c, next) => {
+  let start_time = Date.now()
+  await next()
+  let end_time = Date.now()
+  console.log(end_time - start_time)
+})
+
+//后执行
+app.use(async (c, next) => {
+  console.log(c.method, c.path)
+  await next()
+})
+
+//use可以级联: app.use(m1).use(m2)
+//在21.5.4版本以后，不过这个功能其实根本不重要
+//因为有titbit-loader扩展，实现的功能要强大的多。
+
+```
+
+## titbit完整的流程图示
+
+![](images/titbit-middleware.jpg)
 
 
 ## pre 在接收body数据之前
@@ -410,7 +438,9 @@ app.use(setbodysize, {pre: true});
     badRequest : 'Bad Request',
 
     //控制子进程最大内存使用量的百分比参数，范围从-0.42 ～ 0.36。基础数值是0.52，所以默认值百分比为80%。
-    memFactor: 0.28
+    memFactor: 0.28,
+
+    maxUrlLength: 2048
 
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
@@ -577,3 +607,17 @@ app.get('/info', async c => {
 app.run(1234);
 
 ```
+
+## 最后
+
+titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,text/xml,text/json）。注意这是在你没有设置content-type的情况下进行。
+
+默认会限制url的最大长度，也会根据硬件情况设定一个最大内存使用率。
+
+这一切你都可以通过配置选项或是中间件来进行扩展和重写，既有限制也有自由。
+
+它很快，并且我们一直在都在关注优化。如果你需要和其他对比测试，请都添加多个中间件，并且都添加上百个路由，然后测试对比。
+
+> 最后我们还是没忍住，在本地机器进行测试，使用express和titbit进行了对比，添加100个路由和一个中间件，查找到第89个路由。titbit处理性能差不多是express的1.68倍。
+
+> fastify确实快，普遍觉得比较难用。其实在真实的场景中，差异会很小。在非常简单的测试中，fastify要比titbit快大概21%。

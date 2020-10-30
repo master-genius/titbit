@@ -19,5 +19,9 @@ app.get('/', async c => {
   c.send('success')
 })
 
+app.get('/ok', async c => {
+  c.send('ok')
+})
+
 app.run(1234)
 
