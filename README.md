@@ -692,7 +692,7 @@ const app = new titbit({
 
 })
 
-app.run(1234)
+app.daemon(1234, 3)
 
 ```
 
