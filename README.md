@@ -388,6 +388,9 @@ app.use(setbodysize, {pre: true});
     //错误请求日志输出的文件路径
     errorLogFile : '',
 
+    //自定义日志处理函数
+    logHandle: null,
+
     //开启HTTPS
     https       : false,
 
@@ -399,7 +402,7 @@ app.use(setbodysize, {pre: true});
 
     //服务器选项都写在server中，在初始化http服务时会传递，参考http2.createSecureServer、tls.createServer
     server : {
-      handshakeTimeout: 7168, //TLS握手连接（HANDSHAKE）超时
+      handshakeTimeout: 8192, //TLS握手连接（HANDSHAKE）超时
       //sessionTimeout: 350,
     },
 
@@ -616,6 +619,87 @@ app.get('/info', async c => {
 app.run(1234);
 
 ```
+
+## daemon和run
+
+run接口的参数为：port、host。host默认为0.0.0.0。还可以是sockPath，就是.sock文件路径，本质上是因为http的listen接口支持。使用.sock，host就被忽略了。
+
+daemon的前两个参数和run一致，支持第三个参数是一个数字，表示要使用多少个子进程处理请求。默认为0，这时候会自动根据CPU核心数量创建子进程。之后，会保持子进程数量的稳定，在子进程意外终止后会创建新的子进程补充。
+
+**cluster模式，最多子进程数量不会超过CPU核心数量的2倍。**
+
+示例：
+
+```
+
+//host默认为0.0.0.0，端口1234
+app.run(1234)
+
+//监听localhost，只能本机访问
+app.run(1234, 'localhost')
+
+//使用两个子进程处理请求，host默认为0.0.0.0
+app.daemon(1234, 2)
+
+//使用3个子进程处理请求
+app.daemon(1234, 'localhost', 3)
+
+```
+
+
+## 日志
+
+框架本身提供了全局日志功能，当使用cluster模式时（使用daemon接口运行服务），使用初始化选项globoalLog可以开启全局日志，并且可以指定日志文件，在单进程模式，会把日志输出到终端，此时利用输出重定向和错误输出重定向仍然可以把日志保存到文件。
+
+除了保存到文件和输出到终端进行调试，还可以利用logHandle选项设置自己的日志处理函数。
+
+**设置了logHanle，logFile和errorLogFile会失效，具体请看代码。**
+
+示例：
+
+``` JavaScript
+
+const titbit = require('titbit')
+
+const app = new titbit({
+  debug: true,
+  //全局日志开启
+  globalLog: true,
+
+  //表示输出到文件，默认为stdio表示输出到终端。
+  logType: 'file'
+
+  //返回状态码为2xx或者3xx
+  logFile : '/tmp/titbit.log',
+
+  //错误的日志输出文件，返回状态码4xx或者5xx
+  errorLogFile: '/tmp/titbit-error.log',
+
+  //自定义处理函数，此时logFile和errorLogFile会失效。
+  //接收参数为(worker, message)
+  //worker具体参考cluster的worker文档
+  /*
+    msg为日志对象，属性：
+      {
+        type : '_log',
+        success : true,
+        log : '@ GET | https://localhost:2021/randst | 200 | 2020-10-31 20:27:7 | 127.0.0.1 | User-Agent'
+      }
+  */
+  logHandle : (w, msg) => {
+    console.log(w.id, msg)
+  }
+
+})
+
+app.run(1234)
+
+```
+
+使用中间件的方式处理日志和全局日志并不冲突，而如果要通过中间件进行日志处理会无法捕获没有路由返回404的情况，因为框架会先查找路由，没有则会返回。这时候，不会有请求上下文的创建，直接返回请求，避免无意义的操作。
+
+而且，这样的方式其实更加容易和cluster模式结合，因为在内部就是利用master和worker的通信机制实现的。
+
 
 ## 其他
 
