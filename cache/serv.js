@@ -109,8 +109,15 @@ router.options('/*', async c => {
 });
 
 router.get('/', async ctx => {
-    ctx.res.body = 'ok';
+  ctx.res.body = {
+    ok : 'ok',
+    query : ctx.query
+  };
 });
+
+app.get('/:name/:age/:detail', async c => {
+  c.res.body = c.param
+})
 
 router.get('/ctx', async ctx => {
   

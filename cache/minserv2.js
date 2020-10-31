@@ -6,7 +6,10 @@ const app = new titbit({
   debug: true,
   //globalLog: true
   useLimit: false,
-  maxpool : 5000
+  maxpool : 5000,
+  cert : './rsa/localhost-cert.pem',
+  key : './rsa/localhost-privkey.pem',
+  http2: true,
 })
 
 async function delay(tm) {
@@ -28,11 +31,6 @@ app.get('/', async c => {
   c.send('success')
 })
 
-app.get('/null', async c => {
-  c.send('null')
-})
-
-
 app.get('/ok', async c => {
   await new Promise((rv, rj) => {
     setTimeout(() => {
@@ -45,22 +43,16 @@ app.get('/ok', async c => {
 
 app.get('/timeout', async c => {
   
-  await delay(4000)
+  await delay(3000)
 
   c.reply.write('123')
 
-  await delay(2000)
-
   c.reply.write('234')
 
-  await delay(26000)
+  await delay(6000)
 
-  c.send('out')
+  //c.send('out')
 })
 
-if (process.argv.indexOf('-c') > 0) {
-  app.daemon(1234, 3)
-  //app.daemon(1235, 3)
-} else {
-  app.run(1234)
-}
+app.run(1234)
+
