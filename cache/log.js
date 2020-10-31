@@ -29,15 +29,18 @@ var app = new titbit({
   loadInfoFile : '/tmp/loadinfo.log',
   timeout : 15000,
   //socktimeout: 1000,
+  cert : './rsa/localhost-cert.pem',
+  key : './rsa/localhost-privkey.pem',
+  //http2: true,
   useLimit: true,
-  //logType : 'file',
+
+  logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
 
-  logType : 'self',
-  logHandle : (w, msg) => {
+  /* logHandle : (w, msg) => {
     console.log(w.id, msg);
-  }
+  } */
 
 });
 
@@ -128,6 +131,17 @@ app.get('/decrypt', async c => {
 app.get('/sha256', async c => {
   c.res.body = c.helper.sha256(`${Math.random()}${Date.now()}`);
 });
+
+app.get('/randst', async c => {
+  let arr = [200,201,202,400,500,503,502,501,404,301]
+
+  let ind = parseInt(Math.random() * arr.length)
+
+  c.status(arr[ind])
+
+  c.res.body = `status: ${arr[ind]}`
+
+})
 
 //app.logger.watch();
 
