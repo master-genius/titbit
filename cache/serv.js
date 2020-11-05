@@ -15,11 +15,10 @@ var app = new titbit({
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 240,
-    socktimeout: 390,
+    timeout : 6000,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    //http2: true,
+    http2: true,
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog: true,
@@ -117,6 +116,13 @@ router.get('/', async ctx => {
 
 app.get('/:name/:age/:detail', async c => {
   c.res.body = c.param
+})
+
+app.get('/timeout/:tm', async c => {
+
+  await delay(parseInt(c.param.tm))
+
+  c.send('timeout ok')
 })
 
 router.get('/ctx', async ctx => {
@@ -392,4 +398,16 @@ if (process.argv.indexOf('-d') > 0) {
   app.config.daemon = true;
 }
 
-app.daemon(2021, 2);
+let serv = app.daemon(2021, 2);
+
+if (cluster.isWorker) {
+
+  setInterval(() => {
+    serv.getConnections((err,count) => {
+      console.log(count)
+    })
+  }, 5000)
+
+} else {
+  console.log(serv.config)
+}
