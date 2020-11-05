@@ -7,6 +7,10 @@
 
 > 它非常快，无论是路由查找还是中间件执行过程。
 
+**因为github无法正常显示图片，建议使用gitee（码云）查看文档。**
+
+[码云地址](https://gitee.com/daoio/titbit)
+
 
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
