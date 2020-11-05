@@ -336,6 +336,33 @@ app.use(async (c, next) => {
 ![](images/titbit-middleware.jpg)
 
 
+## 中间件参数
+
+使用use或者pre接口添加中间件，还支持第二个参数，可以进行精确的控制，传递选项属性：
+
+* group  路由分组，表示针对哪个分组执行。
+
+* method 请求方法，可以是字符串或数组，必须大写。
+
+* name  请求名称，表示只针对此请求执行。
+
+示例：
+
+```
+
+app.get('/xyz', async c => {
+  //...
+  //路由分组命名为proxy
+}, {group: 'proxy'})
+
+app.use(proxy, {
+  method : ['PUT', 'POST', 'GET', 'DELETE', 'OPTIONS'],
+  //针对路由分组proxy的请求执行。
+  group : 'proxy'
+})
+```
+
+
 ## pre 在接收body数据之前
 
 使用pre接口添加的中间件和use添加的主要区别就是会在接收body数据之前执行。可用于在接收数据之前的权限过滤操作。其参数和use一致。
@@ -408,6 +435,11 @@ app.use(setbodysize, {pre: true});
 
     //设置服务器超时，毫秒单位，在具体的请求中，可以再设置请求的超时。
     timeout   : 18000,
+
+    //套接字超时，这是必需的，因为有可能HTTP的连接会出现问题。
+    //所以套接字超时设置保证在底层的传输不会因为异常而导致产生大量空连接。
+    //毫秒单位。
+    socketTimeout: 5000,
 
     debug     : false,
 
