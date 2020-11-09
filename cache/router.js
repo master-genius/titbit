@@ -75,5 +75,10 @@ router.get('/:name/:id/:age', async c => {
   c.res.body = c.param;
 });
 
+//放在最后不会和/err冲突
+router.get('/:name', async c => {
+  c.send(c.param.name)
+})
+
 app.run(2023);
 
