@@ -199,6 +199,10 @@ app.use(async (ctx, next) => {
     console.log(process.pid,ctx.path, `: ${timing}ms`);
 });
 
+app.get('/pid', async c => {
+  c.res.body = process.pid
+})
+
 app.put('/bin-upload/:filename', async c => {
 
   let fname = `${c.helper.makeName(c.param.filename)}${c.helper.extName(c.param.filename)}`;
