@@ -15,7 +15,7 @@ var app = new titbit({
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 6000,
+    timeout : 9600,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     http2: true,

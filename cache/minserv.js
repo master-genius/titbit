@@ -6,7 +6,8 @@ const app = new titbit({
   debug: true,
   //globalLog: true
   useLimit: false,
-  maxpool : 5000
+  maxpool : 5000,
+  timeout : 3000
 })
 
 async function delay(tm) {
@@ -22,16 +23,20 @@ app.get('/', async c => {
   await new Promise((rv, rj) => {
     setTimeout(() => {
       rv()
-    }, parseInt(Math.random() * 5) + 100)
+    }, parseInt(Math.random() * 25) + 50)
   })
 
   c.send('success')
+
 })
 
 app.get('/null', async c => {
-  c.send('null')
+  c.res.body = 'null'
 })
 
+app.get('errcode', async c => {
+  c.send('not found', 404)
+})
 
 app.get('/ok', async c => {
   await new Promise((rv, rj) => {
