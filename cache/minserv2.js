@@ -10,6 +10,7 @@ const app = new titbit({
   cert : './rsa/localhost-cert.pem',
   key : './rsa/localhost-privkey.pem',
   http2: true,
+  timeout: 3200
 })
 
 async function delay(tm) {
@@ -49,10 +50,12 @@ app.get('/timeout', async c => {
 
   c.reply.write('234')
 
+  //c.reply.end()
+
+  //此处会引发段错误。
   await delay(6000)
 
   //c.send('out')
 })
 
 app.run(1234)
-
