@@ -4,13 +4,13 @@ const titbit = require('../main');
 
 var app = new titbit({
     debug : true,
-    allow : [
+    /* allow : [
         '127.0.0.1'
-    ],
-    maxIPRequest: 1500,
-    peerTime: 1,
-    useLimit: false,
-    maxConn: 2000,
+    ], */
+    maxIPRequest: 5,
+    peerTime: 10,
+    useLimit: true,
+    maxConn: 20,
     http2: true,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
@@ -115,4 +115,8 @@ app.use(async (c, next) => {
 }, {pre: true, method: 'POST', name: 'transmit'});
 
 
-app.daemon(2021, 2);
+if (process.argv.indexOf('-c') > 0) {
+  app.daemon(1234, 2)
+} else {
+  app.run(1234)
+}
