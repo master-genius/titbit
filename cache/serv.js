@@ -18,7 +18,10 @@ var app = new titbit({
     timeout : 9600,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
+    server : {
+      allowHTTP1: true
+    },
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog: true,
