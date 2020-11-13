@@ -96,25 +96,20 @@ npm i titbit
 ## 最小示例
 
 ``` JavaScript
-'use strict';
+'use strict'
 
-const titbit = require('titibit');
+const titbit = require('titibit')
 
-var app = new titbit();
+const app = new titbit()
 
-//router中的路由方法在app中都有同名的快速调用方法。
-var {router} = app;
 
-//也可以直接使用app.get
-router.get('/', async c => {
-  //data类型为string|Buffer
-  //其等效形式为c.res.body = 'success';
-  //同时可以设置c.res.encoding为返回数据的编码格式，默认为'utf8'。
-  c.res.body = 'success'; //返回字符串
-});
+app.get('/', async c => {
+  //data类型为string|Buffer。可以设置c.res.encoding为返回数据的编码格式，默认为'utf8'。
+  c.res.body = 'success'
+})
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
-app.run(2019);
+app.run(1234)
 
 ```
 
@@ -210,43 +205,43 @@ app.run(8000);
 解析后的文件数据在c.files中存储，想知道具体结构请往下看。
 
 ``` JavaScript
-'use strict';
+'use strict'
 
-const titbit = require('titbit');
+const titbit = require('titbit')
 
-var app = new titbit();
-
-var {router} = app;
+const app = new titbit()
 
 //添加中间件过滤上传文件的大小，后面有中间件详细说明。
 //第二个参数表示只针对POST请求，并且路由命名为upload-image路由执行。
 app.use(async (c, next) => {
-  //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
-  let upf = c.getFile('image');
-  if (!upf) {
-    c.res.body = 'file not found';
-    return ;
-  } else if (upf.data.length > 2000000) {
-    c.res.body = 'max file size: 2M';
-    return ;
-  }
-  await next();
 
+  //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
+  let upf = c.getFile('image')
+  if (!upf) {
+    c.res.body = 'file not found'
+    return
+  } else if (upf.data.length > 2000000) {
+    c.res.body = 'max file size: 2M'
+    return
+  }
+
+  await next()
+  //指定只有POST请求，并且路由名称为upload-image才会执行此中间件。
 }, {method: 'POST', name: 'upload-image'});
 
 router.post('/upload', async c => {
-  let f = c.getFile('image');
+  let f = c.getFile('image')
   //此函数是助手函数，makeName默认会按照时间戳生成名字，extName解析文件的扩展名。
-  let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`;
+  let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`
 
   try {
-    c.res.body = await c.moveFile(f, fname);
+    c.res.body = await c.moveFile(f, fname)
   } catch (err) {
-    c.res.body = err.message;
+    c.res.body = err.message
   }
 }, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
 
-app.run(2019);
+app.run(1234)
 
 ```
 
@@ -686,7 +681,7 @@ app.daemon(1234, 'localhost', 3)
 
 除了保存到文件和输出到终端进行调试，还可以利用logHandle选项设置自己的日志处理函数。
 
-**设置了logHanle，logFile和errorLogFile会失效，具体请看代码。**
+**设置了logHandle，logFile和errorLogFile会失效，具体请看代码。**
 
 示例：
 
