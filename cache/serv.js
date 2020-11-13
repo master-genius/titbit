@@ -405,6 +405,10 @@ if (process.argv.indexOf('-d') > 0) {
   app.config.daemon = true;
 }
 
+if (process.argv.indexOf('--http2')) {
+  app.config.http2 = true;
+}
+
 let serv = app.daemon(2021, 2);
 
 if (cluster.isWorker) {
@@ -415,6 +419,4 @@ if (cluster.isWorker) {
     })
   }, 5000)
 
-} else {
-  console.log(serv.config)
 }
