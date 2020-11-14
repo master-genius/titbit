@@ -12,6 +12,8 @@
 [码云地址](https://gitee.com/daoio/titbit)
 
 
+**Wiki中有相关主题的说明**
+
 [Wiki](https://gitee.com/daoio/titbit/wikis)
 
 
@@ -184,6 +186,35 @@ router.post('/p', async c => {
 });
 
 app.run(2019);
+
+```
+
+## send函数
+
+send函数就是对c.res.body的包装，其实就是设置了c.res.body的值。并且支持第二个参数，作为状态码，默认为200。
+
+``` JavaScript
+
+app.get('/', async c => {
+  c.send('success')
+})
+
+app.get('/randerr', async c => {
+  let n = parseInt(Math.random() * 10)
+  if (n >= 5) {
+    c.send('success')
+  } else {
+    //返回404状态码
+    /*
+      等效于：
+        c.status(404)
+        c.res.body = 'not found'
+    */
+    c.send('not found', 404)
+  }
+})
+
+app.run(1234)
 
 ```
 
