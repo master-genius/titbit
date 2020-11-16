@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "21.8.5",
+  "version": "21.8.6",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -9,7 +9,7 @@
   "bin" : {
   },
   "scripts": {
-    "test": "echo ok"
+    "test": "node test/test-route.js"
   },
   "repository": {
     "type": "git",
