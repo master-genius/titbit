@@ -131,10 +131,10 @@ app.run(1234)
 
 HTTP的起始行给出了请求类型，也被称为：请求方法。目前的请求方法：
 ```
-GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH CONNECT
+GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH
 ```
 
-最常用的是前面5个。对于每个请求类型，router中都有同名但是小写的函数进行路由挂载。为了方便调用，在初始化app后，可以使用app上同名的快捷调用。
+最常用的是前面5个。对于每个请求类型，router中都有同名但是小写的函数进行路由挂载。为了方便调用，在初始化app后，可以使用app上同名的快捷调用。（框架层面仅支持这些。）
 
 **示例：**
 
