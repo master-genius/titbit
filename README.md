@@ -16,7 +16,6 @@
 
 [Wiki](https://gitee.com/daoio/titbit/wikis)
 
-
 Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
 
 
@@ -87,13 +86,26 @@ app.daemon(8008, workers);
 
 ## !注意
 
-请使用最新版本。
+请尽可能使用最新版本。
 
 ## 安装
 
-```
+``` JavaScript
 npm i titbit
 ```
+
+## 兼容性
+
+从最初发展到后来一段时间内，都尽可能保证大版本的兼容性。中间经历过多次比较大的演进，但是我们必须承认，有时候次版本号更新也会有不兼容更新，我们做的不太好。从21.5+版本以后，郑重保证，只有大版本更新可能会有一些不兼容的更新，并给出不兼容项，请注意文档和Wiki。之后的两个小版本号更新都不会体现不兼容的更新。（在此之前，次要版本号仍然可以保证兼容性）
+
+## 重要版本改进
+
+| 版本 | 主要修改项 | 说明 |
+|----|----|----|
+| v21.3.1 | 去掉hook接口，增加pre接口 |  |
+| v21.5.4 | protocol表示的协议字符串统一不再有: |http1有 : ，http2没有，Node.js本身就不一致，但是此后，框架提供的请求上下文一致。|
+| v21.8.1 | 添加major属性表示http协议主要版本号，但是此不会导致不兼容；<br>请求上下文的send函数支持第二个参数表示状态码。 | major为数字类型；<br>send函数第二个参数也为数字类型，默认为200。 |
+
 
 ## 最小示例
 
@@ -758,6 +770,52 @@ app.daemon(1234, 3)
 使用中间件的方式处理日志和全局日志并不冲突，而如果要通过中间件进行日志处理会无法捕获没有路由返回404的情况，因为框架会先查找路由，没有则会返回。这时候，不会有请求上下文的创建，直接返回请求，避免无意义的操作。
 
 而且，这样的方式其实更加容易和cluster模式结合，因为在内部就是利用master和worker的通信机制实现的。
+
+## 消息事件处理
+
+基于message事件，在daemon模式（基于cluster模块），提供了一个setMsgEvent函数用于获取子进程发送的事件消息并进行处理。
+
+这要求worker进程发送的消息必须是一个对象，其中的type属性是必需的，表示消息事件的名称。其他字段的数据皆可以自定义。
+
+使用方式如下：
+
+``` JavaScript
+
+const titbit = require('titbit')
+const cluster = require('cluster')
+
+const app = new titbit({
+  debug: true,
+  loadInfoFile: '/tmp/loadinfo.log'
+})
+
+if (cluster.isMaster) {
+  app.setMsgEvent('test-msg', (worker, msg, handle) => {
+    //子进程中会通过message事件收到消息
+    worker.send({
+      id : worker.id,
+      data : 'ok'
+    })
+
+    console.log(msg)
+  })
+} else {
+  //接收worker.send发送的消息
+  process.on('message', msg => {
+    console.log(msg)
+  })
+
+  setIneterval(() => {
+    process.send({
+      type : 'test-msg',
+      pid : process.pid,
+      time : (new Date()).toLocaleString()
+    })
+  }, 1000)
+
+}
+
+```
 
 
 ## 其他
