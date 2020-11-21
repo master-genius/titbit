@@ -1,13 +1,15 @@
 'use strict';
 
 const titbit = require('../main')
+const cluster = require('cluster');
 
 const app = new titbit({
   debug: true,
   //globalLog: true
   useLimit: false,
   maxpool : 5000,
-  timeout : 3000
+  timeout : 3000,
+  //loadInfoFile : '--mem'
 })
 
 async function delay(tm) {
@@ -23,7 +25,7 @@ app.get('/', async c => {
   await new Promise((rv, rj) => {
     setTimeout(() => {
       rv()
-    }, parseInt(Math.random() * 25) + 50)
+    }, parseInt(Math.random() * 25) + 40)
   })
 
   c.send('success')
@@ -62,6 +64,26 @@ app.get('/timeout', async c => {
 
   c.send('out')
 })
+
+/* 
+if (cluster.isWorker) {
+  setInterval(() => {
+    process.send({
+      type : 'get-load-info'
+    })
+  }, 1000)
+
+  process.on('message', msg => {
+    console.log(process.pid, '\n')
+    console.log(msg)
+  })
+
+} else {
+  app.setMsgEvent('get-load-info', (w, msg) => {
+    w.send(app.monitor.loadCache)
+  })
+}
+ */
 
 if (process.argv.indexOf('-c') > 0) {
   app.daemon(1234, 3)
