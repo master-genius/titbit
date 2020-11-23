@@ -537,25 +537,35 @@ app.use(setbodysize, {pre: true});
 
     var ctx = {
 
-      version : '1.1', //协议版本
+      //协议版本字符串，'1.1' 或者 '2'
+      version : '1.1', 
+
+      //在v21.8.1之后的版本有此项，是协议的主要版本号，数字类型。
+      major : 1,
       
-      maxBody : 0, //最大body请求数据量
+      //最大允许的POST或PUT提交的body数据大小，字节单位
+      maxBody : 0,
 
-      method    : '', //请求类型
+      //请求类型 GET、POST····
+      method    : '',
 
-      ip      : '', //客户端IP
+      //请求客户端的IP地址
+      ip      : '',
 
-      host    : '', 
+      host    : '',
       
       port    : 0,
       
-      protocol: '', //协议
+      //协议，小写的字符串，http | https | http2
+      protocol: '',
 
       //实际的访问路径
       path    : '',
 
-      name    : '', //对路由和请求的命名
+      //路由名称
+      name    : '',
       
+      //在处理请求时，指向实际请求的headers
       headers   : {},
 
       //实际执行请求的路径，是添加到路由模块的路径
@@ -590,16 +600,17 @@ app.use(setbodysize, {pre: true});
       requestCall : null,
 
       //助手函数，包括aes加解密、sha1、sha256、sha512、格式化时间字符串、生成随机字符串等处理。
+      //helper是直接指向helper模块。
       helper    : helper,
 
-      //要返回数据和编码的记录
+      //要返回数据和编码的记录，在http2中，还有headers属性用于缓存要返回的消息头。
       res : {
         body : '',
         encoding : 'utf8',
       },
   
       //http模块请求回调函数传递的参数被封装到此。
-      //在http2协议中，没有这两项。
+      //在http2协议中，没有response，而request会指向stream。
       request   : null,
       response  : null,
 
@@ -617,7 +628,8 @@ app.use(setbodysize, {pre: true});
       service:null,
     };
 
-    ctx.send = (d) => {
+    ctx.send = (d, st = 200) => {
+      ctx.status(st);
       ctx.res.body = d;
     };
 
