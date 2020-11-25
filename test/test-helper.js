@@ -11,13 +11,13 @@ let data = JSON.stringify({
 
 let cryptData = helper.aesEncrypt(data, key)
 
-console.log(helper.aesDecrypt(cryptData, key))
+console.log('aes decrypt: ', helper.aesDecrypt(cryptData, key))
 
-console.log( helper.timestr() )
+console.log('timestr: ', helper.timestr() )
 
-console.log(helper.makeName('aswe.jpg'))
+console.log('make name: ', helper.makeName('aswe.jpg'))
 
-console.log(helper.uuid())
+console.log('uuid: ', helper.uuid())
 
 console.log(helper.ctype('.jppe'))
 
@@ -25,8 +25,8 @@ console.log(helper.ctype('.jpg'))
 
 console.log(helper.ctype('.js'))
 
-console.log( helper.nrand(1,23) )
+console.log('hmacsha1: ', helper.hmacsha1('12345', '123456', 'base64'))
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 5; i++) {
   console.log( helper.nrand(i, 1000 - i) )
 }
