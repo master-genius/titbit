@@ -242,6 +242,21 @@ app.get('/:name/:id', async c => {
 app.run(8000);
 ```
 
+## 任意路径参数
+
+\* 表示任意路径，但是必须出现在路由最后。
+
+``` JavaScript
+
+app.get('/static/*', async c => {
+  //*表示的任意路径解析到c.param.starPath
+  let spath = c.param.starPath
+
+  c.send(spath)
+})
+
+```
+
 ## 上传文件
 
 默认会解析上传的文件，你可以在初始化服务的时候，传递parseBody选项关闭它，关于选项后面有详细的说明。
