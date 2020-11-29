@@ -10,21 +10,21 @@ var app = new titbit({
     maxBody: 150000000,
     maxFiles: 50,
     debug: true,
-    useLimit: true,
+    useLimit: false,
     //deny : ['192.168.3.4'],
     maxIPRequest: 8000,
     maxConn: 12345,
     peerTime: 1,
-    timeout : 9600,
+    timeout : 100,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
     server : {
-      allowHTTP1: true
+      //allowHTTP1: true
     },
     showLoadInfo: true,
     loadInfoType : 'text',
-    globalLog: true,
+    //globalLog: true,
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
@@ -124,6 +124,15 @@ app.get('/:name/:age/:detail', async c => {
 app.get('/timeout/:tm', async c => {
 
   await delay(parseInt(c.param.tm))
+
+  c.send('timeout ok')
+})
+
+app.get('/rand/timeout', async c => {
+
+  c.reply.write('123')
+
+  await delay(parseInt(Math.random() * 1000))
 
   c.send('timeout ok')
 })
@@ -405,7 +414,7 @@ if (process.argv.indexOf('-d') > 0) {
   app.config.daemon = true;
 }
 
-if (process.argv.indexOf('--http2')) {
+if (process.argv.indexOf('--http2') > 0) {
   app.config.http2 = true;
 }
 
@@ -415,7 +424,7 @@ if (cluster.isWorker) {
 
   setInterval(() => {
     serv.getConnections((err,count) => {
-      console.log(count)
+      console.log('conn',count)
     })
   }, 5000)
 
