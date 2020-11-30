@@ -18,7 +18,7 @@ var app = new titbit({
     timeout : 100,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    //http2: true,
+    http2: true,
     server : {
       //allowHTTP1: true
     },
@@ -28,20 +28,6 @@ var app = new titbit({
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
-    notFound: `<!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width">
-                <title>titbit - not found</title>
-            </head>
-            <body>
-                <div style="margin-top:3.8rem;text-align:center;color:#565758;">
-                    <h1>404 : page not found</h1>
-                </div>
-            </body>
-        </html>
-    `,
 });
 
 async function delay(t) {
@@ -51,7 +37,6 @@ async function delay(t) {
     }, t);
   });
 }
-//console.log(app.secure);
 
 //app.secure.maxrss = 36860000*2;
 //console.log(app.secure.maxmem/1024/1024)
@@ -215,52 +200,6 @@ app.get('/pid', async c => {
   c.res.body = process.pid
 })
 
-app.put('/bin-upload/:filename', async c => {
-
-  let fname = `${c.helper.makeName(c.param.filename)}${c.helper.extName(c.param.filename)}`;
-
-  let r = await new Promise((rv, rj) => {
-    fs.writeFile(process.env.HOME + '/tmp/a/' + fname, c.body, (err) => {
-      if (err) {
-        rj(err);
-      } else {
-        rv(fname);
-      }
-    });
-
-  });
-
-  c.res.body = r;
-
-});
-
-/* 
-app.use(async (ctx, next) => {
-    console.log('middleware for POST/PUT');
-    await next();
-    console.log('middleware for POST/PUT -- ');
-}, {method: ['POST','PUT'], hook: true});
-
-app.use(async (ctx, next) => {
-    console.log('a1');
-    console.log(ctx.method, ctx.path);
-    await next();
-    console.log('a1');
-});
-
-app.use(async (ctx, next) => {
-    console.log('a2');
-    await next();
-    console.log('a2');
-});
-
-app.use(async (ctx, next) => {
-    console.log('a3');
-    await next();
-    console.log('a3');
-}, {group: 'post'});
- */
-
 app.use(async (ctx, next) => {
     console.log('checking file');
     if (!ctx.isUpload) {
@@ -368,12 +307,6 @@ router.get('/router', async c => {
     ];
 });
 
-/* if (cluster.isWorker) {
-  setTimeout(() => {
-    process.exit(2);
-  }, 900);
-}
- */
 //worker中设置大量定时器，测试性能
 //在设置1000个定时器，仍然可以处理请求，但是比较慢
 //在设置10个以内的定时器，触发时间100ms以上，对整体的性能影响比较小。
