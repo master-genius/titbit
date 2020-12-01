@@ -10,15 +10,15 @@ var app = new titbit({
     maxBody: 150000000,
     maxFiles: 50,
     debug: true,
-    useLimit: false,
+    useLimit: true,
     //deny : ['192.168.3.4'],
-    maxIPRequest: 8000,
-    maxConn: 12345,
+    maxIPRequest: 1000,
+    maxConn: 2345,
     peerTime: 1,
-    timeout : 100,
+    timeout : 10000,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    http2: true,
+    //http2: true,
     server : {
       //allowHTTP1: true
     },
@@ -26,7 +26,7 @@ var app = new titbit({
     loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
-    loadInfoFile: '/tmp/loadinfo.log',
+    //loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
 });
 
@@ -351,7 +351,7 @@ if (process.argv.indexOf('--http2') > 0) {
   app.config.http2 = true;
 }
 
-let serv = app.daemon(2021, 2);
+let serv = app.daemon(1234, 2);
 
 if (cluster.isWorker) {
 
