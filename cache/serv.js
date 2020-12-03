@@ -36,6 +36,8 @@ var app = new titbit({
 
 app.autoWorker(8)
 
+app.sched('none')
+
 async function delay(t) {
   return await new Promise((rv, rj) => {
     setTimeout(() => {
