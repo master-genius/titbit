@@ -48,6 +48,8 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 * 在cluster模式，监控子进程超出最大内存限制则重启。
 
+* 可选择是否开启自动根据负载创建子进程处理请求。
+
 
 框架在初始化会自动检测内存大小并设定相关上限，你可以在初始化后，通过更改secure中的属性来更改限制，这需要你使用daemon接口，也就是使用master管理子进程的模式。
 
@@ -547,136 +549,41 @@ app.use(setbodysize, {pre: true});
 
 请求上下文就是一个封装了各种请求数据的对象。通过这样的设计，把HTTP/1.1 和 HTTP/2协议的一些差异以及Node.js版本演进带来的一些不兼容做了处理，出于设计和性能上的考虑，对于HTTP2模块，封装请求对象是stream，而不是http模块的IncomingMessage和ServerResponse（封装对象是request和response）。
 
-``` JavaScript
+**请求上下文属性和基本描述**
 
-    var ctx = {
+| 属性 | 描述 |
+| ---- | ---- |
+| version | 协议版本，字符串类型，为'1.1' 或 '2'。 |
+| major | 协议主要版本号，1、2、3分别表示HTTP/1.1 HTTP/2 HTTP/3（目前还没有3）。 |
+| maxBody | 支持的最大请求体字节数，数字类型，默认为初始化时，传递的选项maxBody的值，可以在中间件中根据请求自动设定。 |
+| method | 请求类型，GET POST等HTTP请求类型，大写字母的字符串。 |
+| host | 服务的主机名，就是request.headers['host']的值。 |
+| protocol | 协议字符串，不带冒号，'https'、'http'、'http2'。 |
+| path | 具体请求的路径。 |
+| routepath | 实际执行请求的路由字符串。 |
+| query | url传递的参数。 |
+| param | 路由参数。 |
+| files | 上传文件保存的信息。 |
+| body | body请求体的数据，具体格式需要看content-type，一般为字符串或者对象，也可能是buffer。 |
+| port | 客户端请求的端口号。 |
+| ip | 客户端请求的IP地址。 |
+| headers | 指向request.headers。 |
+| isUpload | 是否为上传文件请求，此时就是检测消息头content-type是否为multipart/form-data格式。 |
+| name | 路由名称，默认为空字符串。 |
+| group | 路由分组，默认为空字符串。 |
+| reply | HTTP/1.1协议，指向response，HTTP/2 指向stream。 |
+| request | HTTP/1.1 就是http模块request事件的参数IncomingMessage对象，HTTP/2 指向stream对象。 |
+| response | HTTP/1.1 是http模块的request事件的第二个参数response对象。HTTP/2没有此属性。 |
+| box | 默认为空对象，可以天际任何属性值，用来动态传递给下一层组件需要使用的信息。 |
+| service | 用于依赖注入的对象，指向app.service。 |
+| res | 一个对象包括encoding、body属性，用来暂存返回数据的编码和具体数据。 |
+| helper | 指向helper模块，提供了一些助手函数，具体参考wiki。 |
+| send | 函数，用来设置res.body的数据并支持第二个参数作为状态码，默认状态码为200。 |
+| moveFile | 函数，用来移动上传的文件到指定路径。 |
+| status | 函数，设置状态码。 |
+| setHeader | 函数，设置消息头。 |
+| getFile | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
 
-      //协议版本字符串，'1.1' 或者 '2'
-      version : '1.1', 
-
-      //在v21.8.1之后的版本有此项，是协议的主要版本号，数字类型。
-      major : 1,
-      
-      //最大允许的POST或PUT提交的body数据大小，字节单位
-      maxBody : 0,
-
-      //请求类型 GET、POST····
-      method    : '',
-
-      //请求客户端的IP地址
-      ip      : '',
-
-      host    : '',
-      
-      port    : 0,
-      
-      //协议，小写的字符串，http | https | http2
-      protocol: '',
-
-      //实际的访问路径
-      path    : '',
-
-      //路由名称
-      name    : '',
-      
-      //在处理请求时，指向实际请求的headers
-      headers   : {},
-
-      //实际执行请求的路径，是添加到路由模块的路径
-      routepath   : '', 
-
-      //路由参数
-      param     : {},
-
-      //url的querystring参数，就是url 的 ? 后面的参数
-      query     : {},
-
-      //请求体解析后的数据
-      body    : {},
-
-      //是否是上传文件的操作
-      isUpload  : false,
-
-      //路由分组
-      group     : '',
-      
-      //原始body数据
-      rawBody   : '',
-
-      //body数据接收到的总大小
-      bodyLength  : 0,
-
-      //解析后的文件信息，实际的文件数据还在rawBody中，这里只记录信息。
-      files     : {},
-
-      // 指向实际请求的回调函数，就是通过app.get等接口添加的回调函数。
-      // 你甚至可以在执行请求过程中，让它指向一个新的函数，这称为请求函数重定向。
-      requestCall : null,
-
-      //助手函数，包括aes加解密、sha1、sha256、sha512、格式化时间字符串、生成随机字符串等处理。
-      //helper是直接指向helper模块。
-      helper    : helper,
-
-      //要返回数据和编码的记录，在http2中，还有headers属性用于缓存要返回的消息头。
-      res : {
-        body : '',
-        encoding : 'utf8',
-      },
-  
-      //http模块请求回调函数传递的参数被封装到此。
-      //在http2协议中，没有response，而request会指向stream。
-      request   : null,
-      response  : null,
-
-      //只有在http2模块才有此项。
-      stream : null,
-
-      //在http1中指向response，在http2中指向stream
-      reply: null,
-  
-      //中间件执行时挂载到此处的值可以传递到下一层。
-      box : {},
-
-      //app运行时，最开始通过addService添加的服务会被此处的service引用。
-      //这称为依赖注入，不必每次在代码里引入。
-      service:null,
-    };
-
-    ctx.send = (d, st = 200) => {
-      ctx.status(st);
-      ctx.res.body = d;
-    };
-
-    ctx.getFile = (name, ind = 0) => {
-      if (ind < 0) {return ctx.files[name] || [];}
-  
-      if (ctx.files[name] === undefined) {return null;}
-      
-      if (ind >= ctx.files[name].length) {return null;}
-  
-      return ctx.files[name][ind];
-    };
-  
-    ctx.setHeader = (name, val) => {
-      ctx.response.setHeader(name, val);
-    };
- 
-    //不使用getter和setter是因为其性能比函数调用差很多
-    ctx.status = (stcode = null) => {
-      if (stcode === null) { return ctx.response.statusCode; }
-      if(ctx.response) { ctx.response.statusCode = stcode; }
-    };
-
-    //上传文件时，写入数据到文件的助手函数。
-    /**
-     * @param {object} upf 通过ctx.getFile获取的文件对象
-     * @param {string} target 目标文件路径，包括路径和文件名。
-    */
-    ctx.moveFile = (upf, target) => {
-      return moveFile(ctx, upf, target);
-    };
-
-```
 
 注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
 
@@ -843,13 +750,50 @@ if (cluster.isMaster) {
 
 ```
 
+## 让服务自动调整子进程数量
+
+通过daemon传递的参数作为基本的子进程数量，比如：
+
+``` JavaScript
+
+//使用2个子进程处理请求。
+app.daemon(1234, 2)
+
+```
+
+如果需要自动根据负载创建子进程，并在负载空闲时终止进程，维持基本的数量，可以使用autoWorker接口来设置一个最大值，表示最大允许多少个子进程处理请求，这个值必须要比基本的子进程数量大才会生效。
+
+```
+
+//最大使用9个子进程处理请求。
+app.autoWorker(9)
+
+//...
+
+app.daemon(1234, 2)
+
+```
+
+当负载过高时，会自动创建子进程，并且在空闲一段时间后，会自动终止连接数量为0的子进程，恢复到基本的数值。
+
+**此功能在v21.9.6+版本可用。**
+
+在这种模式下，采用系统层面的调度策略反而更好：
+
+``` JavaScript
+cluster.schedulingPolicy = cluster.SCHED_NONE;
+```
+
+默认，在Linux上，Node.js会使用轮转的方式，Master进程负责分发请求，每个子进程获得的请求处理是很均衡的。
 
 ## 其他
 
-titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,text/xml,text/json）。注意这是在你没有设置content-type的情况下进行。
+- titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,text/xml,text/json）。注意这是在你没有设置content-type的情况下进行。
 
-默认会限制url的最大长度，也会根据硬件情况设定一个最大内存使用率。
+- 默认会限制url的最大长度，也会根据硬件情况设定一个最大内存使用率。
 
-这一切你都可以通过配置选项或是中间件来进行扩展和重写，既有限制也有自由。
+- 这一切你都可以通过配置选项或是中间件来进行扩展和重写，既有限制也有自由。
 
-它很快，并且我们一直在都在关注优化。如果你需要和其他对比测试，请都添加多个中间件，并且都添加上百个路由，然后测试对比。
+- 它很快，并且我们一直在都在关注优化。如果你需要和其他对比测试，请都添加多个中间件，并且都添加上百个路由，然后测试对比。
+
+- 提供了一个sched函数用来快速设置cluster模式的调度方式，支持参数为'rr'或'none'，本质就是设置cluster.schedulingPolicy的值。
