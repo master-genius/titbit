@@ -12,8 +12,8 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
-    maxIPRequest: 1000,
-    maxConn: 2345,
+    maxIPRequest: 4000,
+    maxConn: 4096,
     peerTime: 1,
     timeout : 10000,
     cert : './rsa/localhost-cert.pem',
@@ -26,9 +26,13 @@ var app = new titbit({
     loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
-    //loadInfoFile: '/tmp/loadinfo.log',
+    loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
 });
+
+//app.workerCount.max = 8
+
+app.autoWorker(8)
 
 async function delay(t) {
   return await new Promise((rv, rj) => {
@@ -46,7 +50,7 @@ app.service.router = app.router;
 var {router} = app;
 
 var _userAgentCache = {};
-
+/* 
 app.use(async (c, next) => {
   if (c.headers['user-agent'] === undefined) {
     c.headers['user-agent'] = 'default-agent';
@@ -82,6 +86,7 @@ app.use(async (c, next) => {
   await next();
 
 });
+ */
 
 app.use(async (c, next) => {
   c.setHeader('Access-control-allow-origin', '*');
@@ -141,14 +146,14 @@ router.get('/ctx', async ctx => {
 
 router.get('/test', async ctx => {
 
-  await delay(10);
+  await delay(30);
   console.log('ok start');
 
-  await delay(10);
+  await delay(25);
 
   console.log('not end');
   
-  await delay(10);
+  await delay(25);
   console.log('ha ha!');
   
   let tout = parseInt(Math.random() * 50);
@@ -188,13 +193,13 @@ app.get('/html', async c => {
     </html>`;
 });
 
-app.use(async (ctx, next) => {
+/* app.use(async (ctx, next) => {
     var start_time = Date.now();
     await next();
     var end_time = Date.now();
     var timing = end_time-start_time;
     console.log(process.pid,ctx.path, `: ${timing}ms`);
-});
+}); */
 
 app.get('/pid', async c => {
   c.res.body = process.pid
@@ -270,7 +275,7 @@ router.put('/upload', async c => {
 }, {name:'upload-file', group:'upload'});
 
 router.get('/err', async ctx => {
-    throw 'Error: test';
+  throw 'Error: test';
 });
 
 router.get('/app', async c => {
@@ -353,6 +358,7 @@ if (process.argv.indexOf('--http2') > 0) {
 
 let serv = app.daemon(1234, 2);
 
+/* 
 if (cluster.isWorker) {
 
   setInterval(() => {
@@ -362,3 +368,4 @@ if (cluster.isWorker) {
   }, 5000)
 
 }
+ */
