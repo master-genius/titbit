@@ -5,6 +5,8 @@ const zlib = require('zlib');
 const fs = require('fs');
 const cluster = require('cluster');
 
+//cluster.schedulingPolicy = cluster.SCHED_NONE;
+
 var app = new titbit({
     //daemon: true,
     maxBody: 150000000,
