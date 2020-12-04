@@ -778,13 +778,6 @@ app.daemon(1234, 2)
 
 **此功能在v21.9.6+版本可用。**
 
-在这种模式下，采用系统层面的调度策略反而更好：
-
-``` JavaScript
-cluster.schedulingPolicy = cluster.SCHED_NONE;
-```
-
-默认，在Linux上，Node.js会使用轮转的方式，Master进程负责分发请求，每个子进程获得的请求处理是很均衡的。
 
 ## 其他
 
