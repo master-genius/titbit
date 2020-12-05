@@ -34,7 +34,7 @@ var app = new titbit({
 
 //app.workerCount.max = 8
 
-app.autoWorker(8)
+app.autoWorker(5)
 
 //app.sched('none')
 
