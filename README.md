@@ -51,40 +51,6 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 * 可选择是否开启自动负载模式：根据负载创建新的子进程处理请求，并在空闲时恢复初始状态。
 
 
-框架在初始化会自动检测内存大小并设定相关上限，你可以在初始化后，通过更改secure中的属性来更改限制，这需要你使用daemon接口，也就是使用master管理子进程的模式。
-
-```
-
-var app = new titbit();
-
-//最大内存设定为500M，但是只有在连接数为0时才会自动重启。
-//这个值和diemem都是针对heap（堆）的。
-app.secure.maxmem = 500000000;
-
-//必须要重启的最大内存上限设定为600M
-//这个值一般要比maxmem大，当内存使用超过maxmem设置的值，
-//但是连接不为0，这时候如果继续请求超过diemem设置的值，则会直接重启进程。
-app.secure.diemem = 600000000;
-
-//最大内存使用设置为2G
-//注意这是总的内存使用，包括你用Buffer申请的内存。
-
-let workers = 2;
-app.secure.maxrss = 2000000000 * workers;
-
-app.get('/', async c => {
-  c.send('ok');
-})
-
-app.daemon(8008, workers);
-
-```
-
-**注意，这需要你开启showLoadInfo选项，这是默认开启的，除非你设置为false**
-
-在服务始化时，会根据系统的可用内存来进行自动的设置，除非你必须要自己控制，否则最好是使用默认的配置。
-
-
 ## !注意
 
 请尽可能使用最新版本。
@@ -107,6 +73,8 @@ npm i titbit
 | v21.5.4 | protocol表示的协议字符串统一不再有: |http模块有 : ，http2模块没有 : ，Node.js本身就不一致，但是此后，框架提供的请求上下文一致，屏蔽了这种不一致性。|
 | v21.8.1 | - 添加major属性表示http协议主要版本号，但是此不会导致不兼容。<br>- 请求上下文的send函数支持第二个参数表示状态码。 | major为数字类型；<br>send函数第二个参数也为数字类型，默认为200。 |
 | v21.9.6 | - monitor监控模块优化输出和精确度。<br>- 支持自动根据负载情况创建新的子进程处理请求，并在负载降低时在空闲时kill掉多出的进程。<br>- 增加autoWorker接口设置自动创建子进程最大数量。 | 此版本无任何不兼容更新。 |
+
+| v21.10.0 | - 全局日志会显示real_ip，如果没有使用代理，则使用 - 代替。<br> - 请求上下文的ip属性就是客户端套接字的IP地址。 | 此版本无不兼容更新。 |
 
 
 ## 最小示例
@@ -567,7 +535,7 @@ app.use(setbodysize, {pre: true});
 | files | 上传文件保存的信息。 |
 | body | body请求体的数据，具体格式需要看content-type，一般为字符串或者对象，也可能是buffer。 |
 | port | 客户端请求的端口号。 |
-| ip | 客户端请求的IP地址。 |
+| ip | 客户端请求的IP地址，是套接字的地址，如果使用了代理服务器，需要检测x-real-ip或是x-forwarded-for消息头获取真正的IP。 |
 | headers | 指向request.headers。 |
 | isUpload | 是否为上传文件请求，此时就是检测消息头content-type是否为multipart/form-data格式。 |
 | name | 路由名称，默认为空字符串。 |
@@ -575,7 +543,7 @@ app.use(setbodysize, {pre: true});
 | reply | HTTP/1.1协议，指向response，HTTP/2 指向stream。 |
 | request | HTTP/1.1 就是http模块request事件的参数IncomingMessage对象，HTTP/2 指向stream对象。 |
 | response | HTTP/1.1 是http模块的request事件的第二个参数response对象。HTTP/2没有此属性。 |
-| box | 默认为空对象，可以天际任何属性值，用来动态传递给下一层组件需要使用的信息。 |
+| box | 默认为空对象，可以添加任何属性值，用来动态传递给下一层组件需要使用的信息。 |
 | service | 用于依赖注入的对象，指向app.service。 |
 | res | 一个对象包括encoding、body属性，用来暂存返回数据的编码和具体数据。 |
 | helper | 指向helper模块，提供了一些助手函数，具体参考wiki。 |
@@ -650,7 +618,6 @@ app.daemon(1234, 2)
 app.daemon(1234, 'localhost', 3)
 
 ```
-
 
 ## 日志
 
@@ -791,3 +758,37 @@ app.daemon(1234, 2)
 - 它很快，并且我们一直在都在关注优化。如果你需要和其他对比测试，请都添加多个中间件，并且都添加上百个路由，然后测试对比。
 
 - 提供了一个sched函数用来快速设置cluster模式的调度方式，支持参数为'rr'或'none'，本质就是设置cluster.schedulingPolicy的值。
+
+
+框架在初始化会自动检测内存大小并设定相关上限，你可以在初始化后，通过更改secure中的属性来更改限制，这需要你使用daemon接口，也就是使用master管理子进程的模式。
+
+```
+
+var app = new titbit();
+
+//最大内存设定为500M，但是只有在连接数为0时才会自动重启。
+//这个值和diemem都是针对heap（堆）的。
+app.secure.maxmem = 500000000;
+
+//必须要重启的最大内存上限设定为600M
+//这个值一般要比maxmem大，当内存使用超过maxmem设置的值，
+//但是连接不为0，这时候如果继续请求超过diemem设置的值，则会直接重启进程。
+app.secure.diemem = 600000000;
+
+//最大内存使用设置为2G
+//注意这是总的内存使用，包括你用Buffer申请的内存。
+
+let workers = 2;
+app.secure.maxrss = 2000000000 * workers;
+
+app.get('/', async c => {
+  c.send('ok');
+})
+
+app.daemon(8008, workers);
+
+```
+
+**注意，这需要你开启showLoadInfo选项，这是默认开启的，除非你设置为false**
+
+在服务始化时，会根据系统的可用内存来进行自动的设置，除非你必须要自己控制，否则最好是使用默认的配置。
