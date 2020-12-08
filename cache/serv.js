@@ -14,13 +14,13 @@ var app = new titbit({
     debug: true,
     useLimit: true,
     //deny : ['192.168.3.4'],
-    maxIPRequest: 4000,
+    maxIPRequest: 2000,
     maxConn: 4096,
     peerTime: 1,
     timeout : 10000,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
-    //http2: true,
+    http2: true,
     server : {
       //allowHTTP1: true
     },
@@ -354,10 +354,6 @@ if (cluster.isWorker) {
 
 if (process.argv.indexOf('-d') > 0) {
   app.config.daemon = true;
-}
-
-if (process.argv.indexOf('--http2') > 0) {
-  app.config.http2 = true;
 }
 
 let serv = app.daemon(1234, 2);
