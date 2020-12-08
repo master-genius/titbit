@@ -8,17 +8,23 @@ const app = new titbit({
 });
 
 async function m1(c, next) {
-  console.log('m1 start');
+  console.log('    m1 start');
   await next();
-  console.log('m1 end');
+  console.log('    m1 end');
 }
 
 async function m2(c, next) {
-  console.log('m2 start');
+  console.log('    m2 start');
   await next();
-  console.log('m2 end');
+  console.log('    m2 end');
 }
 
-app.use(m1).use(m2);
+async function m3(c, next) {
+  console.log('m3 before data event');
+  await next();
+  console.log('m3 end');
+}
+
+app.use(m1).use(m2).pre(m3);
 
 app.run(1234);

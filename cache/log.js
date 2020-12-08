@@ -31,16 +31,16 @@ var app = new titbit({
   //socktimeout: 1000,
   cert : './rsa/localhost-cert.pem',
   key : './rsa/localhost-privkey.pem',
-  //http2: true,
+  http2: true,
   useLimit: true,
 
-  logType : 'file',
+  //logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
 
-  logHandle : (w, msg) => {
+  /* logHandle : (w, msg) => {
     console.log(w.id, msg);
-  }
+  } */
 
 });
 
