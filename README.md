@@ -66,11 +66,7 @@ npm i titbit
 从最初发展到后来一段时间内，都尽可能保证大版本的兼容性。中间经历过多次比较大的演进，有时候次版本号演进也会有不兼容更新。从21.5+版本以后，只有大版本更新可能会有一些不兼容的更新，并给出不兼容项，请注意文档和Wiki。之后的两个小版本号更新都不会体现不兼容的更新。（在此之前，次要版本号仍然可以保证兼容性）
 
 
-<a href="https://gitee.com/daoio/titbit/wikis/%E7%89%88%E6%9C%AC%E6%94%B9%E8%BF%9B%E8%AF%B4%E6%98%8E?sort_id=3220595" target="_blank">
-
-## 重要版本改进
-
-</a>
+<a href="https://gitee.com/daoio/titbit/wikis/%E7%89%88%E6%9C%AC%E6%94%B9%E8%BF%9B%E8%AF%B4%E6%98%8E?sort_id=3220595" target="_blank">重要版本改进</a>
 
 ## 最小示例
 
