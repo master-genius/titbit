@@ -30,6 +30,7 @@ var app = new titbit({
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
+    monitorTimeSlice: 96
 });
 
 //app.workerCount.max = 8
