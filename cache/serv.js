@@ -211,7 +211,10 @@ app.get('/pid', async c => {
 })
 
 app.use(async (ctx, next) => {
-    console.log('checking file');
+  
+  console.log(ctx.body, ctx.files)
+
+  console.log('checking file');
     if (!ctx.isUpload) {
         return ;
     }
