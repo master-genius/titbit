@@ -65,18 +65,12 @@ npm i titbit
 
 从最初发展到后来一段时间内，都尽可能保证大版本的兼容性。中间经历过多次比较大的演进，有时候次版本号演进也会有不兼容更新。从21.5+版本以后，只有大版本更新可能会有一些不兼容的更新，并给出不兼容项，请注意文档和Wiki。之后的两个小版本号更新都不会体现不兼容的更新。（在此之前，次要版本号仍然可以保证兼容性）
 
+
+<a href="https://gitee.com/daoio/titbit/wikis/%E7%89%88%E6%9C%AC%E6%94%B9%E8%BF%9B%E8%AF%B4%E6%98%8E?sort_id=3220595" target="_blank">
+
 ## 重要版本改进
 
-| 版本 | 主要修改项 | 说明 |
-|----|----|----|
-| v21.3.1 | 去掉hook接口，增加pre接口，并针对use增加pre选项。 |  |
-| v21.5.4 | protocol表示的协议字符串统一不再有: |http模块有 : ，http2模块没有 : ，Node.js本身就不一致，但是此后，框架提供的请求上下文一致，屏蔽了这种不一致性。|
-| v21.8.1 | 添加major属性表示http协议主要版本号，但是此不会导致不兼容。<br><br>请求上下文的send函数支持第二个参数表示状态码。 | major为数字类型；<br><br>send函数第二个参数也为数字类型，默认为200。 |
-| v21.9.6 | monitor监控模块优化输出和精确度。<br><br>支持自动根据负载情况创建新的子进程处理请求，并在负载降低时在空闲时kill掉多出的进程。<br><br>增加autoWorker接口设置自动创建子进程最大数量。 | 此版本无任何不兼容更新。 |
-| v21.10.0 | 全局日志会显示real_ip，如果没有使用代理，则使用 - 代替。<br><br>请求上下文的ip属性就是客户端套接字的IP地址。 | 此版本无不兼容更新。 |
-| v21.10.2 | http2模块在很多地方存在不明确的地方。一直在优化修复过程中。<br><br>此版本终于在超时、连接异常等多种错误条件下让http2的服务稳定运行，并保证不会有因为异常而无法终止的连接，或者连接中断出现segment sault导致程序退出。（http1的服务一直是稳定运行的。） | 此版本无任何不兼容更新。 |
-| v21.10.3 | 支持选项monitorTimeSlice用于设置子进程获取请求负载的定时器时间片，默认为640ms。<br><br>传递参数为一个数字表示毫秒数。 | 此版本无任何不兼容更新。 |
-
+</a>
 
 ## 最小示例
 
@@ -261,13 +255,17 @@ app.use(async (c, next) => {
 router.post('/upload', async c => {
   let f = c.getFile('image')
   //此函数是助手函数，makeName默认会按照时间戳生成名字，extName解析文件的扩展名。
-  let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`
+  //let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`
+
+  //根据原始文件名解析扩展名并生成时间戳加随机数的唯一文件名。
+  let fname = c.helper.makeName(f.filename)
 
   try {
     c.res.body = await c.moveFile(f, fname)
   } catch (err) {
     c.res.body = err.message
   }
+  
 }, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
 
 app.run(1234)
