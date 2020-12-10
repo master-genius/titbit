@@ -52,7 +52,7 @@ let output_count = 0
 
 let crashcount = 0
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < 5000000; i++) {
   //tmp = helper.uuid(true)
   tmp = helper.makeId(12)
   if (uuidmap[tmp] === undefined) {
