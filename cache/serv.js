@@ -30,7 +30,7 @@ var app = new titbit({
     //logType: 'stdio',
     loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
-    monitorTimeSlice: 96
+    monitorTimeSlice: 128
 });
 
 //app.workerCount.max = 8
@@ -129,7 +129,7 @@ app.get('/rand/timeout', async c => {
 
   await delay(parseInt(Math.random() * 1000))
 
-  c.send('timeout ok')
+  c.res.body = 'timeout ok'
 })
 
 router.get('/ctx', async ctx => {
@@ -148,6 +148,10 @@ router.get('/ctx', async ctx => {
   ctx.res.body = JSON.stringify(ctxjson);
 
 });
+
+app.get('/status/:code', async c => {
+  c.send(`status ${c.param.code} send`, c.param.code)
+})
 
 router.get('/test', async ctx => {
 
