@@ -25,6 +25,28 @@ async function m3(c, next) {
   console.log('m3 end');
 }
 
-app.use(m1).use(m2).pre(m3);
+let xyz = async (c, next) => {
+
+  let tmstr = (new Date).toLocaleString()
+
+  console.log('xyz: ',  tmstr)
+
+  c.box.timestr = tmstr
+
+  await next()
+
+}
+
+app.use(m1).use(m2).pre(m3)
+  .use(xyz, {name: ['time']})
+
+app.get('/', async c => {
+  c.send('OK')
+})
+
+app.get('/time', async c => {
+  c.send(c.box.timestr)
+}, 'time')
+
 
 app.run(1234);
