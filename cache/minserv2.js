@@ -4,14 +4,16 @@ const titbit = require('../main')
 
 const app = new titbit({
   debug: true,
-  //globalLog: true
+  globalLog: true,
   useLimit: false,
   maxpool : 5000,
   cert : './rsa/localhost-cert.pem',
   key : './rsa/localhost-privkey.pem',
-  http2: true,
+  //http2: true,
   timeout: 5000,
-  socketTimeout: 6000
+  socketTimeout: 6000,
+  maxUrlLength: 18,
+  realIP: true
 })
 
 async function delay(tm) {
@@ -58,6 +60,21 @@ app.get('/timeout', async c => {
 
   //c.send('out')
 })
+
+app.get('/url-too-long', async c => {
+  c.send({
+    query : c.query,
+    url : c.request.url
+  })
+})
+
+if (process.argv.indexOf('--http2') > 0) {
+  app.config.http2 = true
+}
+
+if (process.argv.indexOf('--no-https') > 0) {
+  app.config.https = false
+}
 
 let serv = app.run(1234)
 
