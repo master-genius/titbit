@@ -9,6 +9,8 @@ const app = new titbit({
   useLimit: false,
   maxpool : 5000,
   timeout : 3000,
+  maxQuery: 8,
+  //fastParseQuery: true,
   //loadInfoFile : '--mem'
 })
 
@@ -28,7 +30,9 @@ app.get('/', async c => {
     }, parseInt(Math.random() * 25) + 40)
   })
 
-  c.send('success')
+  c.send({
+    query: c.query
+  })
 
 })
 
@@ -48,6 +52,22 @@ app.get('/ok', async c => {
   })
 
   c.send('ok')
+})
+
+app.get('/error', async c => {
+  let r = parseInt(Math.random() * 11)
+
+  if (r > 5) {
+    console.log('abort')
+    c.request.emit('aborted')
+  } else {
+    console.log('error')
+    c.request.emit('error', new Error('eee'))
+    c.response.emit('error')
+  }
+
+  c.send('ok')
+
 })
 
 app.get('/timeout', async c => {
@@ -89,5 +109,12 @@ if (process.argv.indexOf('-c') > 0) {
   app.daemon(1234, 3)
   //app.daemon(1235, 3)
 } else {
-  app.run(1234)
+  let serv = app.run(1234)
+  setInterval(() => {
+
+    serv.getConnections((err, conn) => {
+      console.log(conn)
+    })
+
+  }, 3000)
 }

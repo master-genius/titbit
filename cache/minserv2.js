@@ -2,6 +2,18 @@
 
 const titbit = require('../main')
 
+let http2_on = false
+
+if (process.argv.indexOf('--http2') > 0) {
+  http2_on = true
+}
+
+let https_on = true
+
+if (process.argv.indexOf('--no-https') > 0) {
+  https_on = false
+}
+
 const app = new titbit({
   debug: true,
   globalLog: true,
@@ -9,7 +21,8 @@ const app = new titbit({
   maxpool : 5000,
   cert : './rsa/localhost-cert.pem',
   key : './rsa/localhost-privkey.pem',
-  //http2: true,
+  http2: http2_on,
+  https: https_on,
   timeout: 5000,
   socketTimeout: 6000,
   maxUrlLength: 18,
@@ -68,13 +81,20 @@ app.get('/url-too-long', async c => {
   })
 })
 
-if (process.argv.indexOf('--http2') > 0) {
-  app.config.http2 = true
-}
+app.get('/error', async c => {
+  let r = parseInt(Math.random() * 11)
 
-if (process.argv.indexOf('--no-https') > 0) {
-  app.config.https = false
-}
+  if (r > 5) {
+    console.log('abort')
+    c.request.emit('aborted')
+  } else {
+    console.log('error')
+    c.request.emit('error')
+  }
+
+  c.send('ok')
+
+})
 
 let serv = app.run(1234)
 
