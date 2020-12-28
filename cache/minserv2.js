@@ -58,6 +58,18 @@ app.get('/ok', async c => {
   c.send('ok')
 })
 
+app.get('/delay-error', async c => {
+  
+  await delay(10)
+  //c.request.emit('error')
+  c.reply.emit('error')
+
+  await delay(100)
+
+  c.reply.end('delay-error ok')
+
+})
+
 app.get('/timeout', async c => {
   
   await delay(3000)

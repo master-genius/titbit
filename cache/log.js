@@ -35,8 +35,8 @@ var app = new titbit({
   useLimit: true,
 
   //logType : 'file',
-  logFile: '/tmp/access.log',
-  errorLogFile : '/tmp/error.log',
+  //logFile: '/tmp/access.log',
+  //errorLogFile : '/tmp/error.log',
 
   /* logHandle : (w, msg) => {
     console.log(w.id, msg);
