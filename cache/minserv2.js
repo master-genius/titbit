@@ -108,6 +108,11 @@ app.get('/error', async c => {
 
 })
 
+app.on('requestError', (err, stream, headers) => {
+  console.log(err || 'error nothing')
+  stream.close();
+})
+
 let serv = app.run(1234)
 
 setInterval(() => {
