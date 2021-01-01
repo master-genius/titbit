@@ -106,7 +106,8 @@ if (cluster.isWorker) {
  */
 
 if (process.argv.indexOf('-c') > 0) {
-  app.daemon(1234, 3)
+  app.autoWorker(4)
+  app.daemon(1234, 2)
   //app.daemon(1235, 3)
 } else {
   let serv = app.run(1234)
@@ -118,3 +119,12 @@ if (process.argv.indexOf('-c') > 0) {
 
   }, 3000)
 }
+
+/* if (cluster.isMaster) {
+  setTimeout(() => {
+    for (let k in cluster.workers) {
+      cluster.workers[k].emit('error', new Error('test err'))
+    }
+  }, 1600)
+}
+ */
