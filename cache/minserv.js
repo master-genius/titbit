@@ -12,6 +12,7 @@ const app = new titbit({
   maxQuery: 8,
   //fastParseQuery: true,
   //loadInfoFile : '--mem'
+  keepAlive: 12000,
 })
 
 async function delay(tm) {
@@ -44,6 +45,14 @@ app.get('errcode', async c => {
   c.send('not found', 404)
 })
 
+app.post('/data', async c => {
+  c.send(c.body)
+})
+
+app.post('/upload', async c => {
+  c.send(c.files)
+})
+
 app.get('/ok', async c => {
   await new Promise((rv, rj) => {
     setTimeout(() => {
@@ -72,7 +81,7 @@ app.get('/error', async c => {
 
 app.get('/timeout', async c => {
   
-  await delay(4000)
+  await delay(400)
 
   c.reply.write('123')
 
@@ -80,7 +89,12 @@ app.get('/timeout', async c => {
 
   c.reply.write('234')
 
-  await delay(26000)
+
+  await delay(2000)
+
+  c.reply.write('234')
+
+  //await delay(26000)
 
   c.send('out')
 })
@@ -110,14 +124,18 @@ if (process.argv.indexOf('-c') > 0) {
   app.daemon(1234, 2)
   //app.daemon(1235, 3)
 } else {
-  let serv = app.run(1234)
+  app.run(1234)
   setInterval(() => {
 
-    serv.getConnections((err, conn) => {
+    app.server.getConnections((err, conn) => {
       console.log(conn)
     })
 
   }, 3000)
+
+  app.server.requestTimeout = 50
+  app.server.maxHeadersCount = 80
+  
 }
 
 /* if (cluster.isMaster) {
