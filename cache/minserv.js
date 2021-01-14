@@ -5,7 +5,7 @@ const cluster = require('cluster');
 
 const app = new titbit({
   debug: true,
-  //globalLog: true
+  globalLog: true,
   useLimit: false,
   maxpool : 5000,
   timeout : 3000,
@@ -13,6 +13,7 @@ const app = new titbit({
   //fastParseQuery: true,
   //loadInfoFile : '--mem'
   keepAlive: 12000,
+  strong: true,
 })
 
 async function delay(tm) {
