@@ -38,7 +38,7 @@ app.get('/', async c => {
 })
 
 app.get('/null', async c => {
-  c.res.body = 'null'
+  c.res.body = null
 })
 
 app.get('errcode', async c => {
