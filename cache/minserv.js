@@ -3,6 +3,12 @@
 const titbit = require('../main')
 const cluster = require('cluster');
 
+let http2_on = false
+
+if (process.argv.indexOf('--http2') > 0) {
+  http2_on = true
+}
+
 const app = new titbit({
   debug: true,
   globalLog: true,
@@ -14,7 +20,15 @@ const app = new titbit({
   //loadInfoFile : '--mem'
   keepAlive: 12000,
   strong: true,
+  http2: http2_on,
 })
+
+/* 
+const v8 = require('v8');
+setInterval(() => {
+  console.log(v8.getHeapStatistics())
+}, 2000)
+ */
 
 async function delay(tm) {
   await new Promise((rv, rj) => {
@@ -41,6 +55,8 @@ app.get('/', async c => {
 app.get('/null', async c => {
   c.res.body = null
 })
+
+app.get('/emit-error', async c => {})
 
 app.get('errcode', async c => {
   c.send('not found', 404)

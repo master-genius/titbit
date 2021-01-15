@@ -508,6 +508,13 @@ app.use(setbodysize, {pre: true});
     //在globalLog为true时，全局日志是否记录真实的IP地址，主要用在反向代理模式下。
     realIP: false,
 
+    //允许的最大query参数个数。
+    maxQuery: 12,
+
+    //是否启用strong模式，启用后会使用process处理rejectionHandled 和 uncaughtException事件，
+    //并捕获一些错误：TypeError,ReferenceError,RangeError,AssertionError,URIError,Error。
+    strong: false,
+
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
   // 因为一旦能够开始执行，就可以通过运行状态返回对应的状态码。
