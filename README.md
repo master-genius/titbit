@@ -475,7 +475,7 @@ app.use(setbodysize, {pre: true});
     maxIPRequest: 0,
 
     //单位时间，默认为1秒
-    peerTime : 1,
+    unitTime : 1,
     
     //展示负载信息，需要通过daemon接口开启cluster集群模式
     showLoadInfo : true,

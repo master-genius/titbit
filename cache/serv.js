@@ -16,7 +16,7 @@ var app = new titbit({
     //deny : ['192.168.3.4'],
     maxIPRequest: 2000,
     maxConn: 4096,
-    peerTime: 1,
+    unitTime: 1,
     timeout : 10000,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
