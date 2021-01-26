@@ -26,7 +26,7 @@ const app = new titbit({
   realIP: true,
   server : {
     peerMaxConcurrentStreams : 100,
-    //settings : sess_set
+    settings : sess_set
   }
 })
 
@@ -126,18 +126,16 @@ app.on('requestError', (err, stream, headers) => {
   stream.close();
 })
 
-app.on('listening', () => {
-  console.log(app.server)
-})
-
 let maxStream = 8000;
 
 app.run(1234).on('session', sess => {
 
-  /* sess.settings(sess_set, (err, setting, dura) => {
-    console.log(err, setting, dura)
-    console.log(sess.localSettings, sess.remoteSettings)
-  }) */
+  console.log('--', sess.localSettings, sess.remoteSettings)
+
+  sess.settings(sess_set, (err, setting, dura) => {
+  
+    console.log('settings:', sess.localSettings, sess.remoteSettings)
+  })
 
   sess.on('stream', (stream, headers) => {
 
