@@ -12,7 +12,9 @@ if (process.argv.indexOf('--http2') > 0) {
 const app = new titbit({
   debug: true,
   globalLog: true,
-  useLimit: false,
+  useLimit: true,
+  maxIPRequest: 10,
+  unitTime: 12,
   maxpool : 5000,
   timeout : 3000,
   maxQuery: 8,
