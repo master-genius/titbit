@@ -37,8 +37,34 @@ let xyz = async (c, next) => {
 
 }
 
+let midt = {
+  detail : 'test for mid',
+
+
+  mid : () => {
+    return async (c, next) => {
+      console.log(midt.detail)
+      await next()
+    }
+  }
+
+}
+
+let midware = {
+
+  detail: 'middleware test',
+
+  middleware: async function (c, next) {
+    console.log(this.detail)
+    await next()
+  }
+
+}
+
 app.use(m1).use(m2).pre(m3)
   .use(xyz, {name: ['time']})
+  .use(midt)
+  .pre(midware)
 
 app.get('/', async c => {
   c.send('OK')
