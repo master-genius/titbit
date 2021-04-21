@@ -52,8 +52,8 @@ let output_count = 0
 
 let crashcount = 0
 
-for (let i = 0; i < 5000000; i++) {
-  //tmp = helper.uuid(true)
+for (let i = 0; i < 1200000; i++) {
+  //tmp = helper.uuid()
   tmp = helper.makeId(12)
   if (uuidmap[tmp] === undefined) {
     if (output_count < 10) {
@@ -69,4 +69,3 @@ for (let i = 0; i < 5000000; i++) {
 let et = Date.now()
 
 console.log(et - st, 'ms', crashcount)
-

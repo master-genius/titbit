@@ -53,7 +53,7 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 ## !注意
 
-请尽可能使用最新版本。
+请尽可能使用最新版本。**titbit会先查找路由再进行请求上下文对象的创建，如果没有发现路由，则不会创建请求上下文对象。**
 
 ## 安装
 
@@ -302,6 +302,7 @@ app.run(1234)
   ]
 }
 ```
+
 c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0的数字，则会获取整个文件数组，没有返回null。
 
 
@@ -332,7 +333,7 @@ app.add(async (c, next) => {
 
 使用add添加的中间件是按照添加顺序逆序执行，这是标准的洋葱模型。为了提供容易理解的逻辑，提供use接口添加中间件，使用use添加的中间件按照添加顺序执行。不同的框架对实现顺序的逻辑往往会不同，但是顺序执行更符合开发者习惯。
 
-**建议你最好只使用use来添加中间件：**
+**建议只使用use来添加中间件：**
 
 ``` JavaScript
 //先执行
@@ -515,6 +516,15 @@ app.use(setbodysize, {pre: true});
     //并捕获一些错误：TypeError,ReferenceError,RangeError,AssertionError,URIError,Error。
     strong: false,
 
+    //querystring最大个数
+    maxQuery: 12,
+
+    //快速解析querystring，多个同名的值会仅设置第一个，不会解析成数组。
+    fastParseQuery: false,
+
+    //在multipart格式中，限制单个表单项的最大长度。
+    maxFormLength: 1000000,    
+
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
   // 因为一旦能够开始执行，就可以通过运行状态返回对应的状态码。
@@ -560,6 +570,7 @@ app.use(setbodysize, {pre: true});
 | status | 函数，设置状态码。 |
 | setHeader | 函数，设置消息头。 |
 | getFile | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
+| sendHeader | 函数，用于http2发送消息头，setHeader只是缓存了设置的消息头。对于http/1.1来说，为了保持代码一致，只是一个空函数。 |
 
 
 注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
