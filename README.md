@@ -221,7 +221,7 @@ app.get('/static/*', async c => {
 ## 上传文件
 
 默认会解析上传的文件，你可以在初始化服务的时候，传递parseBody选项关闭它，关于选项后面有详细的说明。
-解析后的文件数据在c.files中存储，想知道具体结构请往下看。
+解析后的文件数据在c.files中存储，具体结构在后面有展示。
 
 ``` JavaScript
 'use strict'
@@ -230,30 +230,15 @@ const titbit = require('titbit')
 
 const app = new titbit()
 
-//添加中间件过滤上传文件的大小，后面有中间件详细说明。
-//第二个参数表示只针对POST请求，并且路由命名为upload-image路由执行。
-app.use(async (c, next) => {
-
-  //解析后的文件在c.files中存储，通过getFile可以方便获取文件数据。
-  let upf = c.getFile('image')
-  if (!upf) {
-    c.res.body = 'file not found'
-    return
-  } else if (upf.data.length > 2000000) {
-    c.res.body = 'max file size: 2M'
-    return
-  }
-
-  await next()
-  //指定只有POST请求，并且路由名称为upload-image才会执行此中间件。
-}, {method: 'POST', name: 'upload-image'});
-
 router.post('/upload', async c => {
+  
   let f = c.getFile('image')
+
   //此函数是助手函数，makeName默认会按照时间戳生成名字，extName解析文件的扩展名。
   //let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`
 
   //根据原始文件名解析扩展名并生成时间戳加随机数的唯一文件名。
+
   let fname = c.helper.makeName(f.filename)
 
   try {
@@ -285,18 +270,20 @@ app.run(1234)
       filename: ORIGIN_FILENAME,
       start : START,
       end   : END,
-      length: LENGTH
+      length: LENGTH,
+      rawHeader: HEADER_DATA
     },
     ...
   ],
 
   "video" : [
     {
-      'content-type': CONTENT_TYPE,  //文件类型
-      filename: ORIGIN_FILENAME //原始文件名
-      start : START, //ctx.rawBody开始的索引位置
-      end   : END,   //ctx.rawBody结束的索引位置
-      length: LENGTH,  //文件长度，字节数
+      'content-type': CONTENT_TYPE,  //文件类型。
+      filename: ORIGIN_FILENAME //原始文件名。
+      start : START, //ctx.rawBody开始的索引位置。
+      end   : END,   //ctx.rawBody结束的索引位置。
+      length: LENGTH,  //文件长度，字节数。
+      rawHeader: HEADER_DATA //原始消息头文本，是multipart/form-data的消息头。
     },
     ...
   ]
