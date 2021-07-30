@@ -28,7 +28,7 @@ var app = new titbit({
     loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
-    //loadInfoFile: '/tmp/loadinfo.log',
+    loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
     monitorTimeSlice: 292
 });
