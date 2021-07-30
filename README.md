@@ -496,15 +496,12 @@ app.use(setbodysize, {pre: true});
     //在globalLog为true时，全局日志是否记录真实的IP地址，主要用在反向代理模式下。
     realIP: false,
 
-    //允许的最大query参数个数。
+    //允许的最大querystring参数个数。
     maxQuery: 12,
 
     //是否启用strong模式，启用后会使用process处理rejectionHandled 和 uncaughtException事件，
     //并捕获一些错误：TypeError,ReferenceError,RangeError,AssertionError,URIError,Error。
     strong: false,
-
-    //querystring最大个数
-    maxQuery: 12,
 
     //快速解析querystring，多个同名的值会仅设置第一个，不会解析成数组。
     fastParseQuery: false,
