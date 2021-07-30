@@ -15,7 +15,7 @@ var app = new titbit({
     useLimit: true,
     //deny : ['192.168.3.4'],
     maxIPRequest: 2000,
-    maxConn: 4096,
+    maxConn: 100,
     unitTime: 1,
     timeout : 10000,
     cert : './rsa/localhost-cert.pem',
@@ -28,9 +28,9 @@ var app = new titbit({
     loadInfoType : 'text',
     //globalLog: true,
     //logType: 'stdio',
-    loadInfoFile: '/tmp/loadinfo.log',
+    //loadInfoFile: '/tmp/loadinfo.log',
     //loadInfoFile : '',
-    monitorTimeSlice: 128
+    monitorTimeSlice: 292
 });
 
 //app.workerCount.max = 8
