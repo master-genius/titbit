@@ -398,7 +398,7 @@ app.use(setbodysize, {pre: true});
 
 ## 配置选项
 
-应用初始化，完整的配置选项如下
+应用初始化，完整的配置选项如下，请仔细阅读注释说明。
 
 ``` JavaScript
   {
@@ -507,7 +507,19 @@ app.use(setbodysize, {pre: true});
     fastParseQuery: false,
 
     //在multipart格式中，限制单个表单项的最大长度。
-    maxFormLength: 1000000,    
+    maxFormLength: 1000000,
+
+    /* 错误处理函数，此函数统一收集服务运行时出现的
+          tlsClientError、服务器error、secureConnection错误、clientError、运行时的抛出错误。
+      errname是一个标记错误信息和出现位置的字符串，统一格式为--ERR-CONNECTION--、--ERR-CLIENT--这种形式。
+
+      通常Node.js抛出错误会有code和message等信息方便识别和排查，也不排除有抛出错误没有code的情况，
+        errname可用可不用，但是参数会进行传递。
+      通过配置选项传递自定函数即可实现自定义错误收集和处理方式。
+    */
+    errorHandle: (err, errname) => {
+      this.config.debug && console.error(errname, err)
+    }
 
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
