@@ -57,8 +57,14 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 ## 安装
 
-``` JavaScript
+```javascript
 npm i titbit
+```
+
+同样可以通过yarn安装：
+
+```javascript
+yarn add titbit
 ```
 
 ## 兼容性
@@ -68,7 +74,28 @@ npm i titbit
 
 <a href="https://gitee.com/daoio/titbit/wikis/%E7%89%88%E6%9C%AC%E6%94%B9%E8%BF%9B%E8%AF%B4%E6%98%8E?sort_id=3220595" target="_blank">·重要版本改进</a>
 
+
 ## 最小示例
+
+```javascript
+'use strict'
+
+const titbit = require('titbit')
+
+const app = new titbit()
+
+app.run(1234)
+
+```
+
+当不填加路由时，titbit默认添加一个路由：
+
+`/*`
+
+浏览器访问会看到一个非常简单的页面，这仅仅是为了方便最开始的了解和访问文档，它不会对实际开发有任何影响。
+
+
+## 添加一个路由
 
 ``` JavaScript
 'use strict'
