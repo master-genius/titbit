@@ -494,7 +494,7 @@ app.use(setbodysize, {pre: true});
     unitTime : 1,
     
     //展示负载信息，需要通过daemon接口开启cluster集群模式
-    showLoadInfo : true,
+    loadMonitor : true,
 
     //负载信息的类型，text 、json、--null
     //json类型是给程序通信使用的，方便接口开发
@@ -568,7 +568,7 @@ app.use(setbodysize, {pre: true});
 | major | 协议主要版本号，1、2、3分别表示HTTP/1.1 HTTP/2 HTTP/3（目前还没有3）。 |
 | maxBody | 支持的最大请求体字节数，数字类型，默认为初始化时，传递的选项maxBody的值，可以在中间件中根据请求自动设定。 |
 | method | 请求类型，GET POST等HTTP请求类型，大写字母的字符串。 |
-| host | 服务的主机名，就是request.headers['host']的值。 |
+| host | 服务的主机名，就是request.headers.host的值。 |
 | protocol | 协议字符串，不带冒号，'https'、'http'、'http2'。 |
 | path | 具体请求的路径。 |
 | routepath | 实际执行请求的路由字符串。 |
@@ -805,6 +805,7 @@ app.daemon(1234, 2)
 
 框架在初始化会自动检测内存大小并设定相关上限，你可以在初始化后，通过更改secure中的属性来更改限制，这需要你使用daemon接口，也就是使用master管理子进程的模式。
 
+
 ```
 
 var app = new titbit();
@@ -832,6 +833,6 @@ app.daemon(8008, workers);
 
 ```
 
-**注意，这需要你开启showLoadInfo选项，这是默认开启的，除非你设置为false**
+**注意，这需要你开启loadMonitor选项，这是默认开启的，除非你设置为false**
 
 在服务始化时，会根据系统的可用内存来进行自动的设置，除非你必须要自己控制，否则最好是使用默认的配置。
