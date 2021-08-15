@@ -9,7 +9,7 @@ var start_time = Date.now();
 
 var ctx = null;
 
-let total = 50000;
+let total = 20000;
 
 for (let i=0 ;i < total; i++) {
   ctx = new app.httpServ.context();

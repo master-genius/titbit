@@ -29,7 +29,7 @@ let urlobj = []
 let start_time = Date.now()
 
 for (let i = 0; i < urls.length; i++) {
-  urlobj.push(parseurl(urls[i], true, true, 12))
+  urlobj.push(parseurl(urls[i], true, true, 18))
   //urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
 }
 
