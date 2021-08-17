@@ -761,6 +761,50 @@ if (cluster.isMaster) {
 
 ```
 
+比较麻烦的地方在于，worker进程发送消息比较复杂，在22.4.0版本开始，提供了一个send方法用于快速发送消息。只有在worker进程中才会发送给master进程，所以不必额外进行worker进程检测。
+
+## app.send 和 app.workerMsg
+
+现在让我们来改写上面代码的worker进程发送消息的部分：
+
+```javascript
+
+const titbit = require('titbit')
+
+const app = new titbit({
+  debug: true,
+  loadInfoFile: '/tmp/loadinfo.log'
+})
+
+//master进程注册消息事件类型，worker进程不会执行。
+app.setMsgEvent('test-msg', (worker, msg, handle) => {
+  //子进程中会通过message事件收到消息
+  worker.send({
+    id : worker.id,
+    data : 'ok'
+  })
+
+  console.log(msg)
+})
+
+//只有worker进程才会监听。
+app.workerMsg(msg => {
+  console.log(msg)
+})
+
+setInterval(() => {
+  //只有worker会执行。
+  app.send('test-msg', {
+    pid: process.pid,
+    time: (new Date).toLocaleString()
+  })
+
+}, 1000)
+
+app.daemon(1234, 2)
+
+```
+
 ## 让服务自动调整子进程数量
 
 通过daemon传递的参数作为基本的子进程数量，比如：
