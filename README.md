@@ -569,7 +569,7 @@ app.use(setbodysize, {pre: true});
 | maxBody | 支持的最大请求体字节数，数字类型，默认为初始化时，传递的选项maxBody的值，可以在中间件中根据请求自动设定。 |
 | method | 请求类型，GET POST等HTTP请求类型，大写字母的字符串。 |
 | host | 服务的主机名，就是request.headers.host的值。 |
-| protocol | 协议字符串，不带冒号，'https'、'http'、'http2'。 |
+| protocol | 协议字符串，不带冒号，'https'、'http'。 |
 | path | 具体请求的路径。 |
 | routepath | 实际执行请求的路由字符串。 |
 | query | url传递的参数。 |
@@ -792,6 +792,8 @@ app.workerMsg(msg => {
   console.log(msg)
 })
 
+cluster.isWorker
+    &&
 setInterval(() => {
   //只有worker会执行。
   app.send('test-msg', {
