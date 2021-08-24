@@ -9,13 +9,17 @@ let data = JSON.stringify({
   age : 30
 })
 
-let iv = 'qwertyuiopasdfgh'
+helper.aesIv = 'qwertyuiopasdfgh'
 
-let cryptData = helper.aesEncrypt(data, key, iv)
+let cryptData = helper.aesEncrypt(data, key)
 
 console.log('encrypt data:', cryptData)
 
-console.log('aes decrypt: ', helper.aesDecrypt(cryptData, key, iv))
+console.log('aes decrypt: ', helper.aesDecrypt(cryptData, key))
+
+helper.aesIv = '1010101010101010';
+
+console.log('aesIv: ', helper.aesIv);
 
 console.log('timestr: ', helper.timestr() )
 
