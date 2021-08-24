@@ -373,7 +373,7 @@ app.use(async (c, next) => {
 
 ## titbit完整的流程图示
 
-![](images/titbit-middleware.jpg)
+![](images/titbit-middleware.png)
 
 
 ## 中间件参数
