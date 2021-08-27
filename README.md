@@ -867,15 +867,13 @@ app.secure.diemem = 600000000;
 
 //最大内存使用设置为2G
 //注意这是总的内存使用，包括你用Buffer申请的内存。
-
-let workers = 2;
-app.secure.maxrss = 2000000000 * workers;
+app.secure.maxrss = 2000000000;
 
 app.get('/', async c => {
   c.send('ok');
 })
 
-app.daemon(8008, workers);
+app.daemon(8008, 2);
 
 ```
 
