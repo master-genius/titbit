@@ -364,6 +364,18 @@ if (process.argv.indexOf('-d') > 0) {
   app.config.daemon = true;
 }
 
+if (app.isMaster) {
+  console.log(process.pid, 'master')
+}
+
+if (app.isPrimary) {
+  console.log(process.pid, 'master')
+}
+
+if (app.isWorker) {
+  console.log(process.pid, 'worker')
+}
+
 let serv = app.daemon(1234, 2);
 
 /* 
