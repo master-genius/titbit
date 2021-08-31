@@ -1,55 +1,18 @@
 #!/bin/bash
 
-PID=
-LOAD_FILE="./titbit-monitor.log"
-RUNCOMM=
-
-get_master_pid () {
-    PID=`cat "$LOAD_FILE" | grep 'Master PID' | awk -F ': ' '{printf $2}'`
-}
-
-if [ $# -gt 0 ] ; then
-    for k in $@ ; do
-        case "$k" in
-            "--stop")
-                RUNCOMM="$k"
-                ;;
-            *)
-                LOAD_FILE="$k"
-                ;;
-        esac
-    done
+if [ "$#" -eq 0 ] ; then
+    echo "usage: $0 [PATH]"
+    echo "example: $0 /tmp/loadinfo.log"
+    exit 0
 fi
 
-get_master_pid
-
-CPID=`ps -e -o comm,pid,args | grep "node.*$PID" | grep -v grep`
-
-if [ -n "$RUNCOMM" ] ; then
-    case "$RUNCOMM" in
-        "--stop")
-            if [ -n "$CPID" ] ; then
-                kill "$PID" && echo "stop server"
-            fi
-            exit 0
-            ;;
-    esac
-else
-    if [ ! -f $LOAD_FILE ] ; then
-        echo "$LOAD_INFO not found"
-        echo "usage: $0 [PATH], by default, the file is $LOAD_FILE"
-        exit 1
-    fi
-fi
-
-if [ -z "$CPID" ] ; then
-    echo "The master process not running"
-    echo "Please run the server with node"
+if [ ! -f "$1" ] ; then
+    echo "$1 is not a file"
     exit 1
 fi
 
-while cat "$LOAD_FILE" ; do
-    echo "run 'kill $PID' to end the server"
-    sleep 0.8
-    clear
+while clear ; do
+    cat "$1"
+    sleep 0.35
 done
+
