@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "22.5.0",
+  "version": "22.5.1",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -39,5 +39,6 @@
   "bugs": {
     "url": "https://gitee.com/daoio/titbit/issues"
   },
-  "homepage": "https://gitee.com/daoio/titbit"
+  "homepage": "https://gitee.com/daoio/titbit/blob/master/README.md"
 }
+
