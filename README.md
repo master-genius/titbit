@@ -16,7 +16,7 @@
 **Wiki中有相关主题的说明：[Wiki](https://gitee.com/daoio/titbit/wikis)**
 
 
-Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间机制。
+Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强大的中间件机制。
 
 
 核心功能：
