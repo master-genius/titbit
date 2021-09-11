@@ -133,7 +133,7 @@ GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH
 
 const titbit = require('titibit');
 
-var app = new titbit({
+const app = new titbit({
   debug: true
 });
 
@@ -192,7 +192,7 @@ app.run(2019);
 
 ## send函数
 
-send函数就是对c.res.body的包装，其实就是设置了c.res.body的值。并且支持第二个参数，作为状态码，默认为200。
+send函数就是对c.res.body的包装，其实就是设置了c.res.body的值。并且支持第二个参数，作为状态码，默认为0，表示采用模块自身的默认状态码，Node.js中http和http2默认状态码为200。
 
 ``` JavaScript
 
@@ -211,13 +211,32 @@ app.get('/randerr', async c => {
         c.status(404)
         c.res.body = 'not found'
     */
-    c.send('not found', 404)
+   //你可以在v22.4.6以上的版本使用链式调用。
+    c.status(404).send('not found')
   }
 })
 
 app.run(1234)
 
 ```
+
+## 链式调用
+
+在v22.4.6版本开始，可以对setHeader、status、sendHeader使用链式调用。
+
+```javascript
+
+app.get('/', async c => {
+
+  c.setHeader('content-type', 'text/plain; charset=utf-8')
+    .setHeader('x-server', 'nodejs server')
+    .status(200)
+    .send(`${Date.now()} Math.random()}`)
+
+})
+
+```
+
 
 ## 路由参数
 
@@ -547,7 +566,12 @@ app.use(setbodysize, {pre: true});
     */
     errorHandle: (err, errname) => {
       this.config.debug && console.error(errname, err)
-    }
+    },
+
+
+    //最大负载率百分比，默认为75表示当CPU使用率超过75%，则会自动创建子进程。
+    //必须通过autoWorker开启自动负载模式才有效。
+    maxLoadRate: 75
 
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
@@ -635,6 +659,15 @@ app.get('/info', async c => {
 app.run(1234);
 
 ```
+
+## app.isMaster和app.isWorker
+
+Node.js在v16.x版本开始，cluster模块推荐使用isPrimary代替isMaster，不过isMaster仍然是可用的，在titbit初始化app实例之后，app上有两个getter属性：isMaster和isWorker。作用和cluster上的属性一致，其目的在于：
+
+- 在代码中不必再次编写const cluster = require('cluster')。
+
+- 屏蔽未来cluster可能的不兼容更改，增强代码兼容性。
+
 
 ## daemon和run
 
