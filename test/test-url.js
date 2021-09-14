@@ -1,12 +1,12 @@
 'use strict'
 
-const parseurl = require('../lib/fastParseUrl')
+const parseurl = require('../lib/fastParseUrl').fpurl
 const url = require('url')
 
 let tmp = ''
 let urls = []
 
-for (let i = 0 ; i < 100000; i++) {
+for (let i = 0 ; i < 20000; i++) {
   tmp = `?name=hel${i+1}&a=${i}&a=${i*i+1}&age=${(i+1) % 35}&say=${encodeURIComponent('我是中国人')}`
     + `&info=${encodeURIComponent('{"sign":"12dodfos9rhoaoz","x":"1=213"}')}`
     + `&t=${encodeURIComponent('a=123&b=213')}&t=${encodeURIComponent('x=123&y=234')}&==&a=*&v=@&sdk&=123&we==`
