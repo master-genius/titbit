@@ -427,7 +427,7 @@ app.use(async (c, next) => {
 
 示例：
 
-```
+```javascript
 
 app.get('/xyz', async c => {
   //...
