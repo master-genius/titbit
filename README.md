@@ -448,7 +448,7 @@ app.use(proxy, {
 
 为了一致的开发体验，你可以直接使用use接口，只需要在选项中通过pre指定：
 
-```
+```javascript
 let setbodysize = async (c, next) => {
     //设定body最大接收数据为~10k。
     c.maxBody = 10000;
