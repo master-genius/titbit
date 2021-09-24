@@ -340,7 +340,7 @@ app.run(1234)
 c.getFile就是通过名称索引，默认索引值是0，如果是一个小于0的数字，则会获取整个文件数组，没有返回null。
 
 
-## 设置允许提交的最大数据量
+## body最大数据量限制
 
 ```javascript
 'use strict'
@@ -887,6 +887,68 @@ app.daemon(1234, 2)
 当负载过高时，会自动创建子进程，并且在空闲一段时间后，会自动终止连接数量为0的子进程，恢复到基本的数值。
 
 **此功能在v21.9.6+版本可用。**
+
+----
+
+## strong模式
+
+通过strong选项可以开启strong模式，此模式会监听uncaughtException和unhandledRejection事件，保证程序稳定运行。最简单的情况，你只需要给strong设置为true即可。
+
+**strong模式的所有功能都可以通过process模块自行实现，此处只是简化了处理方式而已。**
+
+```javascript
+'use strict';
+
+const titbit = require('titbit');
+
+setTimeout(() => {
+  //在定时器的循环里抛出异常
+  throw new Error(`test error`)
+}, 2000);
+
+const app = new titbit({
+    //调试模式，输出错误信息。
+    debug: true,
+    //开启strong模式
+    strong: true
+});
+
+app.run(1234);
+
+```
+
+默认情况下，strong模式会捕获以下错误：
+
+```
+'TypeError', 'ReferenceError', 'RangeError', 'AssertionError', 'URIError', 'Error'
+```
+
+但是，你可能需要自定义处理方式，这可以通过给strong传递object类型的选项选项来实现。
+
+```javascript
+
+//核心代码示例
+const app = new titbit({
+    //调试模式，输出错误信息。
+    debug: true,
+    //开启strong模式
+    strong: {
+      //静默行为，不会输出错误。
+      quiet: true,
+      //自定义错误处理函数
+      errorHandle: (err, errname) => {
+        //....
+      },
+
+      //要捕获的错误有哪些
+      catchErrors: [
+        'TypeError', 'URIError', 'Error', 'RangeError'
+      ]
+
+    }
+});
+
+```
 
 
 ## 其他
