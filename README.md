@@ -166,6 +166,13 @@ app.run(8080);
 
 ## 获取URL参数和表单数据
 
+- URL中的查询字符串（?后面a=1&b=2形式的参数）解析到c.query中。
+
+- 表单提交的数据解析到c.body中。
+
+> 表单对应的content-type为application/x-www-form-urlencoded
+
+
 ``` JavaScript
 'use strict';
 
@@ -189,6 +196,23 @@ router.post('/p', async c => {
 app.run(2019);
 
 ```
+
+## 关于content-type
+
+- 基本的表单类型会解析到c.body，是一个JS对象。
+
+- 若content-type是text/*，就是text/开头的类型，比如text/json，框架层面不做解析处理，仅仅是把上传数据以utf8编码的格式转换成字符串赋值给c.body。后续的处理开发者自行决定。
+
+- 若content-type是上传文件类型则默认会解析。
+
+- 若content-type是其他类型，则默认只是让c.body指向c.rawBody，即为最原始的Buffer数据。
+
+框架层面提供基本的核心的支持，其他类型需要开发处理或者是使用扩展，比如titbit-toolkit中的parsebody扩展。
+
+要比较容易使用，也要留出足够的空间，你可以完全抛弃框架默认的body解析处理，通过parseBody选项为false关闭它。也可以在这基础上，进行扩展处理。
+
+content-encoding可以指明body数据是否使用了压缩处理，所以很多处理留给扩展是最好的选择，这样更加灵活。
+
 
 ## send函数
 
@@ -461,6 +485,39 @@ app.use(setbodysize, {pre: true});
 ```
 
 使用pre可以进行更复杂的处理，并且可以拦截并不执行下一层，比如titbit-toolkit扩展的proxy模块利用这个特性直接实现了高性能的代理服务，但是仅仅作为框架的一个中间件。其主要操作就是在这一层，直接设置了request的data事件来接收数据，并作其他处理，之后直接返回。
+
+**根据不同的请求类型动态限制请求体大小**
+
+这个需求可以通过pre添加中间件解决：
+
+```javascript
+
+const app = new titbit({
+  //默认最大请求体 ~10M 限制。
+  maxBody: 10000000
+})
+
+app.pre(async (c, next) => {
+
+  let ctype = c.headers['content-type'] || ''
+
+  if (ctype.indexOf('text/') === 0) {
+    //50K
+    c.maxBody = 50000
+  } else if (ctype.indexOf('application/') === 0) {
+    //100K
+    c.maxBody = 100000
+  } else if (ctype.indexOf('multipart/form-data') < 0) {
+    //10K
+    c.maxBody = 10000
+  }
+
+  await next()
+
+}, {method: ['POST', 'PUT']})
+
+
+```
 
 
 ## 配置选项
