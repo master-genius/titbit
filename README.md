@@ -199,19 +199,25 @@ app.run(2019);
 
 ## 关于content-type
 
-- 基本的表单类型会解析到c.body，是一个JS对象。
+**content-type: application/x-www-form-urlencoded**
 
-- 若content-type是text/*，就是text/开头的类型，比如text/json，框架层面不做解析处理，仅仅是把上传数据以utf8编码的格式转换成字符串赋值给c.body。后续的处理开发者自行决定。
+基本的表单类型会解析到c.body，是一个JS对象。
 
-- 若content-type是上传文件类型则默认会解析。
+**text/\***
 
-- 若content-type是其他类型，则默认只是让c.body指向c.rawBody，即为最原始的Buffer数据。
+若content-type是text/*，就是text/开头的类型，比如text/json，框架层面不做解析处理，仅仅是把上传数据以utf8编码的格式转换成字符串赋值给c.body。后续的处理开发者自行决定。
+
+**multipart/form-data;boundary=xxx**
+
+若content-type是上传文件类型则默认会解析。
+
+**其他类型**
+
+若content-type是其他类型，则默认只是让c.body指向c.rawBody，即为最原始的Buffer数据。
 
 框架层面提供基本的核心的支持，其他类型需要开发处理或者是使用扩展，比如titbit-toolkit中的parsebody扩展。
 
-要比较容易使用，也要留出足够的空间，你可以完全抛弃框架默认的body解析处理，通过parseBody选项为false关闭它。也可以在这基础上，进行扩展处理。
-
-content-encoding可以指明body数据是否使用了压缩处理，所以很多处理留给扩展是最好的选择，这样更加灵活。
+要比较容易使用，也要留出足够的空间给开发者处理，你可以完全抛弃框架默认的body解析，通过parseBody选项为false关闭它。也可以在这基础上，进行扩展处理。
 
 
 ## send函数
