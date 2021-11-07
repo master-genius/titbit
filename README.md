@@ -199,7 +199,7 @@ app.run(2019);
 
 ## 关于content-type
 
-**content-type: application/x-www-form-urlencoded**
+**application/x-www-form-urlencoded**
 
 基本的表单类型会解析到c.body，是一个JS对象。
 
