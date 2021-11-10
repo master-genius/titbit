@@ -25,6 +25,12 @@ console.log('timestr: ', helper.timestr() )
 
 console.log('make name: ', helper.makeName('aswe.jpg'))
 
+console.log('make name: ', helper.makeName('qw123456..'))
+
+console.log('make name: ', helper.makeName('qw123456.'))
+
+console.log('make name: ', helper.makeName('qwert..jpe.zip'))
+
 console.log('make salt:', helper.makeSalt())
 
 console.log(helper.ctype('.jppe'))
