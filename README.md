@@ -525,6 +525,10 @@ app.pre(async (c, next) => {
 
 ```
 
+这些参数若同时出现在文件里会显得很复杂，维护也不方便，但是功能很强，所以若要交给程序自动完成则可以大大简化编码的工作。
+
+**完整的项目结构搭建，请配合使用titbit-loader，此扩展完成了路由、模型的自动加载和中间件自动编排。<a target=_blank href="https://gitee.com/daoio/titbit-loader">titbit-loader</a>**
+
 
 ## 配置选项
 
