@@ -946,7 +946,7 @@ app.daemon(1234, 2)
 
 ```
 
-## 让服务自动调整子进程数量
+## 自动调整子进程数量
 
 通过daemon传递的参数作为基本的子进程数量，比如：
 
@@ -1009,7 +1009,7 @@ app.run(1234);
 'TypeError', 'ReferenceError', 'RangeError', 'AssertionError', 'URIError', 'Error'
 ```
 
-但是，你可能需要自定义处理方式，这可以通过给strong传递object类型的选项选项来实现。
+但是，你可能需要自定义处理方式，这可以通过给strong传递object类型的选项来实现。
 
 ```javascript
 
@@ -1039,7 +1039,7 @@ const app = new titbit({
 
 ## 其他
 
-- titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,text/xml,text/json）。注意这是在你没有设置content-type的情况下进行。
+- titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,application/json）。注意这是在你没有设置content-type的情况下进行。
 
 - 默认会限制url的最大长度，也会根据硬件情况设定一个最大内存使用率。
 
