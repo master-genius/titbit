@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "22.7.8",
+  "version": "22.7.9",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -35,7 +35,7 @@
     "webserver"
   ],
   "author": "BraveWang",
-  "license": "GPL-3.0",
+  "license": "ISC",
   "bugs": {
     "url": "https://gitee.com/daoio/titbit/issues"
   },
