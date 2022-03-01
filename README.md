@@ -648,6 +648,9 @@ app.pre(async (c, next) => {
 
     //快速解析querystring，多个同名的值会仅设置第一个，不会解析成数组。
     fastParseQuery: false,
+    
+    //是否自动解码Query参数，会调用decodeURIComponent函数。
+    autoDecodeQuery: true,
 
     //在multipart格式中，限制单个表单项的最大长度。
     maxFormLength: 1000000,
@@ -664,7 +667,6 @@ app.pre(async (c, next) => {
       this.config.debug && console.error(errname, err)
     },
 
-
     //最大负载率百分比，默认为75表示当CPU使用率超过75%，则会自动创建子进程。
     //必须通过autoWorker开启自动负载模式才有效。
     maxLoadRate: 75,
@@ -675,7 +677,7 @@ app.pre(async (c, next) => {
     //请求超时时间，此超时时间是请求总的时间，主要是为了应对恶意请求。
     //比如，发出大量请求，每个请求每秒发送一个字节，空闲超时不会起作用，则可以长期占有服务器资源。
     //在大量请求时，正常用户无法访问，此攻击属于DDOS。
-    requestTimeout: 100000
+    requestTimeout: 100000,
 
   };
   // 对于HTTP状态码，在这里仅需要这两个，其他很多是可以不必完整支持，并且你可以在实现应用时自行处理。
