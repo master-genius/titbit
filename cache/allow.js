@@ -4,14 +4,22 @@ const titbit = require('../main');
 
 var app = new titbit({
     debug : true,
-    /* allow : [
-        '127.0.0.1'
-    ], */
+  /*
+    allow : {
+        '127.0.0.1': 1
+    },
+    */
+    allow: (ip) => {
+      if (parseInt(Math.random() * 10) > 5) {
+        return false;
+      }
+      return true;
+    },
     maxIPRequest: 5,
-    peerTime: 10,
+    unitTime: 10,
     useLimit: true,
     maxConn: 20,
-    http2: true,
+    http2: false,
     cert : './rsa/localhost-cert.pem',
     key : './rsa/localhost-privkey.pem',
     showLoadInfo: true,
