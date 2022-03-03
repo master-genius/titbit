@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "22.8.2",
+  "version": "23.0.0",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -21,7 +21,6 @@
     "tibit",
     "titbit",
     "bit",
-    "itbit",
     "http",
     "server",
     "http/1.1",
@@ -32,7 +31,8 @@
     "framework",
     "tidbit",
     "proxy",
-    "webserver"
+    "webserver",
+    "backend"
   ],
   "author": "BraveWang",
   "license": "ISC",
