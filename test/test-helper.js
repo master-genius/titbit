@@ -41,6 +41,8 @@ console.log(helper.ctype('.js'))
 
 console.log('hmacsha1: ', helper.hmacsha1('12345', '123456', 'base64'))
 
+console.log('sm3: ', helper.sm3(`${Date.now()}`))
+
 for (let i = 0; i < 5; i++) {
   console.log( helper.nrand(i, 1000 - i) )
 }
