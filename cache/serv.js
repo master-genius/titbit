@@ -7,6 +7,8 @@ const cluster = require('cluster');
 
 //cluster.schedulingPolicy = cluster.SCHED_NONE;
 
+const ap1 = new titbit()
+
 var app = new titbit({
     //daemon: true,
     maxBody: 150000000,
