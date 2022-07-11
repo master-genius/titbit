@@ -50,6 +50,15 @@ async function delay(t) {
 //app.secure.maxrss = 36860000*2;
 //console.log(app.secure.maxmem/1024/1024)
 
+//app.service = {};
+
+app.addService('ok', true);
+
+app.addService({
+  a: 23,
+  b: 45
+})
+
 app.service.router = app.router;
 
 var {router} = app;
@@ -368,15 +377,20 @@ if (app.isMaster) {
   console.log(process.pid, 'master')
 }
 
-if (app.isPrimary) {
-  console.log(process.pid, 'master')
-}
 
 if (app.isWorker) {
   console.log(process.pid, 'worker')
+  setTimeout(() => {
+    console.log(process.pid,app.service)
+  }, 100)
 }
 
 let serv = app.daemon(1234, 2);
+
+if (app.isPrimary) {
+  console.log(process.pid, 'master')
+  console.log(app.service)
+}
 
 /* 
 if (cluster.isWorker) {
