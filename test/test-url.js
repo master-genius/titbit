@@ -19,6 +19,8 @@ for (let i = 0 ; i < 20000; i++) {
     tmp += `&r=% ${k}`
   }
 
+  tmp += '#a=123?234'
+
   urls.push(tmp)
 }
 
