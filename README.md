@@ -4,6 +4,12 @@
 
 > titbit是运行于服务端的Web框架，最开始是为了在教学中方便开发而设计，也用在一些业务系统上。它绝对算不上重型框架，但是也不简单过头。
 
+> **关于类型和TypeScript的支持**
+> 如果关于ECMAScript对类型系统的提案能够通过，则以后可以直接在JavaScript中使用类型，而无需考虑支持TS。
+> 如果后续此提案没有通过，再考虑支持。
+
+> 参考连接：<a href="https://github.com/tc39/proposal-type-annotations" target=_blank>JS的类型提案</a>
+
 > 有bug或是疑惑请提交issue或者发送私信。
 
 > 它非常快，无论是路由查找还是中间件执行过程。
