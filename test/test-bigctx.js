@@ -18,6 +18,7 @@ for (let i=0 ;i < total; i++) {
   ctx.requestCall = (c) => {
     c.send('success');
   };
+  ctx.box.rand = Math.random()
   ctx = null;
 }
 

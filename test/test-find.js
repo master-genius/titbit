@@ -30,6 +30,12 @@ app.get('/:sys/:release/iso/:handle', async c => {});
 
 app.get('/xyz', async c => {});
 
+try {
+  console.log('---测试非法路由字符串---')
+  app.get('/^*', async c => {})
+} catch (err) {
+  console.log(err.message)
+}
 
 console.log(app.router.findRealPath('/p/wang/1/25/:', 'GET') );
 
