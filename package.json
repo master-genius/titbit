@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "23.1.4",
+  "version": "23.1.5",
   "description": "a web framework support http/1.1 and http/2",
   "main": "main.js",
   "directories": {
@@ -10,7 +10,8 @@
       "tbload": "./bin/loadinfo.sh"
   },
   "scripts": {
-    "test": "node test/test-route.js"
+    "test": "node test/test-service.js",
+    "test-route": "node test/test-route.js"
   },
   "repository": {
     "type": "git",
