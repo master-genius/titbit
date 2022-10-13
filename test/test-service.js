@@ -5,7 +5,8 @@ const titbit = require('../main')
 const app = new titbit({
   debug: true,
   //globalLog: true
-  useLimit: false,
+  useLimit: true,
+  maxConn: 102,
   maxpool : 5000
 })
 
