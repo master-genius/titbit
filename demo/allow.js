@@ -2,18 +2,16 @@
 
 const titbit = require('../main');
 
-var app = new titbit({
+const app = new titbit({
     debug : true,
-    allow : [
-        '127.0.0.1'
-    ],
+    allow : {
+        '127.0.0.1': 1
+    },
     maxIPRequest: 1500,
-    peerTime: 1,
+    unitTime: 1,
     useLimit: false,
     maxConn: 2000,
     //http2: true,
-    cert : './rsa/localhost-cert.pem',
-    key : './rsa/localhost-privkey.pem',
     showLoadInfo: true,
     loadInfoType : 'text',
     globalLog : true,
@@ -22,11 +20,10 @@ var app = new titbit({
 });
 
 app.use(async (c, next) => {
-  console.log('hook running');
   console.log(c.group, c.name, c.method, '\n');
   console.log(c.box);
   await next();
-
+  console.log('pre middleware end');
 }, {pre : true});
 
 app.use(async (c, next) => {

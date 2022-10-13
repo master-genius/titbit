@@ -118,7 +118,7 @@ app.post('/tout', async c => {
 });
 
 app.get('/encrypt', async c => {
-  c.res.body = c.helper.aesEncrypt(c.query.data, _key);
+  c.res.body = c.helper.aesEncrypt(JSON.stringify(c.query), _key);
 });
 
 app.get('/decrypt', async c => {
