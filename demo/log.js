@@ -22,7 +22,7 @@ async function delay(t) {
   });
 }
 
-var app = new titbit({
+let app = new titbit({
   debug: true,
   globalLog : true,
   //loadInfoType : 'text',
@@ -30,43 +30,14 @@ var app = new titbit({
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
-  //logType : 'file',
+  logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
-
-  logType : 'self',
-  logHandle : (w, msg) => {
-    console.log(w.id, msg);
-  }
-
+  logMaxLines: 10,
+  logHistory: 10
 });
 
 app.addService('name', 'brave');
-
-app.use(async (c, next) => {
-  //c.request.setTimeout(1);
-
-  //c.response.setTimeout(123);
-  //
-  /*
-  c.response.on('timeout', (sock) => {
-    console.log(sock);
-  });*/
-  
-  await next(c);
-});
-
-/*
- * 重写日志函数
- *
- * */
-
-/* let gbl = app.httpServ.logger;
-
-app.httpServ.logger = (msg) => {
-  console.log('test for rewrite log:', msg);
-  gbl(msg);
-}; */
 
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
 
@@ -131,4 +102,4 @@ app.get('/sha256', async c => {
 
 //app.logger.watch();
 
-app.daemon(2021, 2);
+app.daemon(2023, 2);
