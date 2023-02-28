@@ -13,7 +13,7 @@ for(let i=0; i < 50; i++) {
 
     app.get(`/test/:linux/:unix/${i}`, async c => {
         c.res.body = 'unix';
-    });
+    }, '@linux-unix');
 
     app.get(`/test/${i}/*`, async c => {
       c.res.body = 'unix';
