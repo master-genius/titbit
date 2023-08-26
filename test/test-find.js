@@ -36,6 +36,7 @@ app.get('/:sys/:release/iso/:handle', async c => {});
 app.get('/xyz', async c => {});
 
 app.get('/xyz/:key/oop/:oop', async c => {});
+app.get('/xyz/:key/oo/:oop', async c => {});
 
 try {
   console.log('---测试非法路由字符串---')
@@ -52,7 +53,8 @@ let test_arr = [
   ['/:sys/:release/iso/:handle', 'GET'],
   ['/:sys/:release/iso/:handle/a', 'GET'],
   ['/xyz', 'GET'],
-  ['/xyz/1235/oop/oop', 'GET']
+  ['/xyz/1235/oop/oop', 'GET'],
+  ['/xyz/1235/oo/oop', 'GET']
 ]
 
 test_arr.forEach(a => {
