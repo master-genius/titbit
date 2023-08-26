@@ -22,6 +22,11 @@ try {
 
 app.get('/p/:name/:id/:age/::', async c => {});
 
+try {
+  console.log('测试 模式冲突 路由添加...')
+  app.get('/p/:x/:y/:z/:k', async c => {})
+} catch (err) {}
+
 app.get('/static/*', async c => {});
 
 app.get('/file/download/*', async c => {});
@@ -30,6 +35,8 @@ app.get('/:sys/:release/iso/:handle', async c => {});
 
 app.get('/xyz', async c => {});
 
+app.get('/xyz/:key/oop/:oop', async c => {});
+
 try {
   console.log('---测试非法路由字符串---')
   app.get('/^*', async c => {})
@@ -37,16 +44,24 @@ try {
   console.log(err.message)
 }
 
-console.log(app.router.findRealPath('/p/wang/1/25/:', 'GET') );
+let test_arr = [
+  ['/p/wang/1/25/:', 'GET'],
+  ['/static/css/a.css', 'GET'],
+  ['/file/download/linux/ubuntu/20.04.iso', 'GET'],
+  ['/unix/freebsd/iso/download', 'GET'],
+  ['/:sys/:release/iso/:handle', 'GET'],
+  ['/:sys/:release/iso/:handle/a', 'GET'],
+  ['/xyz', 'GET'],
+  ['/xyz/1235/oop/oop', 'GET']
+]
 
-console.log(app.router.findRealPath('/static/css/a.css', 'GET') );
+test_arr.forEach(a => {
+  console.log('find path:', a[0], a[1])
+  let r = app.router.findRealPath(a[0], a[1])
+  if (!r) {
+    console.log('    ----', 'not found\n')
+  } else {
+    console.log('    path:', r.key, ' args:', r.args, '\n')
+  }
+})
 
-console.log(app.router.findRealPath('/file/download/linux/ubuntu/20.04.iso', 'GET') );
-
-console.log(app.router.findRealPath('/unix/freebsd/iso/download', 'GET') );
-
-console.log(app.router.findRealPath('/:sys/:release/iso/:handle', 'GET') );
-
-console.log(app.router.findRealPath('/:sys/:release/iso/:handle/a', 'GET') );
-
-console.log(app.router.findRealPath('/xyz', 'GET') );
