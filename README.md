@@ -1066,21 +1066,26 @@ const app = new titbit({
 
 
 ```
+'use strict'
 
-var app = new titbit();
+const Titbit = require('titbit');
 
-//最大内存设定为500M，但是只有在连接数为0时才会自动重启。
-//这个值和diemem都是针对heap（堆）的。
-app.secure.maxmem = 500000000;
+let app = new Titbit();
 
-//必须要重启的最大内存上限设定为600M
+/*
+ 以下操作可以通过选项memFactor控制，请参考上文的配置选项部分。
+ */
+
+//最大内存设定为600M，但是只有在连接数为0时才会自动重启。
+app.secure.maxmem = 600_000_000;
+
+//必须要重启的最大内存上限设定为900M，注意这是总的内存使用，包括你用Buffer申请的内存。
 //这个值一般要比maxmem大，当内存使用超过maxmem设置的值，
 //但是连接不为0，这时候如果继续请求超过diemem设置的值，则会直接重启进程。
-app.secure.diemem = 600000000;
+app.secure.diemem = 900_000_000;
 
-//最大内存使用设置为2G
-//注意这是总的内存使用，包括你用Buffer申请的内存。
-app.secure.maxrss = 2000000000;
+//最大内存使用设置为800M，这个就是程序运行使用的内存，但是不包括Buffer申请的内存。
+app.secure.maxrss = 800_000_000;
 
 app.get('/', async c => {
   c.send('ok');
@@ -1093,3 +1098,4 @@ app.daemon(8008, 2);
 **注意，这需要你开启loadMonitor选项，这是默认开启的，除非你设置为false**
 
 在服务始化时，会根据系统的可用内存来进行自动的设置，除非你必须要自己控制，否则最好是使用默认的配置。
+
