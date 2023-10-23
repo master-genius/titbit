@@ -1048,6 +1048,37 @@ const app = new titbit({
 
 ```
 
+## 同时运行http和https？
+
+请注意这是打问号的，你最好不要在正式环境这样做，如果你已经开启了https，则不需要http，而且前端应用有些功能在不启用https是无法使用的。
+
+如果你需要这样功能，也许是用于测试，那么你可以这样做：
+
+```javascript
+'use strict'
+
+const Titbit = require('titbit')
+const http = require('node:http')
+const https = require('https')
+
+const app = new Titbit({
+    //启用调试
+    debug: true,
+})
+
+//以下都是http/1.1的服务，若要同时支持http2，需要启用http2服务并兼容http1，若有需要请使用titbit-httpc扩展。
+
+//这种情况下，你需要自己设定相关事件的监听处理。
+
+let http_server = http.createServer(app.httpServ.onRequest())
+let https_server = https.createServer(app.httpServ.onRequest())
+
+http_server.listen(2025)
+https_server.listen(2026)
+
+```
+
+**需要注意的是，这种情况无法再去支持http2，但是你可以使用http2去兼容http1。**
 
 ## 其他
 
