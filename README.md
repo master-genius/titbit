@@ -219,7 +219,11 @@ app.run(2019);
 
 **multipart/form-data;boundary=xxx**
 
-若content-type是上传文件类型则默认会解析。
+若content-type是上传文件类型则默认会解析，解析后的文件对象放在c.files中，可以通过c.getFile获取。
+
+**application/json**
+
+这种类型会进行JSON.parse解析。
 
 **其他类型**
 
@@ -229,6 +233,7 @@ app.run(2019);
 
 要比较容易使用，也要留出足够的空间给开发者处理，你可以完全抛弃框架默认的body解析，通过parseBody选项为false关闭它。也可以在这基础上，进行扩展处理。
 
+body解析模块本质上是一个中间件，这样设计的目的就是为了方便扩展和替换。
 
 ## send函数
 
@@ -351,26 +356,32 @@ app.run(1234)
 ```
 
 {
-  "image" : [
+  image : [
     {
       'content-type': CONTENT_TYPE,
+      //23.2.6以上可用，是content-type的别名，方便程序访问
+      type: CONTENT_TYPE,
       filename: ORIGIN_FILENAME,
       start : START,
       end   : END,
       length: LENGTH,
-      rawHeader: HEADER_DATA
+      rawHeader: HEADER_DATA,
+      headers: {...}
     },
     ...
   ],
 
-  "video" : [
+  video : [
     {
-      'content-type': CONTENT_TYPE,  //文件类型。
-      filename: ORIGIN_FILENAME //原始文件名。
-      start : START, //ctx.rawBody开始的索引位置。
-      end   : END,   //ctx.rawBody结束的索引位置。
-      length: LENGTH,  //文件长度，字节数。
-      rawHeader: HEADER_DATA //原始消息头文本，是multipart/form-data的消息头。
+      'content-type': CONTENT_TYPE,
+      //23.2.6以上可用，是content-type的别名，方便程序访问
+      type: CONTENT_TYPE,
+      filename: ORIGIN_FILENAME,
+      start : START,
+      end   : END,
+      length: LENGTH,
+      rawHeader: HEADER_DATA,
+      headers: {...}
     },
     ...
   ]
