@@ -2,7 +2,7 @@
 
 const titbit = require('../main');
 
-var app = new titbit({
+const app = new titbit({
     debug : true,
   /*
     allow : {
