@@ -787,6 +787,33 @@ app.run(1234);
 
 ```
 
+## 扩展请求上下文
+
+如果需要给请求上下文的对象添加扩展支持，可以通过app实例的httpServ.context实现。此属性是请求上下文的构造函数。
+
+**示例：**
+
+```javascript
+'use strict'
+const titbit = require('titbit')
+const app = new titbit({
+    debug: true
+})
+
+//this即表示请求上下文
+app.httpServ.prototype.testCtx = function () {
+    console.log(this.method, this.path)
+}
+
+app.get('/test', async ctx => {
+    ctx.testCtx()
+})
+
+app.run(1234)
+
+```
+
+
 ## app.isMaster和app.isWorker
 
 Node.js在v16.x版本开始，cluster模块推荐使用isPrimary代替isMaster，不过isMaster仍然是可用的，在titbit初始化app实例之后，app上有两个getter属性：isMaster和isWorker。作用和cluster上的属性一致，其目的在于：
