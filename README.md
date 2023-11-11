@@ -33,9 +33,7 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 * 路由分组和命名。
 
-* 中间件按照路由分组执行。
-
-* 中间件匹配请求方法和路由来执行。
+* 中间件按照路由分组执行。中间件匹配请求方法和路由来执行。
 
 * 开启守护进程：使用cluster模块。
 
@@ -43,7 +41,7 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 * 默认解析body数据。
 
-* 支持通过配置启用HTTP/1.1或是HTTP/2服务。
+* 支持通过配置启用HTTP/1.1或是HTTP/2服务。兼容模式，允许同时支持HTTP/2和HTTP/1.1。
 
 * 支持配置启用HTTPS服务（HTTP/2服务必须要开启HTTPS）。
 
@@ -554,6 +552,47 @@ app.pre(async (c, next) => {
 **完整的项目结构搭建，请配合使用titbit-loader，此扩展完成了路由、模型的自动加载和中间件自动编排。<a target=_blank href="https://gitee.com/daoio/titbit-loader">titbit-loader</a>**
 
 
+## HTTPS
+
+```javascript
+'use strict'
+
+const Titbit = require('titbit')
+
+//只需要传递证书和密钥文件所在路径
+const app = new Titbit({
+    // './xxx.pem'文件也可以
+    cert: './xxx.cert',
+    key: './xxx.key'
+})
+
+app.run(1234)
+
+```
+
+## 同时支持HTTP/2和HTTP/1.1(兼容模式)
+
+兼容模式是利用ALPN协议，需要使用HTTPS才可以，所以必须要配置证书和密钥。
+
+```javascript
+'use strict'
+
+const Titbit = require('titbit')
+
+//只需要传递证书和密钥文件所在路径
+const app = new Titbit({
+    cert: './xxx.cert',
+    key: './xxx.key',
+    //启用http2并允许http1，会自动启用兼容模式
+    http2: true,
+    allowHTTP1: true
+})
+
+app.run(1234)
+
+```
+
+
 ## 配置选项
 
 应用初始化，完整的配置选项如下，请仔细阅读注释说明。
@@ -598,6 +637,8 @@ app.pre(async (c, next) => {
     https       : false,
 
     http2   : false,
+
+    allowHTTP1: false,
 
     //HTTPS密钥和证书的文件路径，如果设置了路径，则会自动设置https为true。
     key   : '',
