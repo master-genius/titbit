@@ -172,7 +172,7 @@ app.run(8080);
 ```
 
 
-## 获取URL参数和表单数据
+## 获取URL参数
 
 - URL中的查询字符串（?后面a=1&b=2形式的参数）解析到c.query中。
 
@@ -205,6 +205,34 @@ app.run(2019);
 
 ```
 
+## 获取POST提交的数据
+
+提交请求体数据的请求是POST、PUT。在前端页面中，一般是表单提交，或者是异步请求。
+
+- 表单提交的数据解析到c.body中。
+
+> 表单对应的content-type为application/x-www-form-urlencoded
+> 异步请求的数据很多时候content-type是applicaiton/json
+
+以上两种类型，对应的c.body都是一个object。
+
+``` JavaScript
+'use strict'
+
+const titbit = require('titbit')
+
+let app = new titbit({debug: true})
+
+router.post('/p', async c => {
+  //POST、PUT提交的数据保存到body，如果是表单则会自动解析为object，
+  //可以使用中间件处理各种数据。
+  c.send(c.body)
+});
+
+app.run(2019)
+
+```
+
 ## 关于content-type
 
 **application/x-www-form-urlencoded**
@@ -233,7 +261,7 @@ app.run(2019);
 
 body解析模块本质上是一个中间件，这样设计的目的就是为了方便扩展和替换。
 
-## send函数
+## send函数返回数据
 
 send函数就是对c.res.body的包装，其实就是设置了c.res.body的值。并且支持第二个参数，作为状态码，默认为0，表示采用模块自身的默认状态码，Node.js中http和http2默认状态码为200。
 
