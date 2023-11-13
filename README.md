@@ -212,6 +212,7 @@ app.run(2019);
 - 表单提交的数据解析到c.body中。
 
 > 表单对应的content-type为application/x-www-form-urlencoded
+
 > 异步请求的数据很多时候content-type是applicaiton/json
 
 以上两种类型，对应的c.body都是一个object。
