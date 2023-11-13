@@ -349,7 +349,7 @@ const titbit = require('titbit')
 
 const app = new titbit()
 
-router.post('/upload', async c => {
+app.post('/upload', async c => {
   
   let f = c.getFile('image')
 
