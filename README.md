@@ -186,20 +186,20 @@ app.run(8080);
 
 const titbit = require('titbit');
 
-var app = new titbit();
+let app = new titbit({
+    debug: true
+})
 
-var {router} = app;
-
-router.get('/q', async c => {
+app.get('/q', async c => {
   //URL中?后面的查询字符串解析到query中。
   c.res.body = c.query; //返回JSON文本，主要区别在于header中content-type为text/json
-});
+})
 
-router.post('/p', async c => {
+app.post('/p', async c => {
   //POST、PUT提交的数据保存到body，如果是表单则会自动解析，否则只是保存原始文本值，
   //可以使用中间件处理各种数据。
   c.res.body = c.body;
-});
+})
 
 app.run(2019);
 
@@ -224,7 +224,7 @@ const titbit = require('titbit')
 
 let app = new titbit({debug: true})
 
-router.post('/p', async c => {
+app.post('/p', async c => {
   //POST、PUT提交的数据保存到body，如果是表单则会自动解析为object，
   //可以使用中间件处理各种数据。
   c.send(c.body)
