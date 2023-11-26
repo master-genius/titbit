@@ -871,7 +871,7 @@ const app = new titbit({
 })
 
 //this即表示请求上下文
-app.httpServ.prototype.testCtx = function () {
+app.httpServ.context.prototype.testCtx = function () {
     console.log(this.method, this.path)
 }
 
