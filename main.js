@@ -4,6 +4,6 @@
 */
 'use strict';
 
-let titbit = require('./lib/titbit');
+let titbit = require('./lib/titbit.js');
 
 module.exports = titbit;
