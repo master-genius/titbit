@@ -32,10 +32,8 @@ let urlobj = []
 let start_time = Date.now()
 
 for (let i = 0; i < urls.length; i++) {
-  //urlobj.push(parseurl(urls[i], true, false, 15))
-  //if (urlobj[0].info) {}
-  urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
-  if (urlobj[0].searchParams.get('info')){}
+  urlobj.push(parseurl(urls[i], true, false, 15))
+  //urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
 }
 
 let end_time = Date.now()
