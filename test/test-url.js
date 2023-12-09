@@ -7,7 +7,7 @@ let tmp = ''
 let urls = []
 
 for (let i = 0 ; i < 20000; i++) {
-  tmp = `?name=hel${i+1}&a=${i}&a=${i*i+1}&age=${(i+1) % 35}&say=${encodeURIComponent('我是中国人')}`
+  tmp = `/x/y/z?name=hel${i+1}&a=${i}&a=${i*i+1}&age=${(i+1) % 35}&say=${encodeURIComponent('我是中国人')}`
     + `&info=${encodeURIComponent('{"sign":"12dodfos9rhoaoz","x":"1=213"}')}`
     + `&t=${encodeURIComponent('a=123&b=213')}&t=${encodeURIComponent('x=123&y=234')}&==&a=*&v=@&sdk&=123&we==`
 
@@ -21,6 +21,7 @@ for (let i = 0 ; i < 20000; i++) {
 
   tmp += '#a=123?234'
 
+  //tmp = `https://a.qwq/xyy/qwd/qwd?x=123&b=234&c=435#123few`
   urls.push(tmp)
 }
 
@@ -31,8 +32,10 @@ let urlobj = []
 let start_time = Date.now()
 
 for (let i = 0; i < urls.length; i++) {
-  urlobj.push(parseurl(urls[i], true, true, 18))
-  //urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
+  //urlobj.push(parseurl(urls[i], true, false, 15))
+  //if (urlobj[0].info) {}
+  urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
+  if (urlobj[0].searchParams.get('info')){}
 }
 
 let end_time = Date.now()
@@ -40,3 +43,8 @@ let end_time = Date.now()
 console.log(`${urls.length}, ${end_time - start_time} ms`)
 
 console.log(urlobj[0])
+/*
+for (let [k,v] of urlobj[0].searchParams) {
+  console.log(k, v)
+}
+*/
