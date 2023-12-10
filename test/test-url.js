@@ -12,7 +12,7 @@ for (let i = 0 ; i < 20000; i++) {
     + `&t=${encodeURIComponent('a=123&b=213')}&t=${encodeURIComponent('x=123&y=234')}&==&a=*&v=@&sdk&=123&we==`
 
   for (let k=0; k < 10; k++) {
-    tmp += `&x=${encodeURIComponent('人民')}${k+1}`
+    tmp += `&x=${encodeURIComponent('人民')}${k+1}%rr`
   }
 
   for (let k=0; k < 35; k++) {
@@ -36,7 +36,7 @@ let urlobj = []
 let start_time = Date.now()
 
 for (let i = 0; i < urls.length; i++) {
-  urlobj.push(parseurl(urls[i], true, false, 20))
+  urlobj.push(parseurl(urls[i], true, false, 25))
   //urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
 }
 
