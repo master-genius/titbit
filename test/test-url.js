@@ -23,7 +23,7 @@ for (let i = 0 ; i < 20000; i++) {
     tmp += `&r=% ${k}`
   }
 
-  tmp += '#a=123?234'
+  tmp += '&op=123&qwe&&&===#a=123?234'
 
   //tmp = `https://a.qwq/xyy/qwd/qwd?x=123&b=234&c=435#123few`
   urls.push(tmp)
@@ -36,7 +36,7 @@ let urlobj = []
 let start_time = Date.now()
 
 for (let i = 0; i < urls.length; i++) {
-  urlobj.push(parseurl(urls[i], true, false, 25))
+  urlobj.push(parseurl(urls[i], true, false, 20))
   //urlobj.push( new url.URL(urls[i], 'https://w3xm.cn') )
 }
 
