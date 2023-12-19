@@ -2,8 +2,32 @@ const titbit = require('../main');
 
 let app = new titbit();
 
+app.get(`/start/*`, async c => {
+  c.res.body = c.param;
+});
+
+app.get(`/:test/:o/:key/:z/:t`, async c => {
+  c.res.body = c.param;
+});
+
+app.get(`/test/:o/:key/:z/:t`, async c => {
+  c.res.body = c.param;
+});
+
+app.get(`/test/x/:key/:z/:t`, async c => {
+  c.res.body = c.param;
+});
+
+app.get(`/test/:o/:key/:z/:t/oo`, async c => {
+  c.res.body = c.param;
+});
+
 for(let i=0; i < 50; i++) {
   app.get(`/test/${i}`, async c => {});
+
+  app.get(`/test/${i}/*`, async c => {
+    c.res.body = 'unix';
+  });
 
   app.get(`/test/${i}-*`, async c => {});
 
@@ -17,10 +41,6 @@ for(let i=0; i < 50; i++) {
 
   app.get(`/test/linux/unix/${i}`, async c => {
       c.res.body = 'unix';
-  });
-
-  app.get(`/test/${i}/*`, async c => {
-    c.res.body = 'unix';
   });
 
   app.get(`/test/${i}/x/y/*`, async c => {
@@ -47,3 +67,5 @@ console.log(app.router.findRealPath('/test/35/a/s/d', 'GET'))
 console.log(app.router.findRealPath('/test/35/x/y/w/e/r', 'GET'))
 
 console.log(app.router.findRealPath('/test/35-*', 'GET'))
+
+console.log(app.router.apiTable.GET['/test/x/1/:z/:t'])
