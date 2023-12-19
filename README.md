@@ -367,6 +367,65 @@ app.get('/static/*', async c => {
 
 ----
 
+## 分组添加路由
+
+```javascript
+'use strict'
+
+const titbit = require('../lib/titbit.js')
+
+const app = new titbit({
+  debug: true
+})
+
+//中间件函数
+let mid_timing = async (c, next) => {
+  console.time('request')
+  await next()
+  console.timeEnd('request')
+}
+
+//group返回值可以使用use、pre、middleware添加中间件。
+// /api同时会添加到路由的前缀。
+app.group('/api', route => {
+  route.get('/test', async c => {
+    c.send('api test')
+  })
+
+  route.get('/:name', async c => {
+    c.send(c.param)
+  })
+})
+.use(async (c, next) => {
+  console.log(c.group, c.path, c.routepath)
+  await next()
+})
+.pre(async (c, next) => {
+  console.log(c.method, c.headers)
+  await next()
+})
+.middleware([mid_timing])
+
+/*
+  以上中间件只会对/api分组生效
+*/
+
+//测试 不符合 路由规则，所以不会作为路径的前缀。
+app.group('测试', route => {
+  route.get('/test', async c => {
+    console.log(c.group, c.name)
+    c.send('test ok')
+  }, 'test')
+})
+.use(async (c, next) => {
+  console.log('测试组')
+  await next()
+})
+
+app.run(1234)
+
+```
+
 ## 上传文件
 
 默认会解析上传的文件，你可以在初始化服务的时候，传递parseBody选项关闭它，关于选项后面有详细的说明。
