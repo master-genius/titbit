@@ -408,7 +408,6 @@ app.group('/api', route => {
   console.log(c.method, c.headers)
   await next()
 })
-.middleware([mid_timing])
 
 /*
   以上中间件只会对/api分组生效
@@ -429,6 +428,65 @@ app.group('测试', route => {
 app.run(1234)
 
 ```
+
+### 给分组和子分组指派中间件
+
+```javascript
+'use strict'
+
+const titbit = require('../lib/titbit.js')
+
+const app = new titbit({
+  debug: true
+})
+
+//中间件函数
+let mid_timing = async (c, next) => {
+  console.time('request')
+  await next()
+  console.timeEnd('request')
+}
+
+let sub_mid_test = async (c, next) => {
+  console.log('mid test start')
+  await next()
+  console.log('mid test end')
+}
+
+//group返回值可以使用use、pre、middleware添加中间件。
+// /api同时会添加到路由的前缀。
+app.middleware([mid_timing])
+  .group('/api', route => {
+      route.get('/test', async c => {
+        c.send('api test')
+      })
+
+      route.get('/:name', async c => {
+        c.send(c.param)
+      })
+
+      //子分组 /sub启用中间件sub_mid_test，同时，子分组会启用上一层的所有中间件。
+      route.middleware([sub_mid_test])
+        .group('/sub', sub => {
+            sub.get('/:key', async c => {
+              c.send(c.param)
+            })
+        })
+  })
+
+app.run(1234)
+
+```
+
+分组支持嵌套调用，但是层级不能超过9。通常超过3层的嵌套分组就是有问题的，需要重新设计。
+
+**这个功能，其实不如titbit-loader扩展的自动加载机制方便易用，但是在实际情况中。有各种各样的需求。并且有时候不得不利用单文件做服务，同时还要能够兼顾框架本身的路由和中间件分组的优势，还要能够方便的编写逻辑明确，结构清晰的代码，才设计了middleware、group的接口功能。**
+
+以上路由指派分组的功能是非侵入式的，它不会影响已有代码，也不会和titbit-loader冲突。
+
+**!! 复杂的路由处理函数应该放在单独的模块中，使用一个统一的自动化加载函数来完成。**
+
+----
 
 ## 上传文件
 
