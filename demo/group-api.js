@@ -24,6 +24,7 @@ app.get('/home', async c => {
 })
 
 let mid_timing = async (c, next) => {
+  console.log('time start')
   console.time('request')
   await next()
   console.timeEnd('request')
@@ -50,11 +51,34 @@ app.router.group('/api', (route) => {
   console.log(c.method, c.headers)
   await next()
 })
-.middleware([mid_timing])
-.middleware(async(c, next) => {
-  console.log('test for middleware')
-  await next()
-}, {pre: true})
+
+app.middleware([mid_timing]).group('验证', route => {
+  route.get('/c/:o/:p', async c => {
+    console.log(c.group, c.name)
+    c.send(c.param)
+  })
+
+  route.middleware(async (c, next) => {
+    console.log('group sub test')
+    await next()
+  }).group('sub', r => {
+
+    r.get('/oo', async c => {
+      c.send(c.group)
+    })
+
+    r.middleware(async (c, next) => {
+      console.log('sub sub test')
+      await next()
+    }).group('/sub', subr => {
+      subr.get('/ok', async c => {
+        c.send(c.group)
+      })
+    })
+
+  })
+
+})
 
 app.group('测试', route => {
   route.get('/test', async c => {
@@ -71,4 +95,4 @@ app.daemon(1234, 2)
 
 //app.run(1234)
 
-//console.log(app.midware.midGroup)
+//app.isWorker && console.log(app.midware.midGroup)
