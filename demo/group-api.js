@@ -32,6 +32,17 @@ let mid_timing = async (c, next) => {
 
 app.trace('/o', async c => {})
 
+app.use(async (c, next) => {
+  console.log('global request')
+  await next()
+})
+
+app.use(async (c, next) => {
+  console.log('global pre')
+  await next()
+}, {pre: true})
+
+
 app.router.group('/api', (route) => {
   route.get('/test', async c => {
     c.send('api test')
@@ -48,7 +59,7 @@ app.router.group('/api', (route) => {
   await next()
 })
 .pre(async (c, next) => {
-  console.log(c.method, c.headers)
+  console.log('pre', c.method, c.headers)
   await next()
 })
 
