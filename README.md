@@ -389,7 +389,7 @@ let mid_timing = async (c, next) => {
   console.timeEnd('request')
 }
 
-//group返回值可以使用use、pre、middleware添加中间件。
+//group返回值可以使用use、pre添加中间件。
 // /api同时会添加到路由的前缀。
 app.group('/api', route => {
   route.get('/test', async c => {
@@ -400,18 +400,18 @@ app.group('/api', route => {
     c.send(c.param)
   })
 })
-.use(async (c, next) => {
-  console.log(c.group, c.path, c.routepath)
-  await next()
-})
-.pre(async (c, next) => {
-  console.log(c.method, c.headers)
-  await next()
-})
 
-/*
-  以上中间件只会对/api分组生效
-*/
+//添加中间件到对应分组
+app.use(
+  async (c, next) => {
+    console.log(c.method, c.headers)
+    await next()
+  }, {group: '/sub'}
+).group('/sub', route => {
+  route.get('/:id', async c => {
+    c.send(c.param.id)
+  })
+})
 
 //测试 不符合 路由规则，所以不会作为路径的前缀。
 app.group('测试', route => {
@@ -420,14 +420,12 @@ app.group('测试', route => {
     c.send('test ok')
   }, 'test')
 })
-.use(async (c, next) => {
-  console.log('测试组')
-  await next()
-})
 
 app.run(1234)
 
 ```
+
+以上这种方式在指定多个中间件的时候会有些复杂，可以使用middleware方法。参考以下示例。
 
 ### 给分组和子分组指派中间件
 
