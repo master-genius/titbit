@@ -503,11 +503,11 @@ app.post('/upload', async c => {
   let f = c.getFile('image')
 
   //此函数是助手函数，makeName默认会按照时间戳生成名字，extName解析文件的扩展名。
-  //let fname = `${c.helper.makeName()}${c.helper.extName(f.filename)}`
+  //let fname = `${c.ext.makeName()}${c.ext.extName(f.filename)}`
 
   //根据原始文件名解析扩展名并生成时间戳加随机数的唯一文件名。
 
-  let fname = c.helper.makeName(f.filename)
+  let fname = c.ext.makeName(f.filename)
 
   try {
     c.res.body = await c.moveFile(f, fname)
@@ -958,7 +958,7 @@ app.run(1234)
 | box | 默认为空对象，可以添加任何属性值，用来动态传递给下一层组件需要使用的信息。 |
 | service | 用于依赖注入的对象，指向app.service。 |
 | res | 一个对象包括encoding、body属性，用来暂存返回数据的编码和具体数据。 |
-| helper | 指向helper模块，提供了一些助手函数，具体参考wiki。 |
+| ext | 提供了一些助手函数，具体参考wiki。 |
 | send | 函数，用来设置res.body的数据并支持第二个参数作为状态码，默认状态码为200。 |
 | moveFile | 函数，用来移动上传的文件到指定路径。 |
 | status | 函数，设置状态码。 |

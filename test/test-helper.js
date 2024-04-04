@@ -31,8 +31,6 @@ console.log('make name: ', helper.makeName('qw123456.'))
 
 console.log('make name: ', helper.makeName('qwert..jpe.zip'))
 
-console.log('make salt:', helper.makeSalt())
-
 console.log(helper.ctype('.jppe'))
 
 console.log(helper.ctype('.jpg'))
@@ -48,7 +46,7 @@ for (let i = 0; i < 5; i++) {
 }
 
 for (let i = 0; i < 10 ; i++) {
-  console.log( helper.uuid() )
+  console.log(helper.serialId(), helper.uuid() )
 }
 
 for (let i = 0; i < 10 ; i++) {
@@ -65,8 +63,8 @@ let output_count = 0
 let crashcount = 0
 
 for (let i = 0; i < 1200000; i++) {
-  //tmp = helper.uuid()
-  tmp = helper.makeId(12)
+  tmp = helper.uuid()
+  //tmp = helper.serialId(16)
   if (uuidmap[tmp] === undefined) {
     if (output_count < 10) {
       console.log(tmp)
