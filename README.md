@@ -954,7 +954,6 @@ app.run(1234)
 | group | 路由分组，默认为空字符串。 |
 | reply | HTTP/1.1协议，指向response，HTTP/2 指向stream。 |
 | request | HTTP/1.1 就是http模块request事件的参数IncomingMessage对象，HTTP/2 指向stream对象。 |
-| response | HTTP/1.1 是http模块的request事件的第二个参数response对象。HTTP/2没有此属性。 |
 | box | 默认为空对象，可以添加任何属性值，用来动态传递给下一层组件需要使用的信息。 |
 | service | 用于依赖注入的对象，指向app.service。 |
 | res | 一个对象包括encoding、body属性，用来暂存返回数据的编码和具体数据。 |
@@ -965,7 +964,7 @@ app.run(1234)
 | setHeader | 函数，设置消息头。 |
 | getFile | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
 | sendHeader | 函数，用于http2发送消息头，setHeader只是缓存了设置的消息头。对于http/1.1来说，为了保持代码一致，只是一个空函数。 |
-
+| user | 给用户登录提供一个标准属性，默认之为null。 |
 
 注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
 
