@@ -962,10 +962,11 @@ app.run(1234)
 | moveFile | 函数，用来移动上传的文件到指定路径。 |
 | status | 函数，设置状态码。 |
 | setHeader | 函数，设置消息头。 |
+| removeHeader | 函数，移除等待发送的消息头。 |
 | getFile | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
 | sendHeader | 函数，用于http2发送消息头，setHeader只是缓存了设置的消息头。对于http/1.1来说，为了保持代码一致，只是一个空函数。 |
 | user | 给用户登录提供一个标准属性，默认之为null。 |
-| pipe | 流式响应数据，示例：await ctx.setHeader('content-type', 'text/html').pipe('./index.html') |
+| pipe | 函数，流式响应数据，示例：await ctx.setHeader('content-type', 'text/html').pipe('./index.html') |
 
 注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
 
