@@ -1,4 +1,4 @@
-const titbit = require('../main');
+const titbit = require('../lib/titbit.js');
 
 const app = new titbit({
   debug: true

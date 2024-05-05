@@ -1,4 +1,4 @@
-const doio = require('../main');
+const doio = require('../lib/titbit.js');
 
 const app = new doio();
 

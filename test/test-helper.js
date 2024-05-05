@@ -1,6 +1,6 @@
 'use strict'
 
-const helper = require('../lib/helper')
+const helper = require('../lib/helper.js')
 
 let key = '123456789012345678900987654321qw'
 
