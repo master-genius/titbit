@@ -1,6 +1,6 @@
 'use strict';
 
-const titbit = require('../main');
+const titbit = require('../lib/titbit.js');
 
 var app = new titbit({
     //daemon: true,

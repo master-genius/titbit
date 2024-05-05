@@ -1,6 +1,6 @@
 'use strict';
 
-const titbit = require('../main');
+const titbit = require('../lib/titbit.js');
 const fs = require('fs');
 const tls = require('tls');
 

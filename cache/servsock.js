@@ -1,6 +1,6 @@
 'use strict';
 
-const titbit = require('../main');
+const titbit = require('../lib/titbit.js');
 const zlib = require('zlib');
 const fs = require('fs');
 const cluster = require('cluster');
