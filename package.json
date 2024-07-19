@@ -1,14 +1,14 @@
 {
   "name": "titbit",
-  "version": "24.0.4",
+  "version": "24.0.5",
   "description": "a web framework support http/1.1 and http/2",
   "main": "lib/titbit.js",
   "directories": {
     "lib": "lib"
   },
-  "bin" : {
-      "tbload": "./bin/loadinfo.sh",
-      "titbit-new-app": "bin/newapp.js"
+  "bin": {
+    "tbload": "bin/loadinfo.sh",
+    "titbit-new-app": "bin/newapp.js"
   },
   "scripts": {
     "test": "node test/test-service.js",
