@@ -12,7 +12,7 @@ var ctx = null;
 let total = 20000;
 
 for (let i=0 ;i < total; i++) {
-  ctx = new app.httpServ.context();
+  ctx = new app.httpServ.Context();
   ctx.path = '/';
   ctx.ip = '127.0.0.1';
   ctx.requestCall = (c) => {
