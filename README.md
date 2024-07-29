@@ -109,7 +109,7 @@ app.run(1234)
 ``` JavaScript
 'use strict'
 
-const Titbit = require('titibit')
+const Titbit = require('titbit')
 
 const app = new Titbit({
   debug: true
@@ -122,6 +122,23 @@ app.get('/', async c => {
 })
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
+app.run(1234)
+
+```
+
+## 在.mjs文件中使用import导入
+
+```javascript
+import Titbit from 'titbit'
+
+const app = new Titbit({
+  debug: true
+})
+
+app.get('/', async ctx => {
+    ctx.send('success')
+})
+
 app.run(1234)
 
 ```
