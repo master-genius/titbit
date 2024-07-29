@@ -89,9 +89,9 @@ yarn add titbit
 ```javascript
 'use strict'
 
-const titbit = require('titbit')
+const Titbit = require('titbit')
 
-const app = new titbit()
+const app = new Titbit()
 
 app.run(1234)
 
@@ -109,9 +109,11 @@ app.run(1234)
 ``` JavaScript
 'use strict'
 
-const titbit = require('titibit')
+const Titbit = require('titibit')
 
-const app = new titbit()
+const app = new Titbit({
+  debug: true
+})
 
 
 app.get('/', async c => {
@@ -139,9 +141,9 @@ GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH
 
 'use strict';
 
-const titbit = require('titibit');
+const Titbit = require('titibit');
 
-const app = new titbit({
+const app = new Titbit({
   debug: true
 });
 
@@ -376,9 +378,9 @@ app.get('/static/*', async c => {
 ```javascript
 'use strict'
 
-const titbit = require('../lib/titbit.js')
+const Titbit = require('titbit')
 
-const app = new titbit({
+const app = new Titbit({
   debug: true
 })
 
