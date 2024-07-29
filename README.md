@@ -126,7 +126,9 @@ app.run(1234)
 
 ```
 
-## 在.mjs文件中使用import导入
+## 使用import导入
+
+在.mjs文件中，可以使用ES6的import进行导入：
 
 ```javascript
 import Titbit from 'titbit'
