@@ -35,7 +35,7 @@ app.trace('/o', async c => {})
 app.use(async (c, next) => {
   console.log('global request')
   await next()
-})
+}, {pre: true})
 
 app.use(async (c, next) => {
   console.log('global pre')
@@ -63,16 +63,26 @@ app.router.group('/api', (route) => {
   await next()
 })
 
-app.middleware([mid_timing]).group('验证', route => {
+app.middleware([[mid_timing,], ]).group('验证', route => {
   route.get('/c/:o/:p', async c => {
     console.log(c.group, c.name)
     c.send(c.param)
   })
 
-  route.middleware(async (c, next) => {
-    console.log('group sub test')
-    await next()
-  }).group('sub', r => {
+  route.middleware([
+    async (c, next) => {
+      console.log('group sub test')
+      await next()
+    },
+    
+    [
+      async (c, next) => {
+        console.log('group sub test 2')
+        await next()
+      },
+      {pre: false}
+    ]
+  ], {pre: true, tag: 'sub'}).group('sub', r => {
 
     r.get('/oo', async c => {
       c.send(c.group)
@@ -102,7 +112,7 @@ app.group('测试', route => {
   await next()
 })
 
-app.daemon(1234, 2)
+app.daemon({port: 1234}, 2)
 
 //app.run(1234)
 
