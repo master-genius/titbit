@@ -149,10 +149,10 @@ app.run(1234)
 
 HTTP的起始行给出了请求类型，也被称为：请求方法。目前的请求方法：
 ```
-GET POST PUT DELETE OPTIONS  TRACE HEAD PATCH
+GET POST PUT PATCH DELETE OPTIONS  TRACE HEAD
 ```
 
-最常用的是前面5个。对于每个请求类型，router中都有同名但是小写的函数进行路由挂载。为了方便调用，在初始化app后，可以使用app上同名的快捷调用。（框架层面仅支持这些。）
+最常用的是前面6个。对于每个请求类型，router中都有同名但是小写的函数进行路由挂载。为了方便调用，在初始化app后，可以使用app上同名的快捷调用。（框架层面仅支持这些。）
 
 **示例：**
 
@@ -394,6 +394,23 @@ app.get('/static/*', async c => {
 
 ## 分组添加路由
 
+你可以使用app.middleware指定中间件并使用返回的group方法添加分组路由，或者直接使用app.group分组添加路由。
+
+**Titbit.prototype.middleware(mids, options=null)**
+
+- mids是一个数组，每个元素是一个中间件函数或一个数组，数组的第一个元素是中间件，第二个是添加中间件的选项。
+
+- options默认为null，传递一个object为针对所有mids的选项，比如{pre: true}
+
+**Titbit.prototype.group(group_name, callback, prefix=true)**
+
+- group_name 是一个字符串，表示路由分组的名称，如果是合法的路径，也作为路由的前缀。
+
+- callback 回调函数，回调函数接收的参数仍然可以调用middleware和group，同时可以调用get、post等方法添加路由。
+
+- prefix 布尔值，默认为true，用于控制group_name是否添加为路由的前缀，不过只有在group_name为合法的路由字符串才会作为前缀。
+
+
 ```javascript
 'use strict'
 
@@ -453,9 +470,11 @@ app.run(1234)
 ```javascript
 'use strict'
 
-const titbit = require('../lib/titbit.js')
+const Titbit = require('titbit')
+//导入ToFile扩展
+const {ToFile} = require('titbit-toolkit')
 
-const app = new titbit({
+const app = new Titbit({
   debug: true
 })
 
@@ -474,7 +493,14 @@ let sub_mid_test = async (c, next) => {
 
 //group返回值可以使用use、pre、middleware添加中间件。
 // /api同时会添加到路由的前缀。
-app.middleware([mid_timing])
+
+app.middleware([
+     //耗时记录中间件，在接收请求提数据之前进行，所以pre设置为true
+     [ mid_timing, {pre: true} ],
+
+     //ToFile扩展在接收请求体数据之后运行，并且只针对POST和PUT请求执行
+     [ new ToFile(), {method: ['POST', 'PUT']} ]
+  ])
   .group('/api', route => {
       route.get('/test', async c => {
         c.send('api test')
