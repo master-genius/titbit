@@ -1,7 +1,7 @@
 {
   "name": "titbit",
-  "version": "24.0.8",
-  "description": "a web framework support http/1.1 and http/2",
+  "version": "24.0.9",
+  "description": "A Server-side web framework support http/1.1 and http/2",
   "main": "lib/titbit.js",
   "directories": {
     "lib": "lib"
@@ -34,7 +34,8 @@
     "tidbit",
     "proxy",
     "webserver",
-    "backend"
+    "backend",
+    "serverside"
   ],
   "author": "BraveWang",
   "license": "ISC",

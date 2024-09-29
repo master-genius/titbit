@@ -14,9 +14,7 @@
 
 > 它非常快，无论是路由查找还是中间件执行过程。
 
-**因为github无法正常显示图片，并且github服务访问太慢以及其他问题，建议使用gitee（码云）查看文档。**
-
-[码云地址](https://gitee.com/daoio/titbit)
+**因为github和npmjs.com平台无法正常显示图片，可以使用gitee（码云）查看文档。**
 
 
 **Wiki中有相关主题的说明：[Wiki](https://gitee.com/daoio/titbit/wikis)**
@@ -78,7 +76,10 @@ yarn add titbit
 
 ## 兼容性
 
-从最初发展到后来一段时间内，都尽可能保证大版本的兼容性。中间经历过多次比较大的演进，有时候次版本号演进也会有不兼容更新。从21.5+版本以后，只有大版本更新可能会有一些不兼容的更新，并给出不兼容项，请注意文档和Wiki。之后的两个小版本号更新都不会体现不兼容的更新。（在此之前，次要版本号仍然可以保证兼容性）
+
+从v21.8.1版本之后，到目前为止一直保持兼容更新，所有代码无需考虑兼容性问题，可以无缝升级版本。若后续技术变革导致需要不兼容更新，会给出说明。请注意文档和Wiki。
+
+v21.8.1之前，大版本号的版本可以保证兼容性。
 
 
 <a href="https://gitee.com/daoio/titbit/wikis/%E7%89%88%E6%9C%AC%E6%94%B9%E8%BF%9B%E8%AF%B4%E6%98%8E?sort_id=3220595" target="_blank">·重要版本改进</a>
@@ -91,7 +92,9 @@ yarn add titbit
 
 const Titbit = require('titbit')
 
-const app = new Titbit()
+const app = new Titbit({
+  debug: true
+})
 
 app.run(1234)
 
@@ -116,9 +119,9 @@ const app = new Titbit({
 })
 
 
-app.get('/', async c => {
+app.get('/', async ctx => {
   //data类型为string|Buffer。可以设置c.res.encoding为返回数据的编码格式，默认为'utf8'。
-  c.res.body = 'success'
+  ctx.res.body = 'success'
 })
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
@@ -126,9 +129,13 @@ app.run(1234)
 
 ```
 
+ctx.res.body是返回的响应数据，也可以使用ctx.send(data)
+> 其实ctx.send()内部就是设置ctx.res.body的值。
+
+
 ## 使用import导入
 
-在.mjs文件中，可以使用ES6的import进行导入：
+在 `.mjs` 文件中，可以使用ES6的import进行导入：
 
 ```javascript
 import Titbit from 'titbit'
@@ -213,16 +220,17 @@ let app = new titbit({
 
 app.get('/q', async c => {
   //URL中?后面的查询字符串解析到query中。
-  c.res.body = c.query; //返回JSON文本，主要区别在于header中content-type为text/json
+  //返回JSON文本，主要区别在于header中content-type为text/json
+  c.res.body = c.query
 })
 
 app.post('/p', async c => {
   //POST、PUT提交的数据保存到body，如果是表单则会自动解析，否则只是保存原始文本值，
   //可以使用中间件处理各种数据。
-  c.res.body = c.body;
+  c.send(c.body)
 })
 
-app.run(2019);
+app.run(2019)
 
 ```
 
@@ -525,11 +533,66 @@ app.run(1234)
 
 分组支持嵌套调用，但是层级不能超过9。通常超过3层的嵌套分组就是有问题的，需要重新设计。
 
-**这个功能，其实不如titbit-loader扩展的自动加载机制方便易用，但是在实际情况中。有各种各样的需求。并且有时候不得不利用单文件做服务，同时还要能够兼顾框架本身的路由和中间件分组的优势，还要能够方便的编写逻辑明确，结构清晰的代码，才设计了middleware、group的接口功能。**
+**这个功能，不如titbit-loader扩展的自动加载机制方便易用，但是在实际情况中。有各种各样的需求。并且有时候不得不利用单文件做服务，同时还要能够兼顾框架本身的路由和中间件分组的优势，还要能够方便的编写逻辑明确，结构清晰的代码，因此middleware、group的接口功能可以方便处理，并且若不习惯titbit-loader的MCM模式(Middleware - Controller - Model，类似MVC的模式)，使用这个方式也可以很好的组合其他模块代码。**
 
 以上路由指派分组的功能是非侵入式的，它不会影响已有代码，也不会和titbit-loader冲突。
 
 **!! 复杂的路由处理函数应该放在单独的模块中，使用一个统一的自动化加载函数来完成。**
+
+在 v24.0.9 开始，支持使用返回值进行添加，也可以不必传递回调函数：
+
+```javascript
+'use strict'
+
+const Titbit = require('titbit')
+//导入ToFile扩展
+const {ToFile} = require('titbit-toolkit')
+
+const app = new Titbit({
+  debug: true
+})
+
+//中间件函数
+let mid_timing = async (c, next) => {
+  console.time('request')
+  await next()
+  console.timeEnd('request')
+}
+
+let sub_mid_test = async (c, next) => {
+  console.log('mid test start')
+  await next()
+  console.log('mid test end')
+}
+
+let route = app.middleware([
+                //耗时记录中间件，在接收请求提数据之前进行，所以pre设置为true
+                [ mid_timing, {pre: true} ],
+
+                //ToFile扩展在接收请求体数据之后运行，并且只针对POST和PUT请求执行
+                [ new ToFile(), {method: ['POST', 'PUT']} ]
+              ])
+              .group('/api')
+
+route.get('/test', async c => {
+  c.send('api test')
+})
+
+route.get('/:name', async c => {
+  c.send(c.param)
+})
+
+//子分组 /sub启用中间件sub_mid_test，同时，子分组会启用上一层的所有中间件。
+route.middleware([sub_mid_test])
+  .group('/sub', sub => {
+      sub.get('/:key', async c => {
+        c.send(c.param)
+      })
+  })
+
+app.run(1234)
+
+```
 
 ----
 
