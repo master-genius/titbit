@@ -1,4 +1,4 @@
-const titbit = require('../main/lib/titbit.js');
+const titbit = require('../lib/titbit.js');
 const v8 = require('v8');
 const cluster = require('cluster');
 
@@ -30,6 +30,7 @@ let app = new titbit({
   timeout : 15000,
   //socktimeout: 1000,
   useLimit: true,
+  maxConn: 6000,
   logType : 'file',
   logFile: '/tmp/access.log',
   errorLogFile : '/tmp/error.log',
@@ -46,7 +47,17 @@ app.get('/', async c => {
 },{name:'home', group:'/'});
 
 app.get('/uuid', async c => {
-  c.res.body = c.helper.uuid('w_');
+  c.res.body = c.ext.uuid()
+});
+
+app.get('/timeout/:tm', async ctx => {
+  await new Promise((rv, rj) => {
+    setTimeout(() => {
+      rv()
+    }, parseInt(ctx.param.tm) || 10)
+  })
+
+  ctx.send(`timeout ok ${ctx.param.tm}`)
 });
 
 app.post('/p', async c => {
@@ -59,11 +70,11 @@ app.get('/name', async c => {
 
 app.get('/tout', async c => {
 
-  await delay(18000);
+  await delay(1800);
 
   c.response.write('handling...');
 
-  await delay(10000);
+  await delay(1000);
 
   c.res.body = 'timeout test';
 });
@@ -102,4 +113,6 @@ app.get('/sha256', async c => {
 
 //app.logger.watch();
 
-app.daemon(2023, 2);
+app.sched('none')
+
+app.daemon(2025, 2);
