@@ -64,6 +64,12 @@ app.router.group('/api', (route) => {
 })
 
 app.middleware([[mid_timing,], ]).group('验证', route => {
+  route.use(async (ctx, next) => {
+    console.log('    new route use test')
+    await next()
+    console.log('    new route use end')
+  })
+
   route.get('/c/:o/:p', async c => {
     console.log(c.group, c.name)
     c.send(c.param)
