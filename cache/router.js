@@ -4,7 +4,7 @@ const titbit = require('../lib/titbit.js');
 
 var app = new titbit({
     //daemon: true,
-    bodyMaxSize: 2500000,
+    maxBody: 2500000,
     debug: true,
     useLimit: true,
     //deny : ['10.7.10.149'],
