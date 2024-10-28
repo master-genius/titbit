@@ -21,7 +21,17 @@ app.pre(async (c, next) => {
 
 app.get('/home', async c => {
   c.send('home page')
-})
+}, '@home')
+
+app.get('/', async c => {
+  c.send('home page')
+}, '@home')
+
+app.use(async (ctx, next) => {
+  console.log('group', ctx.group, ctx.path)
+  await next()
+  console.log('group', ctx.group, ctx.path, 'end')
+}, '@home')
 
 let mid_timing = async (c, next) => {
   console.log('time start')
@@ -35,11 +45,15 @@ app.trace('/o', async c => {})
 app.use(async (c, next) => {
   console.log('global request')
   await next()
+  console.log('global request end\n')
+
 }, {pre: true})
 
 app.use(async (c, next) => {
   console.log('global pre')
   await next()
+  console.log('global pre end')
+
 }, {pre: true})
 
 
@@ -50,7 +64,13 @@ app.router.group('/api', (route) => {
 
   route.get('/:name', async c => {
     c.send(c.param)
-  })
+  }, 'name')
+
+  route.use(async (ctx, next) => {
+    console.log('name test')
+    await next()
+    console.log('name test end')
+  }, 'name')
 
   route.trace('/o', async c => {})
 })
@@ -63,7 +83,7 @@ app.router.group('/api', (route) => {
   await next()
 })
 
-app.middleware([[mid_timing,], ]).group('验证', route => {
+app.middleware([mid_timing,], {pre: true}).group('验证', route => {
   route.use(async (ctx, next) => {
     console.log('    new route use test')
     await next()
@@ -77,14 +97,16 @@ app.middleware([[mid_timing,], ]).group('验证', route => {
 
   route.middleware([
     async (c, next) => {
-      console.log('group sub test')
+      console.log('  group sub test')
       await next()
+      console.log('  group sub test end')
     },
     
     [
       async (c, next) => {
-        console.log('group sub test 2')
+        console.log('    group sub test 2')
         await next()
+        console.log('    group sub test 2 end')
       },
       {pre: false}
     ]
@@ -122,4 +144,4 @@ app.daemon({port: 1234}, 2)
 
 //app.run(1234)
 
-//app.isWorker && console.log(app.midware.midGroup)
+app.isWorker && console.log(app.midware.midGroup)

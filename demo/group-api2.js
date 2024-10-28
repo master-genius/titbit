@@ -69,5 +69,41 @@ arsub.get('/rich', async ctx => {
   ctx.send('success')
 })
 
+app.post('/d', async ctx => {
+  ctx.send(ctx.body)
+}, {group: 'data', name: 'data'})
+
+app.post('/x', async ctx => {
+  ctx.send(ctx.body)
+}, {group: 'data', name: 'x'})
+
+app.put('/y/:id', async ctx => {
+  ctx.send({
+    param: ctx.param,
+    body: ctx.body
+  })
+}, {group: 'data', name: 'y'})
+
+app.pre(async (ctx, next) => {
+  console.log(ctx.group, ctx.path, 'start')
+  await next()
+  console.log(ctx.group, ctx.path, 'end')
+}, '@data')
+
+app.pre(async (ctx, next) => {
+  console.log(ctx.group, ctx.path, 'start', Math.random())
+  await next()
+  console.log(ctx.group, ctx.path, 'end', Math.random())
+}, {group: 'data', name: 'x'})
+
+app.pre(async (ctx, next) => {
+  console.log(ctx.group, ctx.path, ctx.routepath, 'start')
+  await next()
+  console.log(ctx.group, ctx.path, ctx.routepath, 'end')
+}, {
+  group: 'data',
+  method: 'PUT',
+  name: 'y'
+})
 
 app.run(1213)
