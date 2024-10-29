@@ -56,7 +56,6 @@ app.use(async (c, next) => {
 
 }, {pre: true})
 
-
 app.router.group('/api', (route) => {
   route.get('/test', async c => {
     c.send('api test')
@@ -144,4 +143,4 @@ app.daemon({port: 1234}, 2)
 
 //app.run(1234)
 
-app.isWorker && console.log(app.midware.midGroup)
+//app.isWorker && console.log(app.midware.midGroup)

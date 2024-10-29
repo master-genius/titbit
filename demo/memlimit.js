@@ -10,7 +10,7 @@ const app = new titbit({
   //showLoadInfo: false,
   memFactor: -0.43,
   loadInfoFile: '/tmp/loadinfo.log'
-});
+})
 
 if (app.isWorker) {
   app.addService('data', {})
@@ -28,4 +28,4 @@ if (cluster.isMaster) {
   }, 10);
 }
 
-app.daemon(1234, 9);
+app.daemon(1234, 9)

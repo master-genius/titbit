@@ -43,11 +43,11 @@ app.addService('name', 'brave');
 var _key = 'abcdefghijklmnopqrstuvwxyz123456';
 
 app.get('/', async c => {
-    c.res.body = 'success';
+    c.data = 'success';
 },{name:'home', group:'/'});
 
 app.get('/uuid', async c => {
-  c.res.body = c.ext.uuid()
+  c.data = c.ext.uuid()
 });
 
 app.get('/timeout/:tm', async ctx => {
@@ -61,11 +61,11 @@ app.get('/timeout/:tm', async ctx => {
 });
 
 app.post('/p', async c => {
-    c.res.body = c.body;
+    c.data = c.body;
 });
 
 app.get('/name', async c => {
-  c.res.body = c.service.name;
+  c.data = c.service.name;
 });
 
 app.get('/tout', async c => {
@@ -76,7 +76,7 @@ app.get('/tout', async c => {
 
   await delay(1000);
 
-  c.res.body = 'timeout test';
+  c.data = 'timeout test';
 });
 
 app.post('/tout', async c => {
@@ -96,23 +96,23 @@ app.post('/tout', async c => {
 
   await delay(10000);
 
-  c.res.body = 'timeout test' + JSON.stringify(c.body);
+  c.data = 'timeout test' + JSON.stringify(c.body);
 });
 
 app.get('/encrypt', async c => {
-  c.res.body = c.helper.aesEncrypt(JSON.stringify(c.query), _key);
+  c.data = c.helper.aesEncrypt(JSON.stringify(c.query), _key);
 });
 
 app.get('/decrypt', async c => {
-  c.res.body = c.helper.aesDecrypt(c.query.data, _key);
+  c.data = c.helper.aesDecrypt(c.query.data, _key);
 });
 
 app.get('/sha256', async c => {
-  c.res.body = c.helper.sha256(`${Math.random()}${Date.now()}`);
+  c.data = c.helper.sha256(`${Math.random()}${Date.now()}`);
 });
 
 //app.logger.watch();
 
 app.sched('none')
 
-app.daemon(2025, 2);
+app.daemon(2025, 2)
