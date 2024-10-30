@@ -20,7 +20,7 @@ app.pre(async (c, next) => {
  */
 
 app.get('/home', async c => {
-  c.send('home page')
+  c.setHeader('x-key', Math.random()).sendHeader().send('home page')
 }, '@home')
 
 app.get('/', async c => {
