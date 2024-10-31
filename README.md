@@ -60,7 +60,13 @@ Node.js的Web开发框架，同时支持HTTP/1.1和HTTP/2协议， 提供了强�
 
 ## !注意
 
-请尽可能使用最新版本。**titbit会先查找路由再进行请求上下文对象的创建，如果没有发现路由，则不会创建请求上下文对象。** 这是为了避免无意义的操作，也会有其他一些错误或恶意请求的检测处理，错误状态码涉及到404和400，因此若需要在这个过程中控制返回的错误信息，需要通过初始化选项中的notFound和badRequest进行设置即可，默认的它们只是一条简短的文本信息。
+请尽可能使用最新版本。**titbit会先查找路由再进行请求上下文对象的创建，如果没有发现路由，则不会创建请求上下文对象。** 这是为了避免无意义的操作，也会有其他一些错误或恶意请求的检测处理，错误状态码涉及到404和400，因此若需要在这个过程中控制返回的错误信息，需要通过初始化选项中的notFound和badRequest进行设置即可，默认的它们只是一条简短的文本信息。(自己添加的路由内部处理需要返回404则自行控制。)
+
+## **v25.x版本变化**
+
+v25.0.0版本开始，对请求上下文和其他相关细节进行了更新，数据属性趋向于扁平化，去掉请求上下文的res对象，不再使用ctx.res.body作为收集最终返回数据的属性，直接使用ctx.data。
+
+使用ctx.send()函数设置最终返回的数据，代码具备兼容性，没有需要更改的地方，可以直接升级。
 
 ## 安装
 
@@ -120,8 +126,7 @@ const app = new Titbit({
 
 
 app.get('/', async ctx => {
-  //data类型为string|Buffer。可以设置c.res.encoding为返回数据的编码格式，默认为'utf8'。
-  ctx.res.body = 'success'
+  ctx.send('success')
 })
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
@@ -129,9 +134,9 @@ app.run(1234)
 
 ```
 
-ctx.res.body是返回的响应数据，也可以使用ctx.send(data)
-> 其实ctx.send()内部就是设置ctx.res.body的值。
-
+ctx.data是返回的响应数据，也可以使用ctx.send(data)
+> 其实ctx.send()内部就是设置ctx.data的值。
+**最好使用ctx.send()设置返回的数据，因为v25.0.0之前的版本使用的是ctx.res.body返回数据，使用send函数保证了兼容性。**
 
 ## 使用import导入
 
@@ -165,37 +170,37 @@ GET POST PUT PATCH DELETE OPTIONS  TRACE HEAD
 
 ``` JavaScript
 
-'use strict';
+'use strict'
 
-const Titbit = require('titibit');
+const Titbit = require('titibit')
 
 const app = new Titbit({
   debug: true
-});
+})
 
 app.get('/', async c => {
-  c.res.body = 'success';
-});
+  c.send('success')
+})
 
 app.get('/p', async c => {
-  c.res.body = `${c.method} ${c.routepath}`;
-});
+  c.send(`${c.method} ${c.routepath}`)
+})
 
 app.post('/', async c => {
   //返回上传的数据
-  c.res.body = c.body;
-});
+  c.send(c.body)
+})
 
 app.put('/p', async c => {
-  c.res.body = {
+  c.send({
     method : c.method,
     body : c.body,
     query : c.query
-  };
-});
+  })
+})
 
 //默认监听0.0.0.0，参数和原生接口listen一致。
-app.run(8080);
+app.run(8080)
 
 ```
 
@@ -221,7 +226,7 @@ let app = new titbit({
 app.get('/q', async c => {
   //URL中?后面的查询字符串解析到query中。
   //返回JSON文本，主要区别在于header中content-type为text/json
-  c.res.body = c.query
+  c.send(c.query)
 })
 
 app.post('/p', async c => {
@@ -293,7 +298,7 @@ body解析模块本质上是一个中间件，这样设计的目的就是为了�
 
 ## send函数返回数据
 
-send函数就是对c.res.body的包装，其实就是设置了c.res.body的值。并且支持第二个参数，作为状态码，默认为0，表示采用模块自身的默认状态码，Node.js中http和http2默认状态码为200。
+send函数就是对c.data的包装，其实就是设置了c.data的值。并且支持第二个参数，作为状态码，默认为0，表示采用模块自身的默认状态码，Node.js中http和http2默认状态码为200。
 
 ``` JavaScript
 
@@ -309,8 +314,7 @@ app.get('/randerr', async c => {
     //返回404状态码
     /*
       等效于：
-        c.status(404)
-        c.res.body = 'not found'
+        c.status(404).data = 'not found'
     */
    //你可以在v22.4.6以上的版本使用链式调用。
     c.status(404).send('not found')
@@ -346,9 +350,10 @@ app.get('/:name/:id', async c => {
   //使用:表示路由参数，请求参数被解析到c.param
   let username = c.param.name;
   let uid = c.param.id;
-  c.res.body = `${username} ${id}`;
-});
-app.run(8000);
+  c.send(`${username} ${id}`)
+})
+
+app.run(8000)
 ```
 
 ## 任意路径参数
@@ -620,9 +625,9 @@ app.post('/upload', async c => {
   let fname = c.ext.makeName(f.filename)
 
   try {
-    c.res.body = await c.moveFile(f, fname)
+    c.send(await c.moveFile(f, fname))
   } catch (err) {
-    c.res.body = err.message
+    c.status(500).send(err.message)
   }
   
 }, 'upload-image'); //给路由命名为upload-image，可以在c.name中获取。
@@ -1059,26 +1064,33 @@ app.run(1234)
 | port | 客户端请求的端口号。 |
 | ip | 客户端请求的IP地址，是套接字的地址，如果使用了代理服务器，需要检测x-real-ip或是x-forwarded-for消息头获取真正的IP。 |
 | headers | 指向request.headers。 |
-| isUpload | 是否为上传文件请求，此时就是检测消息头content-type是否为multipart/form-data格式。 |
+| isUpload() | 是否为上传文件请求，此时就是检测消息头content-type是否为multipart/form-data格式。 |
 | name | 路由名称，默认为空字符串。 |
 | group | 路由分组，默认为空字符串。 |
 | reply | HTTP/1.1协议，指向response，HTTP/2 指向stream。 |
 | request | HTTP/1.1 就是http模块request事件的参数IncomingMessage对象，HTTP/2 指向stream对象。 |
 | box | 默认为空对象，可以添加任何属性值，用来动态传递给下一层组件需要使用的信息。 |
 | service | 用于依赖注入的对象，指向app.service。 |
-| res | 一个对象包括encoding、body属性，用来暂存返回数据的编码和具体数据。 |
+| data | 保存最后要返回到客户端的数据，给data赋值即可，或者直接使用ctx.send函数。在v24.x版本以前，是ctx\.res\.body。 |
 | ext | 提供了一些助手函数，具体参考wiki。 |
-| send | 函数，用来设置res.body的数据并支持第二个参数作为状态码，默认状态码为200。 |
-| moveFile | 函数，用来移动上传的文件到指定路径。 |
-| status | 函数，设置状态码。 |
-| setHeader | 函数，设置消息头。 |
-| removeHeader | 函数，移除等待发送的消息头。 |
-| getFile | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
-| sendHeader | 函数，用于http2发送消息头，setHeader只是缓存了设置的消息头。对于http/1.1来说，为了保持代码一致，只是一个空函数。 |
+| send(data) | 函数，用来设置ctx.data的数据。 |
+| write(data) | 直接写入数据到客户端。 |
+| moveFile(file:object, target_filepath:string) | 函数，用来移动上传的文件到指定路径。 |
+| status() | 函数，设置状态码。 |
+| setHeader(k, v) | 函数，设置消息头。 |
+| removeHeader(k) | 函数，移除等待发送的消息头。 |
+| getFile(name) | 函数，获取上传的文件信息，其实就是读取files属性的信息。 |
+| sendHeader() | 函数，用于http2发送消息头，setHeader只是缓存了设置的消息头。对于http/1.1来说，为了保持代码一致，只是一个空函数。 |
 | user | 给用户登录提供一个标准属性，默认之为null。 |
-| pipe | 函数，流式响应数据，示例：await ctx.setHeader('content-type', 'text/html').pipe('./index.html') |
+| json(data) | 函数，设置返回数据，并标记类型为json。 |
+| text(data) | 函数，设置返回数据，并标记类型为text。 |
+| html(data) | 函数，设置返回数据，并标记类型为html。 |
+| pipe(filepath) | 函数，流式响应数据，示例：await ctx.setHeader('content-type', 'text/html').pipe('./index.html') |
+| pipeJson(filepath) | 以json类型流式响应文件数据。 |
+| pipeText(filepath) | 以text类型流式响应文件数据。 |
+| pipeHtml(filepath) | 以html类型流式响应文件数据。 |
 
-注意：send函数只是设置ctx.res.body属性的值，在最后才会返回数据。和直接进行ctx.res.body赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
+注意：send函数只是设置ctx.data属性的值，在最后才会返回数据。和直接进行ctx.data赋值没有区别，只是因为函数调用如果出错会更快发现问题，而设置属性值写错了就是添加了一个新的属性，不会报错但是请求不会返回正确的数据。
 
 ## 依赖注入
 
@@ -1105,15 +1117,13 @@ app.addService('data', {
 这可能看不出什么作用，毕竟在一个文件中，直接访问变量都可以，如果要做模块分离，就变得非常重要了。
 */
 app.get('/info', async c => {
-
-  c.res.body = {
+  c.send({
     name : c.service.name,
     data : c.service.data
-  };
+  })
+})
 
-});
-
-app.run(1234);
+app.run(1234)
 
 ```
 
@@ -1450,7 +1460,7 @@ https_server.listen(2026)
 
 ## 其他
 
-- titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.res.body的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,application/json）。注意这是在你没有设置content-type的情况下进行。
+- titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.data的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,application/json）。注意这是在你没有设置content-type的情况下进行。
 
 - 默认会限制url的最大长度，也会根据硬件情况设定一个最大内存使用率。
 
