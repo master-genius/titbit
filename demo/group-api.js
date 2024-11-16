@@ -5,7 +5,8 @@ const titbit = require('../lib/titbit.js')
 const app = new titbit({
   debug: true,
   loadInfoFile: '--mem',
-  //http2: true,
+  http2: true,
+  allowHTTP1: true,
   key: __dirname + '/../cache/rsa/localhost-privkey.pem',
   cert: __dirname + '/../cache/rsa/localhost-cert.pem'
 })
@@ -66,6 +67,13 @@ app.use(async (c, next) => {
 app.router.group('/api', (route) => {
   route.get('/test', async c => {
     c.send('api test')
+  })
+
+  route.get('/stream', async c => {
+    for (let i = 0; i < 10; i++) {
+      await c.ext.delay(30)
+      c.write(`${i} ${Math.random()} ${Date.now()}\n`)
+    }
   })
 
   route.get('/:name', async c => {
