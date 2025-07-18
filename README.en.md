@@ -14,9 +14,6 @@
 
 > It is extremely fast, both in route lookup and middleware execution.
 
-**Due to image display issues on GitHub and npmjs.com, you can view the documentation on Gitee (Code Cloud).**
-
-**The Wiki contains detailed explanations of related topics: [Wiki](https://gitee.com/daoio/titbit/wikis)**
 
 A Node.js web development framework that supports both HTTP/1.1 and HTTP/2 protocols, providing a robust middleware mechanism.
 

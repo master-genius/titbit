@@ -14,8 +14,6 @@
 
 > 它非常快，无论是路由查找还是中间件执行过程。
 
-**因为github和npmjs.com平台无法正常显示图片，可以使用gitee（码云）查看文档。**
-
 
 **Wiki中有相关主题的说明：[Wiki](https://gitee.com/daoio/titbit/wikis)**
 
