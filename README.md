@@ -2,6 +2,8 @@
 
 # titbit
 
+[English Documentation](README.en.md)
+
 > titbit是运行于服务端的Web框架，最开始是为了在教学中方便开发而设计，也用在一些业务系统上。它绝对算不上重型框架，但是也不简单过头。
 
 > **关于类型和TypeScript的支持**
