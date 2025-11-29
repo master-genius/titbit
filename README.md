@@ -1458,6 +1458,58 @@ https_server.listen(2026)
 
 **需要注意的是，这种情况无法再去支持http2，但是你可以使用http2去兼容http1。**
 
+## 请求限流
+
+框架层面提供的限流是基于IP地址的计算和过滤，避免同一个IP地址密集的发送请求。若使用HTTP/2协议，则需要配合使用titbit-toolkit扩展的http2limit模块。
+
+```javascript
+'use strict';
+
+const Titbit = require('titbit')
+
+const app = new Titbit({
+    debug : true,
+    //启用请求限制
+    useLimit: true,
+
+    //允许访问，不做单位时间请求频率限制的IP地址
+    allow: new Set(['127.0.0.1']),
+
+    //拒绝连接的IP地址
+    deny: (ip) => {
+      //只是示例，支持函数和Set类型
+      if (ip.indexOf('1.') === 0) return false
+      return true
+    },
+    
+    //每个IP地址单位时间内允许请求的次数
+    maxIPRequest: 6,
+    
+    //单位时间，表示15秒
+    unitTime: 15,
+    
+    //一个worker进程允许的最大并发连接
+    maxConn: 2000,
+
+    loadMonitor: true,
+    loadInfoType : 'text',
+    globalLog : true,
+    logType: 'stdio',
+    //负载信息放在内存中
+    loadInfoFile : '--mem'
+})
+
+
+app.get('/', async ctx => {
+  ctx.send('ok')
+})
+
+//使用3个worker进程处理请求，每个都支持单位时间内请求6次
+//若想要大概总共处理6次，则设置maxIPRequest为2
+app.daemon(1234, '0.0.0.0', 3)
+
+```
+
 ## 其他
 
 - titbit在运行后，会有一个最后包装的中间件做最终的处理，所以设置c.data的值就会返回数据，默认会检测一些简单的文本类型并自动设定content-type（text/plain,text/html,application/json）。注意这是在你没有设置content-type的情况下进行。
