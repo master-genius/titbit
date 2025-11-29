@@ -1,6 +1,6 @@
 {
   "name": "titbit",
-  "version": "25.0.8",
+  "version": "25.1.0",
   "description": "A Server-side web framework support http/1.1 and http/2",
   "main": "lib/titbit.js",
   "directories": {
@@ -22,6 +22,7 @@
     "tit",
     "tibit",
     "titbit",
+    "tidbit",
     "bit",
     "http",
     "server",
