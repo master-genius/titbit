@@ -831,8 +831,8 @@ Complete configuration options for application initialization, with detailed com
   // Maximum requests per IP within a time period (0 for unlimited).
   maxIPRequest: 0,
 
-  // Time period for request limiting (default: 1 second).
-  unitTime: 1,
+  // Time period for request limiting (default: 60 second).
+  unitTime: 60,
 
   // Display load information (requires `daemon` mode).
   loadMonitor: true,
@@ -865,7 +865,7 @@ Complete configuration options for application initialization, with detailed com
   realIP: false,
 
   // Maximum number of query string parameters.
-  maxQuery: 12,
+  maxQuery: 25,
 
   // Enable strong mode to handle `rejectionHandled` and `uncaughtException` events,
   // capturing errors like TypeError, ReferenceError, etc.

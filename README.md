@@ -960,8 +960,8 @@ app.run(1234)
     //单个IP单位时间内的最大连接数，0表示不限制
     maxIPRequest: 0,
 
-    //单位时间，默认为1秒
-    unitTime : 1,
+    //针对IP的限流单位时间，1表示1秒，默认为60秒，0.1 ~ 86400
+    unitTime : 60,
     
     //展示负载信息，需要通过daemon接口开启cluster集群模式
     loadMonitor : true,
@@ -995,7 +995,7 @@ app.run(1234)
     realIP: false,
 
     //允许的最大querystring参数个数。
-    maxQuery: 12,
+    maxQuery: 25,
 
     //是否启用strong模式，启用后会使用process处理rejectionHandled 和 uncaughtException事件，
     //并捕获一些错误：TypeError,ReferenceError,RangeError,AssertionError,URIError,Error。
