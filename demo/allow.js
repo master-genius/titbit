@@ -4,12 +4,10 @@ const titbit = require('../lib/titbit.js');
 
 const app = new titbit({
     debug : true,
-    allow : {
-        '127.0.0.1': 1
-    },
-    maxIPRequest: 1500,
-    unitTime: 1,
-    useLimit: false,
+    allow : new Set(['127.0.0.1']),
+    maxIPRequest: 2,
+    unitTime: 10,
+    useLimit: true,
     maxConn: 2000,
     //http2: true,
     showLoadInfo: true,
@@ -97,4 +95,4 @@ app.use(async (c, next) => {
 }, {pre: true, method: 'POST', name: 'transmit'});
 
 
-app.daemon(2021, 2);
+app.daemon(2034, 2);
