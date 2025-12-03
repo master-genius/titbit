@@ -18,8 +18,8 @@ const app = new titbit({
 });
 
 app.use(async (c, next) => {
-  console.log(c.group, c.name, c.method, '\n');
-  console.log(c.box);
+  console.log('pre middleware start');
+  console.log(c.group, c.name, c.method, c.path);
   await next();
   console.log('pre middleware end');
 }, {pre : true});
